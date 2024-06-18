@@ -157,7 +157,7 @@ console.log("locatipon",location.state);
             <fieldset>
               <legend>
                 Please, enter your User, password and password confirmation for
-                sign up.
+                sign up!.
               </legend>
               <div className="input-block">
                 <label htmlFor="signup-email">User</label>
