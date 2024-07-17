@@ -1,36 +1,8 @@
-import axios from "axios";
-import { useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
+import React from "react";
 
 export default function Adminhomepage() {
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  const storeAdminInLocalStorage = (admin) => {
-    try {
-      localStorage.setItem("admin", JSON.stringify(admin));
-      console.log("Admin stored in localStorage:", admin);
-    } catch (error) {
-      console.error("Failed to store user in localStorage:", error);
-    }
-  };
-
-  useEffect(() => {
-    adminGet();
-  }, []);
-
-  const adminGet = () => {
-    axios
-      .get("https://dex-api-novel.onrender.com/view/admin/" + loggedInUser.id)
-      .then((response) => {
-        const data = response.data;
-        if (Array.isArray(data) && data.length > 0) {
-          
-        storeAdminInLocalStorage(data[0]);
-        } else {
-          console.log("No user data found");
-        }
-      })
-      .catch((error) => console.log("error", error));
-      
-  };
+  
   const loggedInAdmin = JSON.parse(localStorage.getItem("admin"));
 
   console.log("admin page ",loggedInAdmin);

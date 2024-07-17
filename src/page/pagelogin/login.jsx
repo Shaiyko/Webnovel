@@ -1,27 +1,36 @@
-import React, { useState, useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
+import React, { useState } from "react";
 import axios from "axios";
-import "./style/css_login.css";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import {
+  Box,
+  Button,
+  FormControl,
+  Grid,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  Link,
+  Typography,
+} from "@mui/material";
+import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
+import KeyIcon from "@mui/icons-material/Key";
+import LoadingComponent from "../../Loading";
+import Account from './../pageprofile/account';
 
 export default function LoginRegister() {
-  const location = useLocation();
-  const [isLoginActive, setIsLoginActive] = useState(location.state?.isLoginActive && true);
-console.log("locatipon",location.state);
-  const handleOpen = () => setIsLoginActive(true);
-  const handleClose = () => setIsLoginActive(false);
-  const [username, handleLoginChangeuser] = useState("");
-  const [password, handleLoginChangepass] = useState("");
-  const [registeruser, handleRegisterChangeUser] = useState("");
-  const [registerpass, handleRegisterChangePass] = useState("");
-  const [registeremail, handleRegisterChangeEmail] = useState("");
-  const statusem = "user";
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => event.preventDefault();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
-  // ฟังก์ชันการเก็บข้อมูลใน Local Storage
+
   const storeUserInLocalStorage = (user) => {
     try {
       localStorage.setItem("user", JSON.stringify(user));
@@ -31,9 +40,36 @@ console.log("locatipon",location.state);
     }
   };
 
-  // ฟังก์ชันการเข้าสู่ระบบ
+  const storeAdminInLocalStorage = (admin) => {
+    try {
+      localStorage.setItem("admin", JSON.stringify(admin));
+      console.log("Admin stored in localStorage:", admin);
+    } catch (error) {
+      console.error("Failed to store user in localStorage:", error);
+    }
+  };
+
+  const storeUserpageInLocalStorage = (userP) => {
+    try {
+      localStorage.setItem("userP", JSON.stringify(userP));
+      console.log("userP stored in localStorage:", userP);
+    } catch (error) {
+      console.error("Failed to store user in localStorage:", error);
+    }
+  };
+
+  const storeAuthorpageInLocalStorage = (author) => {
+    try {
+      localStorage.setItem("author", JSON.stringify(author));
+      console.log("author stored in localStorage:", author);
+    } catch (error) {
+      console.error("Failed to store user in localStorage:", error);
+    }
+  };
+
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     axios
       .get("https://dex-api-novel.onrender.com/login")
       .then((response) => {
@@ -44,156 +80,192 @@ console.log("locatipon",location.state);
         if (loggedInUser) {
           setUser(loggedInUser);
           console.log("Logged in as:", loggedInUser.status);
-          storeUserInLocalStorage(loggedInUser); // เรียกใช้ฟังก์ชันที่นี่
+          storeUserInLocalStorage(loggedInUser);
 
           if (loggedInUser.status === "admin") {
+            axios
+              .get(
+                "https://dex-api-novel.onrender.com/view/admin/" +
+                  loggedInUser.id
+              )
+              .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data) && data.length > 0) {
+                  storeAdminInLocalStorage(data[0]);
+                } else {
+                  console.log("No user data found");
+                }
+              })
+              .catch((error) => console.log("error", error));
             navigate("/admin");
+          } else if (loggedInUser.status === "author") {
+            axios
+              .get(
+                "https://dex-api-novel.onrender.com/view/author/" +
+                  loggedInUser.id
+              )
+              .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data) && data.length > 0) {
+                  storeAuthorpageInLocalStorage(data[0]);
+                } else {
+                  console.log("No user data found");
+                }
+              })
+              .catch((error) => console.log("error", error));
+            navigate("/");
           } else if (loggedInUser.status === "user") {
+            axios
+              .get(
+                "https://dex-api-novel.onrender.com/view/user/" +
+                  loggedInUser.id
+              )
+              .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data) && data.length > 0) {
+                  storeUserpageInLocalStorage(data[0]);
+                } else {
+                  console.log("No user data found");
+                }
+              })
+              .catch((error) => console.log("error", error));
             navigate("/user");
           } else {
             navigate("/");
           }
         } else {
           console.log("Invalid username or password");
+          setLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Invalid username or password",
+          });
         }
       })
       .catch((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
         console.error("Error logging in:", error);
-        alert("Login failed");
+        setLoading(false);
       });
   };
 
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post(
-        "https://api.sheety.co/45e1622fdf6106e2755e21800d53f542/em/employee",
-        {
-          employee: {
-            username: registeruser,
-            email: registeremail,
-            password: registerpass,
-            statusem: statusem,
-          },
-        }
-      )
-      .then((response) => {
-        console.log("Register succeeded", response.data);
-        alert("Register succeeded");
-      })
-      .catch((error) => {
-        console.error("Error registering:", error);
-        alert("Failed to register");
-      });
+  const isFormValid = () => {
+    return username && password;
   };
-
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  if (loggedInUser && isLoginActive === true) {
-    Swal.fire({
-      icon: "info",
-      title: "Something went wrong?",
-      text: "Your friend should logout first!",
-      showDenyButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/");
-      } else {
-        navigate("/");
-      }
-    });
-  }
 
   return (
-    <section className="forms-section">
-      <h1 className="section-title">Form Login</h1>
-      <div className="forms">
-        <div className={`form-wrapper ${isLoginActive ? "is-active" : ""}`}>
-          <button
-            type="button"
-            className="switcher switcher-login"
-            onClick={handleOpen}
-          >
-            Login
-            <span className="underline"></span>
-          </button>
-          <form className="form form-login" onSubmit={handleLoginSubmit}>
-            <fieldset>
-              <legend>Please, enter your User and password for login.</legend>
-              <div className="input-block">
-                <label htmlFor="login-email">User</label>
-                <input
-                  onChange={(e) => handleLoginChangeuser(e.target.value)}
-                  id="login-email"
-                  type="text"
-                  required
-                />
-              </div>
-              <div className="input-block">
-                <label htmlFor="login-password">Password</label>
-                <input
-                  id="login-password"
-                  data-type="password"
-                  onChange={(e) => handleLoginChangepass(e.target.value)}
-                  type="password"
-                  required
-                />
-              </div>
-            </fieldset>
-            <Button type="submit" className="btn-login">
-              Login
-            </Button>
-          </form>
-        </div>
-        <div className={`form-wrapper ${!isLoginActive ? "is-active" : ""}`}>
-          <button
-            type="button"
-            className="switcher switcher-signup"
-            onClick={handleClose}
-          >
-            Sign Up
-            <span className="underline"></span>
-          </button>
-          <form className="form form-signup" onSubmit={handleRegisterSubmit}>
-            <fieldset>
-              <legend>
-                Please, enter your User, password and password confirmation for
-                sign up!.
-              </legend>
-              <div className="input-block">
-                <label htmlFor="signup-email">User</label>
-                <input
-                  id="signup-email"
-                  type="text"
-                  required
-                  onChange={(e) => handleRegisterChangeUser(e.target.value)}
-                />
-              </div>
-              <div className="input-block">
-                <label htmlFor="signup-password">Password</label>
-                <input
-                  id="signup-password"
-                  data-type="password"
-                  onChange={(e) => handleRegisterChangePass(e.target.value)}
-                  type="password"
-                  required
-                />
-              </div>
-              <div className="input-block">
-                <label htmlFor="signup-email">Email</label>
-                <input
-                  id="signup-email"
-                  onChange={(e) => handleRegisterChangeEmail(e.target.value)}
-                  type="email"
-                  required
-                />
-              </div>
-            </fieldset>
-            <Button type="submit" className="btn-signup">
-              Continue
-            </Button>
-          </form>
-        </div>
-      </div>
-    </section>
+    <>
+      <Box>
+        <Grid xs={12}>
+          {loading && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "50%",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+              }}
+            >
+              <LoadingComponent />
+            </Box>
+          )}
+          {!loading && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "50%",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                boxShadow: 5,
+                p: 4,
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+              }}
+            >
+              <AccountCircle sx={{ fontSize: 60 }} />
+              <Typography variant="h5" component="h1" gutterBottom>
+                Login
+              </Typography>
+              <Box>
+                <FormControl fullWidth sx={{ mb: 5 }}>
+                  <InputLabel htmlFor="input-with-icon-adornment">
+                    UserName
+                  </InputLabel>
+                  <Input
+                    id="input-with-icon-adornment"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <FormControl fullWidth variant="standard" sx={{ mb: 5 }}>
+                  <InputLabel htmlFor="standard-adornment-password">
+                    Password
+                  </InputLabel>
+                  <Input
+                    id="standard-adornment-password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <KeyIcon />
+                      </InputAdornment>
+                    }
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </Box>
+              <Button
+                sx={{ width: "70%", mb: 3 }}
+                variant="contained"
+                color="primary"
+                onClick={handleLoginSubmit}
+                fullWidth
+                disabled={!isFormValid()}
+              >
+                Login
+              </Button>
+              <Box display={"flex"} mb={2}>
+                <Typography>
+                  No Account?
+                  <Link href="/register"> {" "}Register</Link>
+                </Typography>
+              </Box>
+                <Link href="/">Forgot Password</Link>,
+            </Box>
+          )}
+        </Grid>
+      </Box>
+    </>
   );
 }

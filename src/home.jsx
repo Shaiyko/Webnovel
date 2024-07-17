@@ -1,4 +1,6 @@
 
+import { useEffect } from "react";
+import Pagenovel from "./page/pagenovel/novelhome";
 import "./style/App.css";
 
 export default function Home() {
@@ -9,6 +11,8 @@ export default function Home() {
     userData = JSON.parse(localStorage.getItem("userP"));
   } else if (loggedInUser && loggedInUser.status === "admin") {
     userData = JSON.parse(localStorage.getItem("admin"));
+  } else if (loggedInUser && loggedInUser.status === "author") {
+    userData = JSON.parse(localStorage.getItem("author"));
   }
 
 
@@ -16,24 +20,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="bg">
-        {userData ? (
-          <div className="bg">
-            <p>
-              Welcome, {userData.user_name} ({userData.status})
-            </p>
-            <p>Gender: {userData.gender}</p>
-            <p>Email: {userData.gmail}</p>
-            <p>Year: {userData.date_of_birth}</p>
-            <p>Status: {userData.status}</p>
-            <p>
-              Avatar: <img src={userData.avatar} alt="Avatar" />
-            </p>
-          </div>
-        ) : (
-          <p>Loading user data...</p>
-        )}
-      </div>
+      <Pagenovel/>
     </>
   );
 }

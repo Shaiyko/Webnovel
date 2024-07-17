@@ -7,14 +7,13 @@ import { useNavigate } from "react-router-dom";
 function Logoutpage() {
   const history = useNavigate();
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
-
   const handleLogout = () => {
     // ลบข้อมูลผู้ใช้ใน localStorage
     localStorage.removeItem("user");
     localStorage.removeItem("admin");
     localStorage.removeItem("userP");
     // ส่งผู้ใช้กลับไปยังหน้าล็อกอิน
-    history("/login", { state: { isLoginActive: true } });
+    history("/login",);
   };
   if (!loggedInUser) {
     return (

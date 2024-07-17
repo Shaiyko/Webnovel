@@ -10,25 +10,41 @@ export default function PrivateRoute({ element, path }) {
     return <Navigate to="/" />;
   } else if (path === "/user" && loggedInUser.status !== "user") {
     return <Navigate to="/" />;
-  } else if (path === "/writer" && loggedInUser.statuse !== "writer") {
+  } else if (path === "/author" && loggedInUser.statuse !== "author") {
     return <Navigate to="/" />;
   } else if (
     path === "/profile" &&
-    loggedInUser.statuse !== "writer" &&
+    loggedInUser.statuse !== "author" &&
     loggedInUser.status !== "user" &&
     loggedInUser.status !== "admin"
   ) {
     return <Navigate to="/" />;
-  }else if (
+  } else if (path === "/manage/ttag" && loggedInUser.status !== "admin") {
+    return <Navigate to="/" />;
+  } else if (path === "/manage/ttype" && loggedInUser.status !== "admin") {
+    return <Navigate to="/" />;
+  } else if (path === "/manage/tadmin" && loggedInUser.status !== "admin") {
+    return <Navigate to="/" />;
+  } else if (path === "/manage/tauthor" && loggedInUser.status !== "admin") {
+    return <Navigate to="/" />;
+  } else if (path === "/manage/tuser" && loggedInUser.status !== "admin") {
+    return <Navigate to="/" />;
+  } else if (
+    path === "/manage/tnovel" &&
+    loggedInUser.status !== "admin" &&
+    loggedInUser.statuse !== "author"
+  ) {
+    return <Navigate to="/" />;
+  } else if (
     path === "/my-bookshelf" &&
-    loggedInUser.statuse !== "writer" &&
+    loggedInUser.statuse !== "author" &&
     loggedInUser.status !== "user" &&
     loggedInUser.status !== "admin"
   ) {
     return <Navigate to="/" />;
-  }else if (
+  } else if (
     path === "/suggestions" &&
-    loggedInUser.statuse !== "writer" &&
+    loggedInUser.statuse !== "author" &&
     loggedInUser.status !== "user" &&
     loggedInUser.status !== "admin"
   ) {
