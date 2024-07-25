@@ -17,7 +17,6 @@ import {
 import Logout from "./page/pagelogin/Loguot";
 import { useState } from "react";
 import { AccountCircle } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -28,9 +27,15 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import TagIcon from "@mui/icons-material/Tag";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
-import EqualizerIcon from "@mui/icons-material/Equalizer";
-import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
+import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PreviewIcon from '@mui/icons-material/Preview';
+import SourceIcon from '@mui/icons-material/Source';
 export default function TemporaryDrawer({dataopen}) {
   const [openMD, setOpenM] = React.useState(false);
   const handleClickMD = () => {
@@ -40,17 +45,21 @@ export default function TemporaryDrawer({dataopen}) {
   const handleClickMN = () => {
     setOpenN(!openMN);
   };
+  const [openRN, setOpenR] = React.useState(false);
+  const handleClickRN = () => {
+    setOpenR(!openRN);
+  };
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInAdmin = JSON.parse(localStorage.getItem("admin"));
   const loggedInUserP = JSON.parse(localStorage.getItem("userP"));
   const loggedInAuthor = JSON.parse(localStorage.getItem("author"));
   const [open, setOpen] = useState(false);
   
-  const history = useNavigate();
+ console.log("User",loggedInUser);
   const handleSignIn = (event) => {
     event.stopPropagation();
     setOpen(false);
-    history("/register");
+    window.location.href = "/register";
   };
 
   const toggleDrawer = (newOpen) => () => {
@@ -96,13 +105,7 @@ export default function TemporaryDrawer({dataopen}) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/ranking" onClick={handleItemClick}>
-            <ListItemIcon>
-              <EqualizerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Ranking List" />
-          </ListItemButton>
-          <ListItemButton href="/novel-category" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -116,7 +119,7 @@ export default function TemporaryDrawer({dataopen}) {
           </ListItemButton>
           <ListItemButton href="/suggestions" onClick={handleItemClick}>
             <ListItemIcon>
-              <SettingsSuggestIcon />
+              <MarkUnreadChatAltIcon />
             </ListItemIcon>
             <ListItemText primary="Suggestions" />
           </ListItemButton>
@@ -149,6 +152,7 @@ export default function TemporaryDrawer({dataopen}) {
         </Box>
 
         <Divider />
+        {/*Manage Data ************************************************************************************************************************** */}
         <ListItemButton onClick={handleClickMD}>
           <ListItemIcon>
             <GroupAddIcon />
@@ -188,8 +192,19 @@ export default function TemporaryDrawer({dataopen}) {
               </ListItemIcon>
               <ListItemText primary="Manage User" />
             </ListItemButton>
+            <ListItemButton
+              href={"/manage/suggestions"}
+              sx={{ pl: 4 }}
+              onClick={handleItemClick}
+            >
+              <ListItemIcon>
+                <SourceIcon  />
+              </ListItemIcon>
+              <ListItemText primary="Manage Suggestions" />
+            </ListItemButton>
           </List>
         </Collapse>
+        {/*Manage Novel ******************************************************************************************************************* */}
         <ListItemButton onClick={handleClickMN}>
           <ListItemIcon>
             <DesignServicesIcon />
@@ -200,7 +215,7 @@ export default function TemporaryDrawer({dataopen}) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/manage/tnovel"}
+              href={"/manage/tnovel/1"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -231,6 +246,68 @@ export default function TemporaryDrawer({dataopen}) {
             </ListItemButton>
           </List>
         </Collapse>
+        {/*Data Report ************************************************************************************************************************* */}
+        <ListItemButton onClick={handleClickRN}>
+          <ListItemIcon>
+            <ImportExportIcon  />
+          </ListItemIcon>
+          <ListItemText primary="Report" />
+          {openRN ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={openRN} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              href={"/report/novel"}
+              sx={{ pl: 4 }}
+              onClick={handleItemClick}
+            >
+              <ListItemIcon>
+                <ReceiptLongIcon  />
+              </ListItemIcon>
+              <ListItemText primary="Report Novels" />
+            </ListItemButton>
+            <ListItemButton
+              href={"/report/author"}
+              sx={{ pl: 4 }}
+              onClick={handleItemClick}
+            >
+              <ListItemIcon>
+                <AssignmentIndIcon  />
+              </ListItemIcon>
+              <ListItemText primary="Report Authors" />
+            </ListItemButton>
+            <ListItemButton
+              href={"/report/user"}
+              sx={{ pl: 4 }}
+              onClick={handleItemClick}
+            >
+              <ListItemIcon>
+                <AccountBoxIcon  />
+              </ListItemIcon>
+              <ListItemText primary="Report Users" />
+            </ListItemButton>
+            <ListItemButton
+              href={"/report/suggestions"}
+              sx={{ pl: 4 }}
+              onClick={handleItemClick}
+            >
+              <ListItemIcon>
+                <AssignmentIcon   />
+              </ListItemIcon>
+              <ListItemText primary="Report Suggestions" />
+            </ListItemButton>
+            <ListItemButton
+              href={"/report/reortview"}
+              sx={{ pl: 4 }}
+              onClick={handleItemClick}
+            >
+              <ListItemIcon>
+                <PreviewIcon  />
+              </ListItemIcon>
+              <ListItemText primary="Report Reading" />
+            </ListItemButton>
+          </List>
+        </Collapse>
         <Divider />
         <List>
           <ListItemButton href="/" onClick={handleItemClick}>
@@ -239,27 +316,15 @@ export default function TemporaryDrawer({dataopen}) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/ranking" onClick={handleItemClick}>
-            <ListItemIcon>
-              <EqualizerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Ranking List" />
-          </ListItemButton>
-          <ListItemButton href="/novel-category" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
             <ListItemText primary="Novel Categories" />
           </ListItemButton>
-          <ListItemButton href="/my-bookshelf" onClick={handleItemClick}>
-            <ListItemIcon>
-              <CollectionsBookmarkIcon />
-            </ListItemIcon>
-            <ListItemText primary=" My Bookshelf" />
-          </ListItemButton>
           <ListItemButton href="/suggestions" onClick={handleItemClick}>
             <ListItemIcon>
-              <SettingsSuggestIcon />
+              <MarkUnreadChatAltIcon />
             </ListItemIcon>
             <ListItemText primary="Suggestions" />
           </ListItemButton>
@@ -303,7 +368,7 @@ export default function TemporaryDrawer({dataopen}) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/manage/tnovel"}
+              href={`/manage/tnovel/${loggedInAuthor.id_author}`}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -322,27 +387,15 @@ export default function TemporaryDrawer({dataopen}) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/ranking" onClick={handleItemClick}>
-            <ListItemIcon>
-              <EqualizerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Ranking List" />
-          </ListItemButton>
-          <ListItemButton href="/novel-category" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
             <ListItemText primary="Novel Categories" />
           </ListItemButton>
-          <ListItemButton href="/my-bookshelf" onClick={handleItemClick}>
-            <ListItemIcon>
-              <CollectionsBookmarkIcon />
-            </ListItemIcon>
-            <ListItemText primary=" My Bookshelf" />
-          </ListItemButton>
           <ListItemButton href="/suggestions" onClick={handleItemClick}>
             <ListItemIcon>
-              <SettingsSuggestIcon />
+              <MarkUnreadChatAltIcon />
             </ListItemIcon>
             <ListItemText primary="Suggestions" />
           </ListItemButton>
@@ -371,13 +424,7 @@ export default function TemporaryDrawer({dataopen}) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/ranking" onClick={handleItemClick}>
-            <ListItemIcon>
-              <EqualizerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Ranking List" />
-          </ListItemButton>
-          <ListItemButton href="/novel-category" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -391,7 +438,7 @@ export default function TemporaryDrawer({dataopen}) {
           </ListItemButton>
           <ListItemButton href="/suggestions" onClick={handleItemClick}>
             <ListItemIcon>
-              <SettingsSuggestIcon />
+              <MarkUnreadChatAltIcon />
             </ListItemIcon>
             <ListItemText primary="Suggestions" />
           </ListItemButton>
@@ -402,6 +449,7 @@ export default function TemporaryDrawer({dataopen}) {
 
   console.log("admin page ", loggedInAdmin);
   console.log("User page ", loggedInUserP);
+  console.log("Author page ", loggedInAuthor);
   return (
     <div>
       <IconButton

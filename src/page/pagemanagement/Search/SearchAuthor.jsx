@@ -1,199 +1,108 @@
 import {
-    Box,
-    ButtonBase,
-    Card,
-    CardActionArea,
-    CardContent,
-    CardMedia,
-    Divider,
-    Grid,
-    Typography,
-  } from "@mui/material";
-  import React from "react";
-  import { useParams } from "react-router-dom";
-  import { styled } from "@mui/system";
-  import MenuBookIcon from "@mui/icons-material/MenuBook";
-  
-  const StyledCard = styled(Card)({
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  });
-  const CustomButtonB = styled(Typography)({
-    color: "black",
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 2,
-    maxWidth: "100%",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    fontSize: "14px",
-  });
-  const CustomLink = styled(ButtonBase)({
-    color: "black",
-  });
-  
-  const chapter1 = {
-    margin: "0 8px",
-    whiteSpace: "pre-line",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    width: "50%",
+  Box,
+  ButtonBase,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Divider,
+  Grid,
+  Typography,
+} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { styled } from "@mui/system";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import axios from "axios"; // ใช้ axios สำหรับเรียก API
+
+const StyledCard = styled(Card)({
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+});
+const CustomButtonB = styled(Typography)({
+  color: "black",
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 2,
+  maxWidth: "100%",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  fontSize: "14px",
+});
+const CustomLink = styled(ButtonBase)({
+  color: "black",
+});
+
+const chapter1 = {
+  margin: "0 8px",
+  whiteSpace: "pre-line",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  width: "50%",
+};
+const chapter2 = {
+  margin: "0 8px",
+  whiteSpace: "pre-line",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  width: "25%",
+};
+const chapter3 = {
+  margin: "0 8px",
+  whiteSpace: "pre-line",
+  width: "25%",
+};
+
+export default function SearchAuthor() {
+  const { searchA } = useParams();
+  const [author, setAuthor] = useState([]);
+  const [penname, setAuthorname] = useState("");
+
+  const fetchNovels = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/novelallviewepa/${searchA}`
+      );
+      const data = response.data;
+      if (Array.isArray(data) && data.length > 0) {
+        const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
+        setAuthor(filteredData);
+      } else {
+        console.log("No user data found");
+      }
+      setAuthorname(response.data[0].penname);
+    } catch (error) {
+      console.error("Error fetching novels:", error);
+    }
   };
-  const chapter2 = {
-    margin: "0 8px",
-    whiteSpace: "pre-line",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    width: "25%",
-  };
-  const chapter3 = {
-    margin: "0 8px",
-    whiteSpace: "pre-line",
-    width: "25%",
-  };
-  
-  const dataTag = [
-    {
-      name_novel: "หมอสวรรค์",
-      penname: "เฟิ่งจิง",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "ความช่วยเหลือ",
-      penname: "โม เสี่ยวสุ่ย",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "นักล่าสัตว์ป่า",
-      penname: "อาโอโกะ",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "โต่วหลัว",
-      penname: "ต้า นายน้อยคนที่ 4",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "ความเข้าใจของฉันท้าทายสวรรค์",
-      penname: "อาทิซซี่",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "ถามเรื่องอายุยืนยาว",
-      penname: "สังเกต ซู",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "ความหวังใหม่",
-      penname: "เฉิน หมิง",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "การกลับมาของราชา",
-      penname: "หวัง หลง",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "สืบทอดสมบัติ",
-      penname: "ซุน หงอคง",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-    {
-      name_novel: "สุดยอดนักรบ",
-      penname: "หลี่ เสี่ยวหลง",
-      image_novel:
-        "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-      status: "continuously",
-      description:
-        "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-        id_novel: 1,
-        id_author: 1,
-        id_ep:1
-    },
-  ];
-  export default function SearchAuthor() {
-    const { searchA } = useParams();
-    return (
-      <>
-        <Card sx={{ minWidth: 275, mb: 1 }}>
-          <CardContent>
-            <Box>
-              <Typography>Search Author: {`"${searchA}"`}</Typography>
-            </Box>
-          </CardContent>
-        </Card>
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <Box sx={{ width: "100%",display:"flex", justifyContent:"center"}}>
-              <Grid container spacing={3} style={{ marginTop: "10px" }}>
-                {dataTag.map((novel, index) => (
+  useEffect(() => {
+    fetchNovels();
+  }, []);
+
+  return (
+    <>
+      <Card sx={{ minWidth: 275, mb: 1 }}>
+        <CardContent>
+          <Box>
+            <Typography>Search Author: {`"${penname}"`}</Typography>
+          </Box>
+        </CardContent>
+      </Card>
+      <Card sx={{ minWidth: 275 }}>
+        <CardContent>
+          <Box
+            sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
+            <Grid container spacing={3} style={{ marginTop: "10px" }}>
+              {author &&
+                author.map((novel, index) => (
                   <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
                     <StyledCard>
-                      <CardActionArea href="/novel">
+                      <CardActionArea
+                        target="_blank"
+                        href={`/novel/${novel.id_novel}`}
+                      >
                         <CardMedia
                           component="img"
                           alt={novel.name_novel}
@@ -204,9 +113,10 @@ import {
                       </CardActionArea>
                       <CardContent style={{ flexGrow: 1 }}>
                         <Typography gutterBottom variant="h5" component="div">
-                          <CustomLink 
+                          <CustomLink
                             target="_blank"
-                            href={`/novel/${novel.id_novel}`}>
+                            href={`/novel/${novel.id_novel}`}
+                          >
                             {novel.name_novel}
                           </CustomLink>
                         </Typography>
@@ -214,7 +124,7 @@ import {
                           sx={{
                             display: "flex",
                             justifyContent: "space-between",
-                            marginBottom: "8px", // เพิ่มระยะห่างของข้อมูล
+                            marginBottom: "8px",
                           }}
                         >
                           <Typography
@@ -222,50 +132,59 @@ import {
                             color="text.secondary"
                             style={{ width: "50%" }}
                           >
-                            <ButtonBase 
-                            target="_blank"
-                            href={`/author/${novel.penname}`}>
+                            <ButtonBase
+                              target="_blank"
+                              href={`/author/${novel.id_author}`}
+                            >
                               {novel.penname}
                             </ButtonBase>
                           </Typography>
                           <Typography
-                            sx={{ margin: "0 8px" }}
+                            gutterBottom
+                            variant="h7"
+                            component="div"
+                            style={{ width: "30%" }}
                           >
-                            Status: {novel.status}
+                            <CustomLink href={`/selecttype/${novel.id_type}`}>
+                              {novel.name_type}
+                            </CustomLink>
+                          </Typography>
+                          <Typography sx={{ margin: "0 8px" }}>
+                            Status: {novel.statusN}
                           </Typography>
                         </Box>
                         <Divider />
-                        <Typography variant="h7" >Introduction :</Typography>
+                        <Typography variant="h7">Introduction :</Typography>
                         <CustomButtonB>{novel.description}</CustomButtonB>
                       </CardContent>
                       <CardContent
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
-                          borderTop: "1px solid #ccc", // เพิ่มเส้นแบ่งระหว่างข้อมูล
+                          borderTop: "1px solid #ccc",
                           paddingTop: "8px",
-                          maxWidth: "100%", // เพิ่มระยะห่างด้านบน
+                          maxWidth: "100%",
                         }}
                       >
                         <Typography sx={chapter1}>
-                          Chapter: 1500 chapter
+                          Chapter: {novel.epall} chapters
                         </Typography>
                         <Typography sx={chapter2}>
-                          Update time: 12/2/2020
+                          Update time:{" "}
+                          {new Date(novel.updatetime).toLocaleDateString()}
                         </Typography>
                         <Typography sx={chapter3}>
                           <MenuBookIcon />
-                          1000 Chapters
+                          {novel.epall} Chapters
                         </Typography>
                       </CardContent>
                     </StyledCard>
                   </Grid>
                 ))}
-              </Grid>
-            </Box>
-          </CardContent>
-        </Card>
-      </>
-    );
-  }
-  
+            </Grid>
+          </Box>
+        </CardContent>
+      </Card>
+    </>
+  );
+}

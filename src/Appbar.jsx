@@ -13,8 +13,31 @@ export default function Appbar() {
   const [datacolor, setcolor] = useState(null);
   const [dataloged, setlogged] = useState(null);
   const [searchFocus, setSearchFocus] = useState(false);
+  const [showAppBar, setShowAppBar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const isSmallScreen = useMediaQuery('(max-width:600px)');
+
+  const controlAppBar = () => {
+    if (typeof window !== 'undefined') {
+      if (window.scrollY > lastScrollY) { // if scroll down hide the navbar
+        setShowAppBar(false);
+      } else { // if scroll up show the navbar
+        setShowAppBar(true);
+      }
+      setLastScrollY(window.scrollY);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlAppBar);
+
+      return () => {
+        window.removeEventListener('scroll', controlAppBar);
+      };
+    }
+  }, [lastScrollY]);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem('user'));
@@ -33,8 +56,8 @@ export default function Appbar() {
   }, []);
 
   return (
-    <Box>
-      <AppBar component="nav" sx={{height:"58px"}}>
+    <>
+      <AppBar position="fixed" sx={{ transition: 'top 0.3s', top: showAppBar ? '0' : '-80px' }}>
         <Toolbar>
           <TemporaryDrawer />
           <Box sx={{ flexGrow: 1, display: isSmallScreen && searchFocus ? 'none' : { xs: 'flex', md: 'flex' } }}>
@@ -54,6 +77,7 @@ export default function Appbar() {
           </Box>
         </Toolbar>
       </AppBar>
-    </Box>
+      <Toolbar /> {/* Add a Toolbar here to give the content correct offset */}
+    </>
   );
 }

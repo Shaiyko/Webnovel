@@ -1,0 +1,14 @@
+ {
+        "id_author": 1,
+        "penname": "Admin",
+        "id_novel": 1,
+        "name_novel": "GAT V KOLO",
+        "description": "SD",
+        "createdate": "2024-06-29T17:00:00.000Z",
+        "updatetime": "2024-07-01T09:38:57.000Z",
+        "status": "start",
+        "uplode": "no",
+        "image_novel": "https://drive.google.com/thumbnail?id=1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd",
+        "id_type": 5,
+        "name_type": "City"
+    }

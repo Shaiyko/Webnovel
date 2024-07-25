@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   Box,
@@ -18,10 +17,8 @@ import {
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import KeyIcon from "@mui/icons-material/Key";
 import LoadingComponent from "../../Loading";
-import Account from './../pageprofile/account';
 
 export default function LoginRegister() {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -44,6 +41,7 @@ export default function LoginRegister() {
     try {
       localStorage.setItem("admin", JSON.stringify(admin));
       console.log("Admin stored in localStorage:", admin);
+      window.location.href = "/admin";
     } catch (error) {
       console.error("Failed to store user in localStorage:", error);
     }
@@ -53,6 +51,7 @@ export default function LoginRegister() {
     try {
       localStorage.setItem("userP", JSON.stringify(userP));
       console.log("userP stored in localStorage:", userP);
+      window.location.href = "/user";
     } catch (error) {
       console.error("Failed to store user in localStorage:", error);
     }
@@ -62,6 +61,7 @@ export default function LoginRegister() {
     try {
       localStorage.setItem("author", JSON.stringify(author));
       console.log("author stored in localStorage:", author);
+      window.location.href = "/";
     } catch (error) {
       console.error("Failed to store user in localStorage:", error);
     }
@@ -89,15 +89,11 @@ export default function LoginRegister() {
                   loggedInUser.id
               )
               .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data) && data.length > 0) {
-                  storeAdminInLocalStorage(data[0]);
-                } else {
-                  console.log("No user data found");
-                }
+                const data = response.data[0];
+
+                storeAdminInLocalStorage(data);
               })
               .catch((error) => console.log("error", error));
-            navigate("/admin");
           } else if (loggedInUser.status === "author") {
             axios
               .get(
@@ -105,15 +101,11 @@ export default function LoginRegister() {
                   loggedInUser.id
               )
               .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data) && data.length > 0) {
-                  storeAuthorpageInLocalStorage(data[0]);
-                } else {
-                  console.log("No user data found");
-                }
+                const data = response.data[0];
+
+                storeAuthorpageInLocalStorage(data);
               })
               .catch((error) => console.log("error", error));
-            navigate("/");
           } else if (loggedInUser.status === "user") {
             axios
               .get(
@@ -121,17 +113,13 @@ export default function LoginRegister() {
                   loggedInUser.id
               )
               .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data) && data.length > 0) {
-                  storeUserpageInLocalStorage(data[0]);
-                } else {
-                  console.log("No user data found");
-                }
+                const data = response.data[0];
+
+                storeUserpageInLocalStorage(data);
               })
               .catch((error) => console.log("error", error));
-            navigate("/user");
           } else {
-            navigate("/");
+            window.location.href = "/";
           }
         } else {
           console.log("Invalid username or password");
@@ -258,10 +246,10 @@ export default function LoginRegister() {
               <Box display={"flex"} mb={2}>
                 <Typography>
                   No Account?
-                  <Link href="/register"> {" "}Register</Link>
+                  <Link href="/register"> Register</Link>
                 </Typography>
               </Box>
-                <Link href="/">Forgot Password</Link>,
+              <Link href="/">Forgot Password</Link>,
             </Box>
           )}
         </Grid>

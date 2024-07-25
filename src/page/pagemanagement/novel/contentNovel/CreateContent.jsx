@@ -23,13 +23,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
-import UpdateTag from "./UpdateAdmin";
-import AddTag from "./AddAdmin";
-import { CardMedia } from "@mui/material";
-import ViewAdmin from "./ViewAdmin";
-import ExportViewAdmin from "./ExportAdminExcel";
-import Swal from "sweetalert2";
+import { Button, Divider } from "@mui/material";
+import ModeIcon from "@mui/icons-material/Mode";
 
+import { useParams } from "react-router-dom";
+import UpgradeIcon from "@mui/icons-material/Upgrade";
+import PromulgateContent from "./PromulgateContent";
+import StatusorFree from "./StatusorFree";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -61,61 +61,31 @@ const headCells = [
     id: "id",
     numeric: false,
     disablePadding: true,
-    label: "ID Admin",
-  },
-  {
-    id: "fname",
-    numeric: true,
-    disablePadding: false,
-    label: "First Name",
-  },
-  {
-    id: "lname",
-    numeric: true,
-    disablePadding: false,
-    label: "Last Name",
-  },
-  {
-    id: "gender",
-    numeric: true,
-    disablePadding: false,
-    label: "Gender",
-  },
-  {
-    id: "date of birth",
-    numeric: true,
-    disablePadding: false,
-    label: "Date of birth",
-  },
-  {
-    id: "phone",
-    numeric: true,
-    disablePadding: false,
-    label: "Phone",
-  },
-  {
-    id: "address",
-    numeric: true,
-    disablePadding: false,
-    label: "Address",
-  },
-  {
-    id: "user",
-    numeric: true,
-    disablePadding: false,
-    label: "User Name",
-  },
-  {
-    id: "gmail",
-    numeric: true,
-    disablePadding: false,
-    label: "Gmail",
-  },
-  {
-    id: "status",
-    numeric: true,
-    disablePadding: false,
     label: "Status",
+  },
+  {
+    id: "name episode",
+    numeric: true,
+    disablePadding: false,
+    label: "Name Episode",
+  },
+  {
+    id: "creation date",
+    numeric: true,
+    disablePadding: false,
+    label: "Creation date",
+  },
+  {
+    id: "updatetime",
+    numeric: true,
+    disablePadding: false,
+    label: "Update Time",
+  },
+  {
+    id: "uploade",
+    numeric: true,
+    disablePadding: false,
+    label: "Promulgate",
   },
 ];
 
@@ -190,55 +160,26 @@ function EnhancedTableToolbar(props) {
     setSelected,
     // eslint-disable-next-line react/prop-types
     UserGet,
+    // eslint-disable-next-line react/prop-types
+    id_novel,
   } = props;
-  console.log("D", selected);
-  const DeleteTag = async () => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        // Make the delete request
-        const response = await axios.delete(
-          "http://localhost:5000/delete/admin",
-          {
-            data: {
-              id: selected,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response.data);
-
-        // Show success alert
-        await Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-        });
-
-        // Perform other actions after successful deletion
-        UserGet();
-        setSelected([]);
-      } catch (error) {
-        console.error("Error:", error);
-        // Optionally, show an error alert
-        await Swal.fire({
-          title: "Error!",
-          text: "There was an issue deleting your file.",
-          icon: "error",
-        });
-      }
+  const handleDelete = async () => {
+    try {
+      await axios.delete("http://localhost:5000/delete/ep_novel", {
+        data: { id: selected },
+      });
+      UserGet();
+      setSelected([]);
+      // Handle success
+    } catch (error) {
+      console.error("Error deleting novels:", error);
+      // Handle error
     }
+  };
+
+  const Newcontent = () => {
+    const url = `/contentnew/${id_novel}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
   return (
     <Toolbar
@@ -282,39 +223,9 @@ function EnhancedTableToolbar(props) {
         sx={{ marginRight: 2 }}
       />
       {numSelected == 1 ? (
-        <Tooltip title="Export select ID" sx={{ marginRight: 2 }}>
-          <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
-        </Tooltip>
-      ) : (
-        <Tooltip title="Export All ID">
-          <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
-        </Tooltip>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete" sx={{ marginRight: 2 }}>
-          <IconButton onClick={DeleteTag}>
-            <DeleteIcon color="error" />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Insert Data">
+        <Tooltip title="Promulgate">
           <IconButton>
-            <AddTag UserGet={UserGet} />
-          </IconButton>
-        </Tooltip>
-      )}
-      {numSelected == 1 ? (
-        <Tooltip title="Update">
-          <IconButton>
-            <UpdateTag
+            <StatusorFree
               selected={selected}
               setSelected={setSelected}
               UserGet={UserGet}
@@ -325,13 +236,47 @@ function EnhancedTableToolbar(props) {
         <Tooltip title="Add Data"></Tooltip>
       )}
       {numSelected == 1 ? (
-        <Tooltip title="Update">
+        <Tooltip title="Promulgate">
           <IconButton>
-            <ViewAdmin
+            <PromulgateContent
               selected={selected}
               setSelected={setSelected}
+              UserGet={UserGet}
             />
           </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="Add Data"></Tooltip>
+      )}
+      {numSelected > 0 ? (
+        <Tooltip title="Delete" sx={{ marginRight: 2 }}>
+          <IconButton onClick={handleDelete}>
+            <DeleteIcon color="error" />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="Insert Data">
+          <IconButton>
+            <Button target="_blank" onClick={Newcontent}>
+              <ModeIcon />
+            </Button>
+          </IconButton>
+        </Tooltip>
+      )}
+      {numSelected == 1 ? (
+        <Tooltip title="Update">
+          <IconButton>
+            <Button href={`/content/updata/${selected}`}>
+              <UpgradeIcon />
+            </Button>
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="Add Data"></Tooltip>
+      )}
+      {numSelected == 1 ? (
+        <Tooltip title="View Amd Create Chapter">
+          <IconButton></IconButton>
         </Tooltip>
       ) : (
         <Tooltip title="Add Data"></Tooltip>
@@ -346,7 +291,9 @@ EnhancedTableToolbar.propTypes = {
   handleSearchChange: PropTypes.func.isRequired,
 };
 
-export default function TableAdmin() {
+export default function ContentNovel() {
+  const { id_novel } = useParams();
+  //********************************************* */
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("id");
   const [selected, setSelected] = useState([]);
@@ -355,16 +302,29 @@ export default function TableAdmin() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [dataTag, setTagnovel] = useState([]);
+  const [datatime, setupdatetime] = useState("");
+  const [datadate, setDate] = useState("");
+  const formatDateTime = (datatime) => {
+    const date = new Date(datatime);
+    return date.toLocaleString(); // แสดง วันเดือนปี เวลา
+  };
 
+  const formatDate = (datadate) => {
+    const date = new Date(datadate);
+    return date.toLocaleDateString(); // แสดง วันเดือนปี
+  };
   useEffect(() => {
     UserGet();
   }, []);
 
   const UserGet = () => {
     axios
-      .get("http://localhost:5000/view/admin")
+      .get(`http://localhost:5000/view/ep_novel/${id_novel}`)
       .then((response) => {
         const data = response.data;
+        const data2 = response.data[0];
+        setDate(data2.createdate);
+        setupdatetime(data2.updatetime);
         if (Array.isArray(data) && data.length > 0) {
           setTagnovel(data);
         } else {
@@ -382,7 +342,7 @@ export default function TableAdmin() {
   //
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = dataTag.map((n) => n.id_taek);
+      const newSelected = dataTag.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -427,7 +387,7 @@ export default function TableAdmin() {
 
   const filteredRows = useMemo(() => {
     return dataTag.filter((row) =>
-      row.f_name.toLowerCase().includes(searchQuery.toLowerCase())
+      row.name_episode.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [dataTag, searchQuery]);
 
@@ -446,12 +406,17 @@ export default function TableAdmin() {
   console.log("data", dataTag);
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: "100%", mb: 2,p:1 }}>
+        <Box>
+          
+        </Box>
+      <Divider />
         <EnhancedTableToolbar
           numSelected={selected.length}
           searchQuery={searchQuery}
           handleSearchChange={handleSearchChange}
           selected={selected}
+          id_novel={id_novel}
           setSelected={setSelected}
           UserGet={UserGet}
         />
@@ -473,7 +438,6 @@ export default function TableAdmin() {
               {visibleRows.map((row) => {
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${row.id}`;
-
                 return (
                   <TableRow
                     hover
@@ -498,22 +462,17 @@ export default function TableAdmin() {
                       scope="row"
                       padding="none"
                     >
-                      <CardMedia
-                      sx={{width: 100,height:150}}
-                          component="img"
-                          image={row.avatar}
-                          alt={row.avatar}
-                        />
+                      {row.status}
                     </TableCell>
-                    <TableCell align="right">{row.f_name}</TableCell>
-                    <TableCell align="right">{row.l_name}</TableCell>
-                    <TableCell align="right">{row.gender}</TableCell>
-                    <TableCell align="right">{row.date_of_birth}</TableCell>
-                    <TableCell align="right">{row.tel}</TableCell>
-                    <TableCell align="right">{row.address}</TableCell>
-                    <TableCell align="right">{row.user_name}</TableCell>
-                    <TableCell align="right">{row.gmail}</TableCell>
-                    <TableCell align="right">{row.status}</TableCell>
+                    <TableCell align="right">
+                      {" "}
+                      Chapter {row.name_episode}
+                    </TableCell>
+                    <TableCell align="right">{formatDate(datadate)}</TableCell>
+                    <TableCell align="right">
+                      {formatDateTime(datatime)}
+                    </TableCell>
+                    <TableCell align="right">{row.uploade}</TableCell>
                   </TableRow>
                 );
               })}
@@ -525,6 +484,7 @@ export default function TableAdmin() {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"

@@ -9,10 +9,11 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { styled } from "@mui/system";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+import axios from "axios"; // ใช้ axios สำหรับเรียก API
 
 const StyledCard = styled(Card)({
   height: "100%",
@@ -53,100 +54,36 @@ const chapter3 = {
   width: "25%",
 };
 
-const dataTag = [
-  {
-    name_novel: "หมอสวรรค์",
-    penname: "เฟิ่งจิง",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "ความช่วยเหลือ",
-    penname: "โม เสี่ยวสุ่ย",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "นักล่าสัตว์ป่า",
-    penname: "อาโอโกะ",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "โต่วหลัว",
-    penname: "ต้า นายน้อยคนที่ 4",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "ความเข้าใจของฉันท้าทายสวรรค์",
-    penname: "อาทิซซี่",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "ถามเรื่องอายุยืนยาว",
-    penname: "สังเกต ซู",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "ความหวังใหม่",
-    penname: "เฉิน หมิง",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "การกลับมาของราชา",
-    penname: "หวัง หลง",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "สืบทอดสมบัติ",
-    penname: "ซุน หงอคง",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-  {
-    name_novel: "สุดยอดนักรบ",
-    penname: "หลี่ เสี่ยวหลง",
-    image_novel:
-      "https://drive.google.com/thumbnail?id=1vYIARaAYnlqPsVZTWI7YiMDemjZG-nRs",
-    status: "continuously",
-    description:
-      "Cards are surfaces that display content and actions on a single topic. The Material UI Card component includes several complementary utility components to handle various use cases:",
-  },
-];
 export default function SearchNovel() {
   const { searchN } = useParams();
+  const [novels, setNovels] = useState([]);
+
+  useEffect(() => {
+    // เรียก API เมื่อ searchN เปลี่ยนแปลง
+    const fetchNovels = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/novelallvieweps`,
+          {
+            params: { name_novel: searchN },
+          }
+        );
+        const data = response.data;
+        if (Array.isArray(data) && data.length > 0) {
+          const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
+
+          setNovels(filteredData);
+        } else {
+          console.log("No user data found");
+        }
+      } catch (error) {
+        console.error("Error fetching novels:", error);
+      }
+    };
+
+    fetchNovels();
+  }, [searchN]);
+
   return (
     <>
       <Card sx={{ minWidth: 275, mb: 1 }}>
@@ -162,74 +99,86 @@ export default function SearchNovel() {
             sx={{ width: "100%", display: "flex", justifyContent: "center" }}
           >
             <Grid container spacing={3} style={{ marginTop: "10px" }}>
-              {dataTag.map((novel, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-                  <StyledCard>
-                    <CardActionArea href="/novel">
-                      <CardMedia
-                        component="img"
-                        alt={novel.name_novel}
-                        height="150"
-                        image={novel.image_novel}
-                        title={novel.name_novel}
-                      />
-                    </CardActionArea>
-                    <CardContent style={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="div">
-                        <CustomLink href="/novel">
-                          {novel.name_novel}
-                        </CustomLink>
-                      </Typography>
-                      <Box
+              {novels &&
+                novels.map((novel, index) => (
+                  <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
+                    <StyledCard>
+                      <CardActionArea href={`/novel/${novel.id_novel}`}>
+                        <CardMedia
+                          component="img"
+                          alt={novel.name_novel}
+                          height="150"
+                          image={novel.image_novel}
+                          title={novel.name_novel}
+                        />
+                      </CardActionArea>
+                      <CardContent style={{ flexGrow: 1 }}>
+                        <Typography gutterBottom variant="h5" component="div">
+                          <CustomLink href={`/novel/${novel.id_novel}`}>
+                            {novel.name_novel}
+                          </CustomLink>
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            style={{ width: "50%" }}
+                          >
+                            <ButtonBase
+                              target="_blank"
+                              href={`/author/${novel.id_author}`}
+                            >
+                              {novel.penname}
+                            </ButtonBase>
+                          </Typography>
+                          <Typography
+                            gutterBottom
+                            variant="h7"
+                            component="div"
+                            style={{ width: "30%" }}
+                          >
+                            <CustomLink href={`/selecttype/${novel.id_type}`}>
+                              {novel.name_type}
+                            </CustomLink>
+                          </Typography>
+                          <Typography sx={{ margin: "0 8px" }}>
+                            Status: {novel.statusN}
+                          </Typography>
+                        </Box>
+                        <Divider />
+                        <Typography variant="h7">Introduction :</Typography>
+                        <CustomButtonB>{novel.description}</CustomButtonB>
+                      </CardContent>
+                      <CardContent
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
-                          marginBottom: "8px", // เพิ่มระยะห่างของข้อมูล
+                          borderTop: "1px solid #ccc",
+                          paddingTop: "8px",
+                          maxWidth: "100%",
                         }}
                       >
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          style={{ width: "50%" }}
-                        >
-                          <ButtonBase
-                            target="_blank"
-                            href={`/author/${novel.penname}`}
-                          >
-                            {novel.penname}
-                          </ButtonBase>
+                        <Typography sx={chapter1}>
+                          Chapter: {novel.epall} chapters
                         </Typography>
-                        <Typography sx={{ margin: "0 8px" }}>
-                          Status: {novel.status}
+                        <Typography sx={chapter2}>
+                          Update time:{" "}
+                          {new Date(novel.updatetime).toLocaleDateString()}
                         </Typography>
-                      </Box>
-                      <Divider />
-                      <Typography variant="h7">Introduction :</Typography>
-                      <CustomButtonB>{novel.description}</CustomButtonB>
-                    </CardContent>
-                    <CardContent
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        borderTop: "1px solid #ccc", // เพิ่มเส้นแบ่งระหว่างข้อมูล
-                        paddingTop: "8px",
-                        maxWidth: "100%", // เพิ่มระยะห่างด้านบน
-                      }}
-                    >
-                      <Typography sx={chapter1}>
-                        Chapter: 1500 chapter
-                      </Typography>
-                      <Typography sx={chapter2}>
-                        Update time: 12/2/2020
-                      </Typography>
-                      <Typography sx={chapter3}>
-                        <MenuBookIcon />
-                        1000 Chapters
-                      </Typography>
-                    </CardContent>
-                  </StyledCard>
-                </Grid>
-              ))}
+                        <Typography sx={chapter3}>
+                          <MenuBookIcon />
+                          {novel.epall} Chapters
+                        </Typography>
+                      </CardContent>
+                    </StyledCard>
+                  </Grid>
+                ))}
             </Grid>
           </Box>
         </CardContent>

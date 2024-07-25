@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 function SearchInput({ setSearchFocus }) {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [focus, setFocus] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -17,8 +17,8 @@ function SearchInput({ setSearchFocus }) {
   };
   const handleSearch = () => {
     if (search) {
-        navigate(`/searchn/${search}`);
-        setFocus(false);
+      window.location.href = `/searchn/${search}`;
+      setFocus(false);
     }
   };
   const handleBlur = () => {

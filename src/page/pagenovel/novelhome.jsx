@@ -5,18 +5,20 @@ import {
   Card,
   CardMedia,
   CardContent,
-  TextField,
-  Tabs,
-  Tab,
   Box,
   ButtonBase,
   CardActionArea,
   Container,
+  Divider,
+  Button,
+  Pagination,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import axios from "axios";
-
+import Slidernovel from "./Slidernovel";
+import { blueGrey } from "@mui/material/colors";
+import { useLocation } from "react-router-dom";
 
 const StyledCard = styled(Card)({
   height: "100%",
@@ -27,7 +29,8 @@ const StyledCard = styled(Card)({
 const CustomLink = styled(ButtonBase)({
   color: "black",
 });
-const CustomButtonB = styled(ButtonBase)({
+
+const CustomButtonB = styled(Typography)({
   color: "black",
   display: "-webkit-box",
   WebkitBoxOrient: "vertical",
@@ -43,82 +46,69 @@ const chapter1 = {
   whiteSpace: "pre-line",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  width: "50%",
+  width: "45%",
 };
 const chapter2 = {
   margin: "0 8px",
   whiteSpace: "pre-line",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  width: "25%",
+  width: "30%",
 };
 const chapter3 = {
+  display: "flex",
   margin: "0 8px",
   whiteSpace: "pre-line",
   width: "25%",
 };
-const categories = [
-  "ทุกหมวดหมู่",
-  "นิยายโรแมนติก",
-  "เวทมนตร์แฟนตาซี",
-  "เวทมนตร์แฟนตาซี",
-  "เวทมนตร์แฟนตาซี",
-  "เวทมนตร์แฟนตาซี",
-];
 
 function Pagenovel() {
   const [dataTag, setTagnovel] = useState([]);
-  const [selectedTab, setSelectedTab] = useState(0);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const page = parseInt(query.get("page")) || 1;
+  const itemsPerPage = 20;
 
-  const handleTabChange = (event, newValue) => {
-    setSelectedTab(newValue);
-  };
-  const onck = () => {};
   useEffect(() => {
     NovelAllGet();
   }, []);
 
   const NovelAllGet = () => {
     axios
-      .get("http://localhost:5000/novelallview")
+      .get("http://localhost:5000/novelallviewep")
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
-          setTagnovel(data);
-         
+          const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
+          setTagnovel(filteredData);
         } else {
           console.log("No user data found");
         }
       })
       .catch((error) => console.log("error", error));
   };
-  return (
-    <Box sx={{ bgcolor: "white"}}>
-      <Container>
 
-        <Tabs
-          value={selectedTab}
-          onChange={handleTabChange}
-          centered
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            maxWidth: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          {categories.map((category, index) => (
-            <Tab key={index} label={category} onClick={onck} />
-          ))}
-        </Tabs>
+  const handlePageChange = (event, value) => {
+    window.location.href = `?page=${value}`;
+  };
+
+  const displayData = dataTag.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+
+  return (
+    <Box sx={{ bgcolor: "white" }}>
+      <Container>
+        <Slidernovel dataTag={dataTag} />
       </Container>
-      <Box sx={{ p: 2, width: "85%", marginLeft: "5%" }}>
-        <Grid container spacing={3} style={{ marginTop: "10px" }}>
-          {dataTag.map((novel, index) => (
+      <Box p={2} bgcolor={blueGrey[50]} sx={{ width: "85%", marginLeft: "5%" }}>
+        <Box backgroundColor={blueGrey[200]}>
+          <Button>Novels</Button>
+        </Box>
+        <Grid container spacing={3} style={{ marginTop: 0 }}>
+          {displayData.map((novel, index) => (
             <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
               <StyledCard>
-                <CardActionArea href="/novel">
+                <CardActionArea href={`/novel/${novel.id_novel}`}>
                   <CardMedia
                     component="img"
                     alt={novel.name_novel}
@@ -126,11 +116,12 @@ function Pagenovel() {
                     image={novel.image_novel}
                     title={novel.name_novel}
                   />
+                  <Typography sx={{marginLeft:"20px"}} gutterBottom variant="h5" component="div">
+                    {novel.name_novel}
+                  </Typography>
+                  <Divider />
                 </CardActionArea>
                 <CardContent style={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="div">
-                    <CustomLink href="/novel">{novel.name_novel}</CustomLink>
-                  </Typography>
                   <Box
                     sx={{
                       display: "flex",
@@ -143,7 +134,9 @@ function Pagenovel() {
                       color="text.secondary"
                       style={{ width: "50%" }}
                     >
-                        <ButtonBase href={`/author/${novel.penname}`}>{novel.penname}</ButtonBase>
+                      <ButtonBase href={`/author/${novel.id_author}`}>
+                        {novel.penname}
+                      </ButtonBase>
                     </Typography>
                     <Typography
                       gutterBottom
@@ -151,22 +144,20 @@ function Pagenovel() {
                       component="div"
                       style={{ width: "30%" }}
                     >
-                      <CustomLink href="/novel-category">
-                        {novel.title}
+                      <CustomLink href={`/selecttype/${novel.id_type}`}>
+                        {novel.name_type}
                       </CustomLink>
                     </Typography>
                     <Typography
                       sx={{ margin: "0 8px" }}
                       style={{ width: "20%" }}
                     >
-                      Status: {novel.status}
+                      Status: {novel.statusN}
                     </Typography>
                   </Box>
-
+                  <Divider />
                   <Typography variant="h7">Introduction</Typography>
-                  <CustomButtonB href="/Content">
-                    {novel.description}
-                  </CustomButtonB>
+                  <CustomButtonB>{novel.description}</CustomButtonB>
                 </CardContent>
                 <CardContent
                   sx={{
@@ -178,20 +169,36 @@ function Pagenovel() {
                   }}
                 >
                   <Typography sx={chapter1}>
-                    <ButtonBase href="/Content">
-                      Chapter: 1500 chapter
-                    </ButtonBase>
+                    Chapter {novel.id_episode_novel}: {novel.name_episode}
                   </Typography>
-                  <Typography sx={chapter2}>Update time: 12/2/2020</Typography>
+                  <Typography sx={chapter2}>
+                    {`${new Date(novel.updateep).toLocaleDateString()}`}
+                  </Typography>
                   <Typography sx={chapter3}>
                     <MenuBookIcon />
-                    1000 Chapters
+                    <Typography color={"red"}>{novel.epall} </Typography>
+                    Chapters
                   </Typography>
                 </CardContent>
               </StyledCard>
             </Grid>
           ))}
         </Grid>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "16px",
+          }}
+        >
+          <Pagination
+            count={Math.ceil(dataTag.length / itemsPerPage)}
+            page={page}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
+          />
+        </Box>
       </Box>
     </Box>
   );

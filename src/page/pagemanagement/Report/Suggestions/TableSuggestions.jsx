@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
@@ -17,17 +16,18 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { visuallyHidden } from "@mui/utils";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
-import UpdateTag from "./UpdateAdmin";
-import AddTag from "./AddAdmin";
-import { CardMedia } from "@mui/material";
-import ViewAdmin from "./ViewAdmin";
-import ExportViewAdmin from "./ExportAdminExcel";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import ViewSuggestions from "./ViewSuggestions";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { visuallyHidden } from "@mui/utils";
 import Swal from "sweetalert2";
 
 function descendingComparator(a, b, orderBy) {
@@ -57,65 +57,26 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
+  { id: "id", numeric: false, disablePadding: true, label: "ID" },
+  { id: "name user", numeric: true, disablePadding: false, label: "User Name" },
+  { id: "creation date", numeric: true, disablePadding: false, label: "Date" },
   {
-    id: "id",
-    numeric: false,
-    disablePadding: true,
-    label: "ID Admin",
-  },
-  {
-    id: "fname",
+    id: "text",
     numeric: true,
     disablePadding: false,
-    label: "First Name",
+    label: "Text Suggestions",
   },
   {
-    id: "lname",
+    id: "namenovel",
     numeric: true,
     disablePadding: false,
-    label: "Last Name",
+    label: "Name Novel",
   },
   {
-    id: "gender",
+    id: "type",
     numeric: true,
     disablePadding: false,
-    label: "Gender",
-  },
-  {
-    id: "date of birth",
-    numeric: true,
-    disablePadding: false,
-    label: "Date of birth",
-  },
-  {
-    id: "phone",
-    numeric: true,
-    disablePadding: false,
-    label: "Phone",
-  },
-  {
-    id: "address",
-    numeric: true,
-    disablePadding: false,
-    label: "Address",
-  },
-  {
-    id: "user",
-    numeric: true,
-    disablePadding: false,
-    label: "User Name",
-  },
-  {
-    id: "gmail",
-    numeric: true,
-    disablePadding: false,
-    label: "Gmail",
-  },
-  {
-    id: "status",
-    numeric: true,
-    disablePadding: false,
-    label: "Status",
+    label: "Type Suggestions",
   },
 ];
 
@@ -184,14 +145,17 @@ function EnhancedTableToolbar(props) {
     numSelected,
     searchQuery,
     handleSearchChange,
-    // eslint-disable-next-line react/prop-types
     selected,
-    // eslint-disable-next-line react/prop-types
     setSelected,
-    // eslint-disable-next-line react/prop-types
     UserGet,
+    startDate,
+    endDate,
+    handleDateChange,
+    handleClera,
+    handleType,
+    genderSearch,
   } = props;
-  console.log("D", selected);
+
   const DeleteTag = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -207,10 +171,10 @@ function EnhancedTableToolbar(props) {
       try {
         // Make the delete request
         const response = await axios.delete(
-          "http://localhost:5000/delete/admin",
+          "http://localhost:5000/delete/report",
           {
             data: {
-              id: selected,
+              type_ids: selected,
             },
             headers: {
               "Content-Type": "application/json",
@@ -270,34 +234,52 @@ function EnhancedTableToolbar(props) {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Suggestions
         </Typography>
       )}
-
       <TextField
         variant="outlined"
         placeholder="Search..."
         value={searchQuery}
         onChange={handleSearchChange}
-        sx={{ marginRight: 2 }}
+        sx={{ marginRight: 15, width: 300 }}
       />
-      {numSelected == 1 ? (
-        <Tooltip title="Export select ID" sx={{ marginRight: 2 }}>
-          <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
-        </Tooltip>
-      ) : (
-        <Tooltip title="Export All ID">
-          <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
-        </Tooltip>
-      )}
+      <FormControl sx={{ width: "500px" }} variant="outlined">
+        <InputLabel>Type of Report</InputLabel>
+        <Select
+          value={genderSearch}
+          onChange={handleType}
+          label="Type of Report"
+        >
+          <MenuItem value="">All</MenuItem>
+          <MenuItem value="General">General</MenuItem>
+          <MenuItem value="Errors of the Novel"></MenuItem>
+          <MenuItem value="Errors of the Novel">Errors of the Novel</MenuItem>
+          <MenuItem value="Suggestions for this Novel">
+            Suggestions for this Novel
+          </MenuItem>
+          <MenuItem value="Report Abuse">Report Abuse</MenuItem>
+        </Select>
+      </FormControl>
+      <TextField
+        variant="outlined"
+        type="date"
+        label="Start Date"
+        value={startDate}
+        onChange={(e) => handleDateChange(e, "start")}
+        sx={{ marginRight: 5, width: 300 }}
+      />
+      <TextField
+        variant="outlined"
+        type="date"
+        label="End Date"
+        value={endDate}
+        onChange={(e) => handleDateChange(e, "end")}
+        sx={{ marginRight: 5, width: 300 }}
+      />
+      <Button color="error" onClick={handleClera}>
+        Clear
+      </Button>
       {numSelected > 0 ? (
         <Tooltip title="Delete" sx={{ marginRight: 2 }}>
           <IconButton onClick={DeleteTag}>
@@ -305,32 +287,13 @@ function EnhancedTableToolbar(props) {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Insert Data">
-          <IconButton>
-            <AddTag UserGet={UserGet} />
-          </IconButton>
-        </Tooltip>
+        <Tooltip title="Insert Data"></Tooltip>
       )}
-      {numSelected == 1 ? (
-        <Tooltip title="Update">
+      {numSelected === 1 ? (
+        <Tooltip title="View and Create Chapter">
           <IconButton>
-            <UpdateTag
-              selected={selected}
-              setSelected={setSelected}
-              UserGet={UserGet}
-            />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Add Data"></Tooltip>
-      )}
-      {numSelected == 1 ? (
-        <Tooltip title="Update">
-          <IconButton>
-            <ViewAdmin
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <ViewSuggestions  selected={selected}
+              setSelected={setSelected}  />
           </IconButton>
         </Tooltip>
       ) : (
@@ -343,10 +306,19 @@ function EnhancedTableToolbar(props) {
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
   searchQuery: PropTypes.string.isRequired,
+  genderSearch: PropTypes.string.isRequired,
   handleSearchChange: PropTypes.func.isRequired,
+  selected: PropTypes.array.isRequired,
+  setSelected: PropTypes.func.isRequired,
+  UserGet: PropTypes.func.isRequired,
+  startDate: PropTypes.string.isRequired,
+  endDate: PropTypes.string.isRequired,
+  handleDateChange: PropTypes.func.isRequired,
+  handleClera: PropTypes.func.isRequired,
+  handleType: PropTypes.func.isRequired,
 };
 
-export default function TableAdmin() {
+export default function TableSuggestions() {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("id");
   const [selected, setSelected] = useState([]);
@@ -354,7 +326,16 @@ export default function TableAdmin() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
+  const [genderSearch, setReportTypeSearch] = useState("");
   const [dataTag, setTagnovel] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // Format the date as "dd/mm/yyyy"
+  const formatDate = (createdate) => {
+    const date = new Date(createdate);
+    return date.toLocaleDateString("en-GB"); // Day/Month/Year format
+  };
 
   useEffect(() => {
     UserGet();
@@ -362,7 +343,7 @@ export default function TableAdmin() {
 
   const UserGet = () => {
     axios
-      .get("http://localhost:5000/view/admin")
+      .get(`http://localhost:5000/reposrt`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -379,20 +360,19 @@ export default function TableAdmin() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  //
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = dataTag.map((n) => n.id_taek);
+      const newSelected = dataTag.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
-  //
+
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
-
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
@@ -407,6 +387,7 @@ export default function TableAdmin() {
     }
     setSelected(newSelected);
   };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -416,63 +397,90 @@ export default function TableAdmin() {
     setPage(0);
   };
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
-  const isSelected = (id) => selected.indexOf(id) !== -1;
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+  const handleType = (event) => {
+    setReportTypeSearch(event.target.value);
+  };
 
-  const filteredRows = useMemo(() => {
-    return dataTag.filter((row) =>
-      row.f_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [dataTag, searchQuery]);
+  const handleDateChange = (event, type) => {
+    if (type === "start") {
+      setStartDate(event.target.value);
+    } else if (type === "end") {
+      setEndDate(event.target.value);
+    }
+  };
+  const handleClera = () => {
+    setSearchQuery("");
+    setStartDate("");
+    setEndDate("");
+    setReportTypeSearch("");
+  };
 
-  const emptyRows =
-    rowsPerPage -
-    Math.min(rowsPerPage, filteredRows.length - page * rowsPerPage);
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const visibleRows = useMemo(
+  // Filter data based on search query and date range
+  const filteredData = useMemo(
     () =>
-      stableSort(filteredRows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
-    [filteredRows, order, orderBy, page, rowsPerPage]
+      dataTag
+        .filter((item) => {
+          const itemDate = new Date(item.date);
+          const start = startDate ? new Date(startDate) : null;
+          const end = endDate ? new Date(endDate) : null;
+
+          return (!start || itemDate >= start) && (!end || itemDate <= end);
+        })
+        .filter((item) =>
+          item.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .filter((item) =>
+          item.typerepost.toLowerCase().includes(genderSearch.toLowerCase())
+        ),
+    [dataTag, searchQuery, genderSearch, startDate, endDate]
   );
-  console.log("data", dataTag);
+
+  const paginatedData = useMemo(
+    () =>
+      filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [filteredData, page, rowsPerPage]
+  );
+
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          searchQuery={searchQuery}
-          handleSearchChange={handleSearchChange}
-          selected={selected}
-          setSelected={setSelected}
-          UserGet={UserGet}
-        />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={filteredRows.length}
-            />
-            <TableBody>
-              {visibleRows.map((row) => {
+    <Paper sx={{ width: "100%", mb: 2 }}>
+      <EnhancedTableToolbar
+        numSelected={selected.length}
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+        selected={selected}
+        setSelected={setSelected}
+        UserGet={UserGet}
+        startDate={startDate}
+        endDate={endDate}
+        handleDateChange={handleDateChange}
+        handleClera={handleClera}
+        handleType={handleType}
+        genderSearch={genderSearch}
+      />
+      <TableContainer>
+        <Table
+          sx={{ minWidth: 750 }}
+          aria-labelledby="tableTitle"
+          size={dense ? "small" : "medium"}
+        >
+          <EnhancedTableHead
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={filteredData.length}
+          />
+          <TableBody>
+            {stableSort(filteredData, getComparator(order, orderBy)).map(
+              (row, index) => {
                 const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${row.id}`;
+                const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
@@ -483,7 +491,6 @@ export default function TableAdmin() {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
@@ -498,47 +505,29 @@ export default function TableAdmin() {
                       scope="row"
                       padding="none"
                     >
-                      <CardMedia
-                      sx={{width: 100,height:150}}
-                          component="img"
-                          image={row.avatar}
-                          alt={row.avatar}
-                        />
+                      {row.id}
                     </TableCell>
-                    <TableCell align="right">{row.f_name}</TableCell>
-                    <TableCell align="right">{row.l_name}</TableCell>
-                    <TableCell align="right">{row.gender}</TableCell>
-                    <TableCell align="right">{row.date_of_birth}</TableCell>
-                    <TableCell align="right">{row.tel}</TableCell>
-                    <TableCell align="right">{row.address}</TableCell>
                     <TableCell align="right">{row.user_name}</TableCell>
-                    <TableCell align="right">{row.gmail}</TableCell>
-                    <TableCell align="right">{row.status}</TableCell>
+                    <TableCell align="right">{formatDate(row.date)}</TableCell>
+                    <TableCell align="right">{row.reason}</TableCell>
+                    <TableCell align="right">{row.name_novel}</TableCell>
+                    <TableCell align="right">{row.typerepost}</TableCell>
                   </TableRow>
                 );
-              })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredRows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+              }
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredData.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Box>
+    </Paper>
   );
 }

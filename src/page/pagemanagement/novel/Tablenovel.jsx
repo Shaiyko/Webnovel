@@ -23,13 +23,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
-import UpdateTag from "./UpdateAdmin";
-import AddTag from "./AddAdmin";
-import { CardMedia } from "@mui/material";
-import ViewAdmin from "./ViewAdmin";
-import ExportViewAdmin from "./ExportAdminExcel";
-import Swal from "sweetalert2";
-
+import { Button, CardMedia } from "@mui/material";
+import CreateNovelForm from "./createnovel";
+import Updatenovel from "./updatenovel";
+import { useParams } from "react-router-dom";
+import PromulgateNovel from "./Promulgate";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -61,55 +59,37 @@ const headCells = [
     id: "id",
     numeric: false,
     disablePadding: true,
-    label: "ID Admin",
+    label: "Photo",
   },
   {
-    id: "fname",
+    id: "name novel",
     numeric: true,
     disablePadding: false,
-    label: "First Name",
+    label: "Name novel",
   },
   {
-    id: "lname",
+    id: "creation date",
     numeric: true,
     disablePadding: false,
-    label: "Last Name",
+    label: "Creation date",
   },
   {
-    id: "gender",
+    id: "updatetime",
     numeric: true,
     disablePadding: false,
-    label: "Gender",
+    label: "Update Time",
   },
   {
-    id: "date of birth",
+    id: "uploade",
     numeric: true,
     disablePadding: false,
-    label: "Date of birth",
+    label: "Promulgate",
   },
   {
-    id: "phone",
+    id: "name_type",
     numeric: true,
     disablePadding: false,
-    label: "Phone",
-  },
-  {
-    id: "address",
-    numeric: true,
-    disablePadding: false,
-    label: "Address",
-  },
-  {
-    id: "user",
-    numeric: true,
-    disablePadding: false,
-    label: "User Name",
-  },
-  {
-    id: "gmail",
-    numeric: true,
-    disablePadding: false,
-    label: "Gmail",
+    label: "Name_type",
   },
   {
     id: "status",
@@ -190,56 +170,33 @@ function EnhancedTableToolbar(props) {
     setSelected,
     // eslint-disable-next-line react/prop-types
     UserGet,
+    id_author
   } = props;
   console.log("D", selected);
   const DeleteTag = async () => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    });
+    try {
+      const response = await axios.delete(
+        "http://localhost:5000/delete/novelall",
+        {
+          data: {
+            id_novel: selected,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    if (result.isConfirmed) {
-      try {
-        // Make the delete request
-        const response = await axios.delete(
-          "http://localhost:5000/delete/admin",
-          {
-            data: {
-              id: selected,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response.data);
-
-        // Show success alert
-        await Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-        });
-
-        // Perform other actions after successful deletion
-        UserGet();
-        setSelected([]);
-      } catch (error) {
-        console.error("Error:", error);
-        // Optionally, show an error alert
-        await Swal.fire({
-          title: "Error!",
-          text: "There was an issue deleting your file.",
-          icon: "error",
-        });
-      }
+      console.log(response.data);
+      UserGet();
+      setSelected([]);
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
+  const ToidNovel = ()=>{
+   window.location.href =`/content/${selected}`
+  }
   return (
     <Toolbar
       sx={{
@@ -281,22 +238,18 @@ function EnhancedTableToolbar(props) {
         onChange={handleSearchChange}
         sx={{ marginRight: 2 }}
       />
-      {numSelected == 1 ? (
-        <Tooltip title="Export select ID" sx={{ marginRight: 2 }}>
-          <ExportViewAdmin
-          numSelected={numSelected}
+       {numSelected == 1 ? (
+        <Tooltip title="Promulgate">
+          <IconButton>
+            <PromulgateNovel
               selected={selected}
               setSelected={setSelected}
+              UserGet={UserGet}
             />
+          </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Export All ID">
-          <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
-        </Tooltip>
+        <Tooltip title="Add Data"></Tooltip>
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete" sx={{ marginRight: 2 }}>
@@ -307,14 +260,14 @@ function EnhancedTableToolbar(props) {
       ) : (
         <Tooltip title="Insert Data">
           <IconButton>
-            <AddTag UserGet={UserGet} />
+            <CreateNovelForm id_author={id_author} UserGet={UserGet} />
           </IconButton>
         </Tooltip>
       )}
       {numSelected == 1 ? (
         <Tooltip title="Update">
           <IconButton>
-            <UpdateTag
+            <Updatenovel
               selected={selected}
               setSelected={setSelected}
               UserGet={UserGet}
@@ -325,12 +278,9 @@ function EnhancedTableToolbar(props) {
         <Tooltip title="Add Data"></Tooltip>
       )}
       {numSelected == 1 ? (
-        <Tooltip title="Update">
+        <Tooltip title="View Amd Create Chapter">
           <IconButton>
-            <ViewAdmin
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <Button onClick={ToidNovel}>Content</Button>
           </IconButton>
         </Tooltip>
       ) : (
@@ -346,7 +296,8 @@ EnhancedTableToolbar.propTypes = {
   handleSearchChange: PropTypes.func.isRequired,
 };
 
-export default function TableAdmin() {
+export default function TableNovel() {
+  const { id_author } = useParams();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("id");
   const [selected, setSelected] = useState([]);
@@ -355,14 +306,22 @@ export default function TableAdmin() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [dataTag, setTagnovel] = useState([]);
+  const formatDateTime = (updatetime) => {
+    const date = new Date(updatetime);
+    return date.toLocaleString(); // แสดง วันเดือนปี เวลา
+  };
 
+  const formatDate = (createdate) => {
+    const date = new Date(createdate);
+    return date.toLocaleDateString(); // แสดง วันเดือนปี
+  };
   useEffect(() => {
     UserGet();
   }, []);
 
   const UserGet = () => {
     axios
-      .get("http://localhost:5000/view/admin")
+      .get(`http://localhost:5000/novelall/${id_author}`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -382,19 +341,19 @@ export default function TableAdmin() {
   //
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = dataTag.map((n) => n.id_taek);
+      const newSelected = dataTag.map((n) => n.id_novel);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
   //
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
+  const handleClick = (event, id_novel) => {
+    const selectedIndex = selected.indexOf(id_novel);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, id_novel);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -420,14 +379,14 @@ export default function TableAdmin() {
     setDense(event.target.checked);
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  const isSelected = (id_novel) => selected.indexOf(id_novel) !== -1;
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
   const filteredRows = useMemo(() => {
     return dataTag.filter((row) =>
-      row.f_name.toLowerCase().includes(searchQuery.toLowerCase())
+      row.name_novel.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [dataTag, searchQuery]);
 
@@ -454,6 +413,7 @@ export default function TableAdmin() {
           selected={selected}
           setSelected={setSelected}
           UserGet={UserGet}
+          id_author={id_author}
         />
         <TableContainer>
           <Table
@@ -471,17 +431,16 @@ export default function TableAdmin() {
             />
             <TableBody>
               {visibleRows.map((row) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${row.id}`;
-
+                const isItemSelected = isSelected(row.id_novel);
+                const labelId = `enhanced-table-checkbox-${row.id_novel}`;
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
+                    onClick={(event) => handleClick(event, row.id_novel)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.id_novel}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
@@ -499,20 +458,19 @@ export default function TableAdmin() {
                       padding="none"
                     >
                       <CardMedia
-                      sx={{width: 100,height:150}}
-                          component="img"
-                          image={row.avatar}
-                          alt={row.avatar}
-                        />
+                        sx={{ width: 100, height: 150 }}
+                        component="img"
+                        image={row.image_novel}
+                        alt={row.image_novel}
+                      />
                     </TableCell>
-                    <TableCell align="right">{row.f_name}</TableCell>
-                    <TableCell align="right">{row.l_name}</TableCell>
-                    <TableCell align="right">{row.gender}</TableCell>
-                    <TableCell align="right">{row.date_of_birth}</TableCell>
-                    <TableCell align="right">{row.tel}</TableCell>
-                    <TableCell align="right">{row.address}</TableCell>
-                    <TableCell align="right">{row.user_name}</TableCell>
-                    <TableCell align="right">{row.gmail}</TableCell>
+                    <TableCell align="right">{row.name_novel}</TableCell>
+                    <TableCell align="right">{formatDate(row.createdate)}</TableCell>
+                    <TableCell align="right">
+                      {formatDateTime(row.updatetime)}
+                    </TableCell>
+                    <TableCell align="right">{row.uplode}</TableCell>
+                    <TableCell align="right">{row.name_type}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
                   </TableRow>
                 );
@@ -525,6 +483,7 @@ export default function TableAdmin() {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
