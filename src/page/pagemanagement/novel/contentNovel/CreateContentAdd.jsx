@@ -16,9 +16,14 @@ import {
   FormControl,
   InputLabel,
   TextField,
+  Container,
+  Card,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { apinovel } from "../../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
+import LoadingComponent from "../../../../Loading";
 
 const CreateContentAdd = () => {
   const { id_novel } = useParams();
@@ -26,7 +31,7 @@ const CreateContentAdd = () => {
   const [dataNameEP, setNameEP] = useState("");
   const [datamax, setMaxIdType] = useState("");
   const dataEP = datamax > 0 ? datamax + 1 : 1;
-
+  const [loading, setLoading] = useState(false);
   const editorRef = useRef(null);
 
   const handleFormat = (command) => {
@@ -37,9 +42,6 @@ const CreateContentAdd = () => {
   const [alignment, setAlignment] = useState("center");
   const [formats, setFormats] = useState(() => []);
   const [fontSize, setFontSize] = useState("16px");
-  const [fontFamily, setFontFamily] = useState("Arial");
-  const [backgroundColor, setBackgroundColor] = useState("white");
-
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
   };
@@ -52,13 +54,8 @@ const CreateContentAdd = () => {
     setFontSize(event.target.value);
   };
 
-  const handleFontFamilyChange = (event) => {
-    setFontFamily(event.target.value);
-  };
 
-  const handleBackgroundColorChange = (event) => {
-    setBackgroundColor(event.target.value);
-  };
+
 
   const handleInput = (event) => {
     setContent(event.target.innerHTML);
@@ -76,7 +73,7 @@ const CreateContentAdd = () => {
 
   const handleGetmaxID = () => {
     axios
-      .get(`http://localhost:5000/view/ep_novel/${id_novel}`)
+      .get(`${apinovel}/view/ep_novel/${id_novel}`)
       .then((response) => {
         const data = response.data;
         if (data.length > 0) {
@@ -92,8 +89,9 @@ const CreateContentAdd = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true)
     try {
-      await axios.post("http://localhost:5000/create/ep_novel", {
+      await axios.post(`${apinovel}/create/ep_novel`, {
         id_episode_novel: dataEP,
         id_novel: id_novel,
         name_episode: `${dataEP} ${dataNameEP}`,
@@ -101,17 +99,28 @@ const CreateContentAdd = () => {
         status: "free",
         uploade: "no",
       });
+      setLoading(false)
+      await Swal.fire({
+        title: "Add success",
+        icon: "success",
+      });
       handleGetmaxID();
       ClreaText();
     } catch (error) {
+      setLoading(false)
       console.error("There was an error creating the novel!", error);
       throw error;
+    }finally{
+      setLoading(false)
     }
   };
 
   console.log(content);
 
   return (
+    <Container>
+      <Card>
+      <LoadingComponent loading={loading} />
     <Box
       sx={{
         "@media (min-width:1200px)": {
@@ -126,7 +135,7 @@ const CreateContentAdd = () => {
           width: "100%",
           fontSize: fontSize,
         },
-        backgroundColor: backgroundColor,
+        backgroundColor: "while",
         color: "black",
       }}
     >
@@ -144,33 +153,9 @@ const CreateContentAdd = () => {
           <MenuItem value="20px">20px</MenuItem>
           <MenuItem value="22px">22px</MenuItem>
           <MenuItem value="26px">26px</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel>Font Family</InputLabel>
-        <Select
-          value={fontFamily}
-          onChange={handleFontFamilyChange}
-          label="Font Family"
-        >
-          <MenuItem value="Arial">Arial</MenuItem>
-          <MenuItem value="Courier New">Courier New</MenuItem>
-          <MenuItem value="Georgia">Georgia</MenuItem>
-          <MenuItem value="Times New Roman">Times New Roman</MenuItem>
-          <MenuItem value="Verdana">Verdana</MenuItem>
-          <MenuItem value="Phetsarath OT">Phetsarath OT</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel>Background Color</InputLabel>
-        <Select
-          value={backgroundColor}
-          onChange={handleBackgroundColorChange}
-          label="Background Color"
-        >
-          <MenuItem value="white">White</MenuItem>
-          <MenuItem value="green">Green</MenuItem>
-          <MenuItem value="yellow">Yellow</MenuItem>
+          <MenuItem value="28px">28px</MenuItem>
+          <MenuItem value="30px">30px</MenuItem>
+          <MenuItem value="32px">32px</MenuItem>
         </Select>
       </FormControl>
       <ToggleButtonGroup
@@ -254,27 +239,29 @@ const CreateContentAdd = () => {
         sx={{
           border: "1px solid #ccc",
           minHeight: "100px",
-          padding: "5px",
+          padding: "20px",
           height: "500px",
           minWidth: "100px",
           maxHeight: "700px",
           maxWidth: "100%",
           overflowY: "auto",
           whiteSpace: "pre-wrap",
-          backgroundColor: backgroundColor,
+          backgroundColor: "white",
           color: "black",
           marginTop: "10px",
           fontSize: fontSize,
-          fontFamily: fontFamily,
+          fontFamily: 'Noto Sans Lao, sans-serif', // Use the font family here
         }}
       />
-      <Box>
-        <Button color="info" onClick={handleSubmit}>
+      <Box mt={2} mb={2}>
+        <Button  sx={{marginLeft:1}} color="info" onClick={handleSubmit}>
           Add EP
         </Button>
-        <Button onClick={ClreaText} color="error"> Clear</Button>
+        <Button sx={{marginLeft:20}} onClick={ClreaText} color="error"> Clear</Button>
       </Box>
     </Box>
+    </Card>
+    </Container>
   );
 };
 

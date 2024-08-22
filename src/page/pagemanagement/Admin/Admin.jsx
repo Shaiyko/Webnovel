@@ -29,6 +29,7 @@ import { CardMedia } from "@mui/material";
 import ViewAdmin from "./ViewAdmin";
 import ExportViewAdmin from "./ExportAdminExcel";
 import Swal from "sweetalert2";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -207,7 +208,7 @@ function EnhancedTableToolbar(props) {
       try {
         // Make the delete request
         const response = await axios.delete(
-          "http://localhost:5000/delete/admin",
+          `${apinovel}/delete/admin`,
           {
             data: {
               id: selected,
@@ -273,7 +274,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Admin Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -362,7 +370,7 @@ export default function TableAdmin() {
 
   const UserGet = () => {
     axios
-      .get("http://localhost:5000/view/admin")
+      .get(`${apinovel}/view/admin`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {

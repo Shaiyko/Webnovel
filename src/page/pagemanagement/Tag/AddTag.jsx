@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, TextField, Box, Typography } from "@mui/material";
 import axios from "axios";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Swal from "sweetalert2";
+import { apinovel } from './../../../URL_API/Apinovels';
 
 // eslint-disable-next-line react/prop-types
 export default function AddTag({ UserGet }) {
@@ -28,7 +29,7 @@ export default function AddTag({ UserGet }) {
 
     axios
       .post(
-        "https://dex-api-novel.onrender.com/create/tags",
+        "${apinovel}/create/tags",
         {
           id_taek: maxIdTaek + 1,
           name_taek: nameTaek
@@ -60,7 +61,7 @@ export default function AddTag({ UserGet }) {
 
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/taeknovel`)
+      .get(`${apinovel}/taeknovel`)
       .then((response) => {
         const data = response.data;
         if (data.length > 0) {
@@ -82,7 +83,7 @@ export default function AddTag({ UserGet }) {
   return (
     <div>
       <Button onClick={handleOpen}>
-        <PersonAddAltIcon color="info" />
+        <AddCircleOutlineIcon  color="info" />
       </Button>
       <Modal
         open={open}

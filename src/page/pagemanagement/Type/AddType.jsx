@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, TextField, Box, Typography } from "@mui/material";
 import axios from "axios";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Swal from "sweetalert2";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 // eslint-disable-next-line react/prop-types
 export default function AddType({ TypeGet }) {
@@ -29,7 +30,7 @@ export default function AddType({ TypeGet }) {
 
     axios
       .post(
-        "https://dex-api-novel.onrender.com/create/type",
+        `${apinovel}/create/type`,
         {
           id_type: maxIdType + 1,
           name_type: nameType
@@ -62,7 +63,7 @@ export default function AddType({ TypeGet }) {
 
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/typenovel`)
+      .get(`${apinovel}/typenovel`)
       .then((response) => {
         const data = response.data;
         if (data.length > 0) {
@@ -84,7 +85,7 @@ export default function AddType({ TypeGet }) {
   return (
     <div>
       <Button onClick={handleOpen}>
-        <PersonAddAltIcon color="info" />
+        <AddCircleOutlineIcon  color="info" />
       </Button>
       <Modal
         open={open}

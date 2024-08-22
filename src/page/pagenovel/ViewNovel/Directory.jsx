@@ -8,9 +8,15 @@ import {
   Divider,
   Box,
   ListItemButton,
+  Grid,
+  Card,
+  Link,
+  Breadcrumbs,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { apinovel } from "../../../URL_API/Apinovels";
+
 
 const Directory = () => {
   const { id_novel } = useParams();
@@ -19,7 +25,8 @@ const Directory = () => {
   const [datanameep, setNameEP] = useState("");
   const [dataep, setEp] = useState(""); // Use consistent naming conventions
   const [userId, setUserId] = useState(null);
-
+  const [dataType, setType] = useState("");
+  const [idtype, setIDType] = useState("");
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (loggedInUser && loggedInUser.status === "user") {
@@ -39,14 +46,14 @@ const Directory = () => {
   const Bookmark = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/readings?id_user=${userId}&id_novel=${id_novel}`
+        `${apinovel}/readings?id_user=${userId}&id_novel=${id_novel}`
       );
       const data = response.data[0];
       setEp(data.episode);
 
       if (data.episode) {
         const episodeResponse = await axios.get(
-          `http://localhost:5000/view/ep_novelep/${data.episode}`
+          `${apinovel}/view/ep_novelep/${data.episode}`
         );
         const episodeData = episodeResponse.data[0];
         setNameEP(episodeData.name_episode);
@@ -58,9 +65,13 @@ const Directory = () => {
 
   const UserGet = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/novelall2/${id_novel}`);
+      const response = await axios.get(
+        `${apinovel}/novelall2/${id_novel}`
+      );
       const data2 = response.data[0];
       setNameN(data2.name_novel);
+      setType(data2.name_type);
+      setIDType(data2.id_type);
     } catch (error) {
       console.log("Error fetching novel data:", error);
     }
@@ -68,7 +79,9 @@ const Directory = () => {
 
   const UserGetChapter = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/view/ep_novel/${id_novel}`);
+      const response = await axios.get(
+        `${apinovel}/view/ep_novel/${id_novel}`
+      );
       const data = response.data;
       if (Array.isArray(data) && data.length > 0) {
         setSelectedChapter(data);
@@ -81,64 +94,109 @@ const Directory = () => {
   };
 
   return (
-    <Container maxWidth="sm,xs,lx">
-      <Box my={4}>
-        <Typography
-          sx={{ backgroundColor: "#e0e0e0", color: "blue" }}
-          variant="h5"
-          gutterBottom
-        >
-          <ListItemButton href={`/novel/${id_novel}`}>
-            {dataname}
-          </ListItemButton>
-        </Typography>
-        <Divider />
-          {userId ? (
-        <Box>
-            <Typography
-            sx={{ backgroundColor: "#eeeeee", color: "blue" }}
-            variant="h5"
-            gutterBottom
-          >
-            Bookshelf
-          </Typography>
-          <Divider />
-          <Fragment>
-            <ListItemButton fullWidth href={`/novel/${id_novel}/${dataep}`}>
-              <ListItemText primary={datanameep} />
-            </ListItemButton>
+    <Box my={4}>
+      <Container maxWidth="sm,xs,lx">
+        <Card>
+          <Box paddingLeft={2} mt={2} mb={2}>
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link underline="hover" color="primary" href="/">
+                Home
+              </Link>
+              <Link
+                underline="hover"
+                color="primary"
+                href={`/novel-category/${idtype}`}
+              >
+                {dataType}
+              </Link>
+              <Link
+                underline="hover"
+                color="primary"
+                href={`/novel/${id_novel}`}
+                aria-current="page"
+              >
+                {dataname}
+              </Link>
+              <Typography
+                underline="hover"
+                color="textSecondary"
+                href={`/novel/${id_novel}`}
+                aria-current="page"
+              >
+                {dataname}
+              </Typography>
+            </Breadcrumbs>
+          </Box>
             <Divider />
-          </Fragment>
-        </Box>
-          ) : (
-              <Typography fullWidth></Typography>
-            )}
-
-        <Box>
-          <Typography
-            sx={{ backgroundColor: "#eeeeee", color: "blue" }}
-            variant="h6"
-            gutterBottom
-          >
-            List of Chapters
-          </Typography>
-          <Divider />
-          <List component="nav" aria-label="chapters">
-            {dataselectchapter.map((chapter, index) => (
-              <Fragment key={index}>
-                <ListItemButton
-                  fullWidth
-                  href={`/novel/${id_novel}/${chapter.id}`}
-                >
-                  <ListItemText primary={chapter.name_episode} />
+          {userId ? (
+            <Box>
+              <Typography
+                sx={{
+                  backgroundColor: "#f5f5f5",
+                  color: "blue",
+                  borderLeft: "3px solid blue",
+                  m: 1,
+                  paddingLeft: 2,
+                }}
+                variant="h5"
+                gutterBottom
+              >
+                Bookshelf
+              </Typography>
+              <Divider />
+              {datanameep ? (<Fragment>
+                <ListItemButton fullWidth href={`/novel/${id_novel}/${dataep}`}>
+                  <ListItemText primary={datanameep} />
                 </ListItemButton>
                 <Divider />
-              </Fragment>
-            ))}
-          </List>
-        </Box>
-      </Box>
-    </Container>
+              </Fragment>):(<Fragment>
+                <ListItemButton fullWidth >
+                  <ListItemText primary={datanameep} />
+                </ListItemButton>
+                <Divider />
+              </Fragment>)}
+              
+            </Box>
+          ) : (
+            <Typography fullWidth></Typography>
+          )}
+
+          <Box>
+            <Typography
+              sx={{
+                backgroundColor: "#f5f5f5",
+                color: "blue",
+                borderLeft: "3px solid blue",
+                m: 1,
+                paddingLeft: 2,
+              }}
+              variant="h6"
+              gutterBottom
+            >
+              List of Chapters
+            </Typography>
+            <Divider />
+            <List component="nav" aria-label="chapters">
+              <Grid container spacing={2} alignItems="center">
+                {dataselectchapter.map((chapter, index) => (
+                  <Fragment key={index}>
+                    <Grid item xs={12} sm={6}>
+                      <ListItemButton
+                        fullWidth
+                        href={`/novel/${id_novel}/${chapter.id}`}
+                      >
+                        <ListItemText primary={chapter.name_episode} />
+                      </ListItemButton>
+                      <Divider />
+                    </Grid>
+                  </Fragment>
+                ))}
+              </Grid>
+            </List>
+          </Box>
+        </Card>
+      </Container>
+    </Box>
   );
 };
 

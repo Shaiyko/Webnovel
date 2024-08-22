@@ -28,6 +28,9 @@ import CreateNovelForm from "./createnovel";
 import Updatenovel from "./updatenovel";
 import { useParams } from "react-router-dom";
 import PromulgateNovel from "./Promulgate";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { apinovel } from "../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -170,36 +173,55 @@ function EnhancedTableToolbar(props) {
     setSelected,
     // eslint-disable-next-line react/prop-types
     UserGet,
-    id_author
+    id_author,
+    nameauthor,
   } = props;
   console.log("D", selected);
   const DeleteTag = async () => {
-    try {
-      const response = await axios.delete(
-        "http://localhost:5000/delete/novelall",
-        {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(`${apinovel}/delete/novelall`, {
           data: {
             id_novel: selected,
           },
           headers: {
             "Content-Type": "application/json",
           },
-        }
-      );
+        });
 
-      console.log(response.data);
-      UserGet();
-      setSelected([]);
-    } catch (error) {
-      console.error("Error:", error);
+        console.log(response.data);
+        await Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+        UserGet();
+        setSelected([]);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
-  const ToidNovel = ()=>{
-   window.location.href =`/content/${selected}`
-  }
+  const ToidNovel = () => {
+    const url = `/contenttable/${selected}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setSelected([]);
+  };
   return (
     <Toolbar
       sx={{
+        boxShadow: 2,
+        backgroundColor: "##cfd8dc",
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
@@ -230,7 +252,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+      <Typography
+        sx={{ flex: "1 1 100%" }}
+        variant="h6"
+        id="tableTitle"
+        component="div"
+      >
+        {`Novel Data "${nameauthor}"`}
+      </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -238,7 +267,7 @@ function EnhancedTableToolbar(props) {
         onChange={handleSearchChange}
         sx={{ marginRight: 2 }}
       />
-       {numSelected == 1 ? (
+      {numSelected == 1 ? (
         <Tooltip title="Promulgate">
           <IconButton>
             <PromulgateNovel
@@ -279,8 +308,8 @@ function EnhancedTableToolbar(props) {
       )}
       {numSelected == 1 ? (
         <Tooltip title="View Amd Create Chapter">
-          <IconButton>
-            <Button onClick={ToidNovel}>Content</Button>
+          <IconButton target="_blank" onClick={ToidNovel}>
+            <AddCircleOutlineIcon color="info" />
           </IconButton>
         </Tooltip>
       ) : (
@@ -296,11 +325,15 @@ EnhancedTableToolbar.propTypes = {
   handleSearchChange: PropTypes.func.isRequired,
 };
 
-export default function TableNovel() {
-  const { id_author } = useParams();
+export default function TableNovel({ id_author: propIdAuthor }) {
+  // ใช้ id_author จาก useParams เป็นค่าเริ่มต้น ถ้า propIdAuthor มีค่าจะใช้ค่าจาก prop แทน
+  const { id_author: paramsIdAuthor } = useParams();
+  const id_author = propIdAuthor || paramsIdAuthor;
+
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("id");
   const [selected, setSelected] = useState([]);
+  const [nameauthor, setnameauthor] = useState("");
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -321,9 +354,11 @@ export default function TableNovel() {
 
   const UserGet = () => {
     axios
-      .get(`http://localhost:5000/novelall/${id_author}`)
+      .get(`${apinovel}/novelall/${id_author}`)
       .then((response) => {
         const data = response.data;
+        const data2 = response.data[0];
+        setnameauthor(data2.penname);
         if (Array.isArray(data) && data.length > 0) {
           setTagnovel(data);
         } else {
@@ -414,6 +449,7 @@ export default function TableNovel() {
           setSelected={setSelected}
           UserGet={UserGet}
           id_author={id_author}
+          nameauthor={nameauthor}
         />
         <TableContainer>
           <Table
@@ -465,7 +501,9 @@ export default function TableNovel() {
                       />
                     </TableCell>
                     <TableCell align="right">{row.name_novel}</TableCell>
-                    <TableCell align="right">{formatDate(row.createdate)}</TableCell>
+                    <TableCell align="right">
+                      {formatDate(row.createdate)}
+                    </TableCell>
                     <TableCell align="right">
                       {formatDateTime(row.updatetime)}
                     </TableCell>

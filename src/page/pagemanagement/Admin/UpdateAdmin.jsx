@@ -8,6 +8,9 @@ import {
   IconButton,
   Card,
   CardMedia,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import axios from "axios";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
@@ -29,6 +32,7 @@ import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
+import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
 
 const currencies = [
   {
@@ -137,7 +141,7 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
 
     try {
       const response = await axios.post(
-        "https://uploadfile-api-huw0.onrender.com/upload",
+        `${apiupfile}/upload`,
         formData,
         {
           headers: {
@@ -158,7 +162,7 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
 
   const handleAddTag = async (fileId) => {
     axios
-      .put(`http://localhost:5000/update/admin/${selected[0]}`, {
+      .put(`${apinovel}/update/admin/${selected[0]}`, {
         f_name: namef,
         l_name: namel,
         gender: datagender,
@@ -195,7 +199,7 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
 
   const handleAddAdmin2 = async (avatar) => {
     axios
-      .put(`http://localhost:5000/update/admin/${selected[0]}`, {
+      .put(`${apinovel}/update/admin/${selected[0]}`, {
         f_name: namef,
         l_name: namel,
         gender: datagender,
@@ -232,7 +236,7 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
 
   const handleGetUpdate = () => {
     axios
-      .get(`http://localhost:5000/view/admin/${selected[0]}`)
+      .get(`${apinovel}/view/admin/${selected[0]}`)
       .then((response) => {
         const data = response.data[0];
         setDataTag(data);
@@ -309,27 +313,13 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
         <PersonAddAltIcon sx={{ mr: 1 }} />
         Update Admin
       </Button>
-      <Modal
-        open={open}
-        aria-labelledby="parent-modal-title"
-        aria-describedby="parent-modal-description"
-      >
+      <Dialog open={open} maxWidth="sm" fullWidth>
+        <DialogTitle id="update-modal-title" color={"black"}>
+          update Admin
+        </DialogTitle>
+        <DialogContent>
         <Box
-          sx={{
-            position: "absolute",
-            top: "5%",
-            left: "30%",
-            right: "30%",
-            width: 600,
-            overflow: "auto",
-            height: 700,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            pt: 2,
-            px: 4,
-            pb: 3,
-          }}
+      
         >
           <Box sx={{ display: "flex", alignItems: "flex-end" }}>
             <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
@@ -531,7 +521,8 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
             </Button>
           </Box>
         </Box>
-      </Modal>
+        </DialogContent>
+        </Dialog>
     </div>
   );
 }

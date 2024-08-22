@@ -30,6 +30,9 @@ import { useParams } from "react-router-dom";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import PromulgateContent from "./PromulgateContent";
 import StatusorFree from "./StatusorFree";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { apinovel } from "../../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -162,11 +165,28 @@ function EnhancedTableToolbar(props) {
     UserGet,
     // eslint-disable-next-line react/prop-types
     id_novel,
+    namenovel
   } = props;
   const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
     try {
-      await axios.delete("http://localhost:5000/delete/ep_novel", {
+      await axios.delete(`${apinovel}/delete/ep_novel`, {
         data: { id: selected },
+      });
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Your file has been deleted.",
+        icon: "success",
       });
       UserGet();
       setSelected([]);
@@ -175,11 +195,17 @@ function EnhancedTableToolbar(props) {
       console.error("Error deleting novels:", error);
       // Handle error
     }
+  }
   };
 
   const Newcontent = () => {
     const url = `/contentnew/${id_novel}`;
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+  const Newcontentview = () => {
+    const url = `/novel/${id_novel}/${selected}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setSelected([])
   };
   return (
     <Toolbar
@@ -214,7 +240,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+  <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+         {` Chapter Data "${namenovel}"`}
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -276,7 +309,9 @@ function EnhancedTableToolbar(props) {
       )}
       {numSelected == 1 ? (
         <Tooltip title="View Amd Create Chapter">
-          <IconButton></IconButton>
+          <IconButton target="_blank" onClick={Newcontentview} >
+            <RemoveRedEyeIcon/>
+          </IconButton>
         </Tooltip>
       ) : (
         <Tooltip title="Add Data"></Tooltip>
@@ -301,6 +336,8 @@ export default function ContentNovel() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const [namenovel, setnameauthor] = useState("");
   const [dataTag, setTagnovel] = useState([]);
   const [datatime, setupdatetime] = useState("");
   const [datadate, setDate] = useState("");
@@ -319,11 +356,12 @@ export default function ContentNovel() {
 
   const UserGet = () => {
     axios
-      .get(`http://localhost:5000/view/ep_novel/${id_novel}`)
+      .get(`${apinovel}/view/ep_novel/${id_novel}`)
       .then((response) => {
         const data = response.data;
         const data2 = response.data[0];
         setDate(data2.createdate);
+        setnameauthor(data2.name_novel)
         setupdatetime(data2.updatetime);
         if (Array.isArray(data) && data.length > 0) {
           setTagnovel(data);
@@ -405,7 +443,8 @@ export default function ContentNovel() {
   );
   console.log("data", dataTag);
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%",boxShadow:2,
+      backgroundColor:"##cfd8dc", }}>
       <Paper sx={{ width: "100%", mb: 2,p:1 }}>
         <Box>
           
@@ -419,6 +458,7 @@ export default function ContentNovel() {
           id_novel={id_novel}
           setSelected={setSelected}
           UserGet={UserGet}
+          namenovel={namenovel}
         />
         <TableContainer>
           <Table

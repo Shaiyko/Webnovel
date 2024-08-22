@@ -10,7 +10,7 @@ export default function Userhomepage() {
   }, []);
   return (
     <>
-      <div className="bg">
+      <div className="bg" style={{height:"500px"}}>
         {userget ? (
           <div className="bg">
             <p>

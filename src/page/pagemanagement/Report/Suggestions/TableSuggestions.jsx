@@ -29,6 +29,7 @@ import ViewSuggestions from "./ViewSuggestions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import Swal from "sweetalert2";
+import { apinovel } from "../../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -60,12 +61,7 @@ const headCells = [
   { id: "id", numeric: false, disablePadding: true, label: "ID" },
   { id: "name user", numeric: true, disablePadding: false, label: "User Name" },
   { id: "creation date", numeric: true, disablePadding: false, label: "Date" },
-  {
-    id: "text",
-    numeric: true,
-    disablePadding: false,
-    label: "Text Suggestions",
-  },
+
   {
     id: "namenovel",
     numeric: true,
@@ -171,7 +167,7 @@ function EnhancedTableToolbar(props) {
       try {
         // Make the delete request
         const response = await axios.delete(
-          "http://localhost:5000/delete/report",
+          `${apinovel}/delete/report`,
           {
             data: {
               type_ids: selected,
@@ -268,6 +264,9 @@ function EnhancedTableToolbar(props) {
         value={startDate}
         onChange={(e) => handleDateChange(e, "start")}
         sx={{ marginRight: 5, width: 300 }}
+        InputLabelProps={{
+                shrink: true,
+              }}
       />
       <TextField
         variant="outlined"
@@ -276,6 +275,9 @@ function EnhancedTableToolbar(props) {
         value={endDate}
         onChange={(e) => handleDateChange(e, "end")}
         sx={{ marginRight: 5, width: 300 }}
+        InputLabelProps={{
+                shrink: true,
+              }}
       />
       <Button color="error" onClick={handleClera}>
         Clear
@@ -343,7 +345,7 @@ export default function TableSuggestions() {
 
   const UserGet = () => {
     axios
-      .get(`http://localhost:5000/reposrt`)
+      .get(`${apinovel}/reposrt`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -447,7 +449,7 @@ export default function TableSuggestions() {
   );
 
   return (
-    <Paper sx={{ width: "100%", mb: 2 }}>
+    <Paper sx={{ width: "100%", mb: 2, }}>
       <EnhancedTableToolbar
         numSelected={selected.length}
         searchQuery={searchQuery}
@@ -464,7 +466,7 @@ export default function TableSuggestions() {
       />
       <TableContainer>
         <Table
-          sx={{ minWidth: 750 }}
+          sx={{ minWidth: 750,height:"400px" }}
           aria-labelledby="tableTitle"
           size={dense ? "small" : "medium"}
         >
@@ -509,7 +511,6 @@ export default function TableSuggestions() {
                     </TableCell>
                     <TableCell align="right">{row.user_name}</TableCell>
                     <TableCell align="right">{formatDate(row.date)}</TableCell>
-                    <TableCell align="right">{row.reason}</TableCell>
                     <TableCell align="right">{row.name_novel}</TableCell>
                     <TableCell align="right">{row.typerepost}</TableCell>
                   </TableRow>

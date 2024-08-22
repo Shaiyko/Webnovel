@@ -21,6 +21,7 @@ import {  useParams } from "react-router-dom";
 import { styled } from "@mui/system";
 import Paper from "@mui/material/Paper";
 import ModeIcon from "@mui/icons-material/Mode";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 const Description = styled(Typography)({
   color: "black",
@@ -96,7 +97,7 @@ export default function ViewAndChapter() {
 
   const UserGet = () => {
     axios
-      .get(`http://localhost:5000/novelall2/${id_novel}`)
+      .get(`${apinovel}/novelall2/${id_novel}`)
       .then((response) => {
         const data2 = response.data[0];
         setNameN(data2.name_novel);
@@ -113,7 +114,7 @@ export default function ViewAndChapter() {
   };
   const UserGetChapter = () => {
     axios
-      .get(`http://localhost:5000/view/ep_novel/${id_novel}`)
+      .get(`${apinovel}/view/ep_novel/${id_novel}`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -126,7 +127,7 @@ export default function ViewAndChapter() {
   };
   const handleGetUpdate2 = () => {
     axios
-      .get(`http://localhost:5000/view/togetherjoin/${id_novel}`)
+      .get(`${apinovel}/view/togetherjoin/${id_novel}`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {

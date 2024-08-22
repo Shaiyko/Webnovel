@@ -8,7 +8,7 @@ export default function Adminhomepage() {
   console.log("admin page ",loggedInAdmin);
   return (
     <>
-      <div className="bg">
+      <div className="bg" style={{height:"500px"}}>
         {loggedInAdmin ? (
           <div className="bg">
             <p>

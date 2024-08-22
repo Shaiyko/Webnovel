@@ -1,39 +1,50 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Button, TextField, FormControl, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  FormControl,
+  Typography,
+  Container,
+  Card,
+} from "@mui/material";
 import axios from "axios";
+import { apinovel } from "../../URL_API/Apinovels";
+import LoadingComponent from "../../Loading";
+import Swal from "sweetalert2";
 
-const SuggestionForm2 = () => {
+const SuggestionForm2 = ({onCancel}) => {
   const [dataloged, setlogged] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [suggestionCategory, setSuggestionCategory] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(false);
   const editorRef = useRef(null);
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = () => {
-    if (
-      userId
-    ) {
-      // Add user or author ID based on context
-
+    if (userId) {
+      setLoading(true)
       axios
-        .post("http://localhost:5000/create/suggestionsrx", { // Updated URL
+        .post(`${apinovel}/create/suggestionsrx`, {
           name_type: editorRef.current.innerHTML,
-          id_user: userId, // Correct handling of id_user
+          id_user: userId,
           typepost: "General",
           user_name: dataloged,
         })
         .then((response) => {
-          setSuggestions([...suggestions]); // Consider updating this if needed
-          // Clear form inputs
+          setSuggestions([...suggestions]);
           setUserId(null);
-          setSuggestionCategory("");
           editorRef.current.innerHTML = "";
+          checkFormValidity();
+          setLoading(false)
+          Swal.fire("Submit a Suggestion Succeed");
         })
         .catch((error) => {
           console.error("There was an error creating the report!", error);
+          setLoading(false)
         });
     } else {
       alert("Please fill in all fields.");
+      setLoading(false)
     }
   };
 
@@ -55,68 +66,71 @@ const SuggestionForm2 = () => {
     }
   }, []);
 
-  return (
-    <Box sx={{ padding: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Submit a Report
-      </Typography>
-      <FormControl fullWidth sx={{ marginBottom: 2 }}>
-        <TextField
-          id="outlined-basic"
-          disabled
-          value={dataloged}
-          label="User Name"
-        />
-      </FormControl>
-      <Box
-        ref={editorRef}
-        contentEditable
-        sx={{
-          border: "1px solid #ccc",
-          minHeight: "100px",
-          padding: "5px",
-          marginBottom: 2,
-        }}
-        placeholder="Enter your suggestion here..."
-      />
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        Submit
-      </Button>
+  const checkFormValidity = () => {
+    if (editorRef.current && editorRef.current.innerHTML.trim() !== "") {
+      setIsFormValid(true);
+    } else {
+      setIsFormValid(false);
+    }
+  };
 
-      <Typography variant="h6" gutterBottom mt={4}>
-        Suggestions
-      </Typography>
-      {suggestions.length === 0 ? (
-        <Typography>No suggestions yet.</Typography>
-      ) : (
-        suggestions.map((suggestion, index) => (
+  useEffect(() => {
+    checkFormValidity();
+  }, []);
+
+  const handleEditorChange = () => {
+    checkFormValidity();
+  };
+
+  return (
+    <Box>
+       <LoadingComponent loading={loading} />
+      <Container>
+        <Card sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Submit a Suggestion
+          </Typography>
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <TextField
+              id="outlined-basic"
+              disabled
+              value={dataloged}
+              label="User Name"
+            />
+          </FormControl>
           <Box
-            key={index}
+            ref={editorRef}
+            contentEditable
             sx={{
               border: "1px solid #ccc",
-              padding: "10px",
+              minHeight: "100px",
+              padding: "5px",
               marginBottom: 2,
-              borderRadius: "4px",
             }}
+            placeholder="Enter your suggestion here..."
+            onInput={handleEditorChange}
+          />
+          <Box sx={{display:"flex"}}>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!isFormValid}
+            >
+            Submit
+          </Button>
+          <Button
+          variant="outlined"
+          color="error"
+          sx={{ display: { xs: "none", md: "block" },marginLeft:"100px" }}
+          onClick={onCancel} // ใช้งาน onCancel เมื่อกดปุ่ม
           >
-            <Typography variant="subtitle1">
-              {suggestion.userId} - {suggestion.novelTitle} -{" "}
-              {suggestion.suggestionCategory}
-            </Typography>
-            <Box
-              contentEditable
-              sx={{
-                border: "1px solid #eee",
-                padding: "5px",
-                minHeight: "50px",
-                marginTop: 1,
-                backgroundColor: "#f9f9f9",
-              }}
-              dangerouslySetInnerHTML={{ __html: suggestion.content }}
-            />
+          Cancel
+        </Button>
           </Box>
-        ))
-      )}
+        </Card>
+      </Container>
     </Box>
   );
 };

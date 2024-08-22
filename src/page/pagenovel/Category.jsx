@@ -1,34 +1,26 @@
 import React, { useEffect, useState } from "react";
 import {
   Typography,
-  Grid,
   Card,
   CardMedia,
   CardContent,
   Tabs,
   Tab,
   Box,
-  ButtonBase,
-  CardActionArea,
   Container,
-  Divider,
   Pagination,
+  Link,
+  Grid,
+  Divider,
+  Skeleton,
 } from "@mui/material";
-import { styled } from "@mui/system";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
+import { Stack, styled } from "@mui/system";
 import axios from "axios";
 import { useLocation, useParams } from "react-router-dom";
+import LoadingComponent from "../../Loading";
+import { apinovel } from "../../URL_API/Apinovels";
 
-const StyledCard = styled(Card)({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-});
-
-const CustomLink = styled(ButtonBase)({
-  color: "black",
-});
-const CustomButtonB = styled(ButtonBase)({
+const CustomButtonB = styled(Typography)({
   color: "black",
   display: "-webkit-box",
   WebkitBoxOrient: "vertical",
@@ -38,47 +30,38 @@ const CustomButtonB = styled(ButtonBase)({
   textOverflow: "ellipsis",
   fontSize: "14px",
 });
-
-const chapter1 = {
-  margin: "0 8px",
-  whiteSpace: "pre-line",
+const Linknovel = styled(Link)({
+  textDecoration: "none",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  width: "45%",
-};
-const chapter2 = {
-  margin: "0 8px",
-  whiteSpace: "pre-line",
-  width: "30%",
-};
-const chapter3 = {
-  display: "flex",
-  margin: "0 8px",
-  whiteSpace: "pre-line",
-  width: "25%",
-};
-
-const categories = [
-  { id: 0, label: "ทุกหมวดหมู่" },
-];
-
+  whiteSpace: "nowrap",
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "none",
+    color: "blue",
+  },
+  fontWeight: "bold",
+});
 function Category() {
   const location = useLocation();
+  const [show404, setShow404] = useState(false);
   const query = new URLSearchParams(location.search);
   const page = parseInt(query.get("page")) || 1;
   const itemsPerPage = 20;
   const { id } = useParams(); // Get the category ID from the URL
   const [dataTag, setTagnovel] = useState([]);
-  const [dataType, setType2] = useState(categories);
+  const [dataType, setType2] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [hasNovels, setHasNovels] = useState(true);
-
-
+  const [nametype, setTypename] = useState("");
   const formatDateTime = (datatime) => {
     const date = new Date(datatime);
     return date.toLocaleString(); // Display date and time
   };
-
+  useEffect(() => {
+    // Fetch category types on component mount
+    handleGetType();
+  }, []);
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
     const selectedCategory = dataType[newValue];
@@ -90,7 +73,7 @@ function Category() {
     // Extract category ID from URL and set the selected tab accordingly
     const categoryId = parseInt(location.pathname.split("/").pop());
     if (!isNaN(categoryId)) {
-      setSelectedTab(dataType.findIndex(cat => cat.id === categoryId));
+      setSelectedTab(dataType.findIndex((cat) => cat.id === categoryId));
     } else {
       setSelectedTab(0);
     }
@@ -103,26 +86,18 @@ function Category() {
     }
   }, [selectedTab, dataType]);
 
-  useEffect(() => {
-    // Fetch category types on component mount
-    handleGetType();
-  }, []);
-
   const handleGetType = () => {
+    setShow404(true);
     axios
-      .get(`http://localhost:5000/typenovel`)
+      .get(`${apinovel}/typenovel`)
       .then((response) => {
         const newData = response.data.map((item) => ({
           id: item.id_type,
           label: item.name_type,
         }));
 
-        // Remove duplicate categories
-        const uniqueData = [
-          ...new Map([...dataType, ...newData].map((item) => [item.id, item])).values(),
-        ];
-
-        setType2(uniqueData);
+        setType2(newData);
+        setShow404(false);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -130,23 +105,25 @@ function Category() {
   };
 
   const NovelAllGet = (categoryId) => {
-    let url = "http://localhost:5000/novelallviewep";
+    let url = `${apinovel}/novelallviewep`;
     if (categoryId !== 0) {
-      url = `http://localhost:5000/novelallvieweptype/${categoryId}`;
+      url = `${apinovel}/novelallvieweptype/${categoryId}`;
     }
 
     axios
       .get(url)
       .then((response) => {
         const data = response.data;
+        const data2 = response.data[0];
         if (Array.isArray(data) && data.length > 0) {
           const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
-          setTagnovel(filteredData);
           setHasNovels(true);
+          setTagnovel(filteredData);
         } else {
           setTagnovel([]);
           setHasNovels(false);
         }
+        setTypename(data2.name_type);
       })
       .catch((error) => {
         console.log("error", error);
@@ -162,131 +139,218 @@ function Category() {
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
+
   return (
-    <Box sx={{ bgcolor: "white" }}>
+    <Box>
       <Container>
-        <Tabs
-          value={selectedTab}
-          onChange={handleTabChange}
-          centered
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            maxWidth: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          {dataType.map((category, index) => (
-            <Tab key={category.id} label={category.label} />
-          ))}
-        </Tabs>
-      </Container>
-      <Box sx={{ p: 1, width: "85%", marginLeft: "5%" }}>
-        {!hasNovels ? (
-          <Typography variant="h6" align="center" sx={{ mt: 4 }}>
-            Not Novel
-          </Typography>
-        ) : (
-          <Grid container spacing={3} style={{ marginTop: "10px" }}>
-            {displayData.map((novel, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-                <StyledCard>
-                  <CardActionArea href={`/novel/${novel.id_novel}`}>
-                    <CardMedia
-                      component="img"
-                      alt={novel.name_novel}
-                      height="150"
-                      image={novel.image_novel}
-                      title={novel.name_novel}
-                    />
-                  </CardActionArea>
-                  <CardContent style={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="div">
-                      <CustomLink href={`/novel/${novel.id_novel}`}>
-                        {novel.name_novel}
-                      </CustomLink>
-                    </Typography>
-                    <Divider />
-                    <Box
+        <Card>
+          <Grid mt={3} xs={12} md={12}>
+            <Container>
+              <Tabs
+                value={selectedTab}
+                onChange={handleTabChange}
+                centered
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  maxWidth: "100%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  boxShadow: 3,
+                  border: "1px solid lightBlue",
+                  backgroundColor: "#e0f7fa",
+                }}
+              >
+                {dataType.map((category, index) => (
+                  <Tab key={category.id} label={category.label} />
+                ))}
+              </Tabs>
+            </Container>
+          </Grid>
+          {id == 0 ? (
+            <Typography
+              mt={2}
+              paddingLeft={2}
+              color={"primary"}
+              variant="h6"
+              fontWeight="bold"
+            >{`Novel category "All category" `}</Typography>
+          ) : (
+            <Typography
+              mt={2}
+              paddingLeft={2}
+              color={"primary"}
+              variant="h6"
+              fontWeight="bold"
+            >{`Novel category "${nametype}" `}</Typography>
+          )}
+
+          <Divider />
+          <Grid xs={12} md={12}>
+            {!hasNovels ? (
+              <Typography variant="h6" align="center" sx={{ mt: 4 }}>
+                Not Novel
+              </Typography>
+            ) : (
+              <Card sx={{ p: 2 }}>
+                <Grid container spacing={2}>
+            {show404
+              ? Array.from(new Array(itemsPerPage)).map((_, index) => (
+                  <Grid item xs={12} sm={6} key={index}>
+                    <Card
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px", // Add margin to space out data
+                        backgroundColor: "#f5f5f5",
+                        height: { xs: 170, md: 200 },
                       }}
                     >
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        style={{ width: "50%" }}
-                      >
-                        <ButtonBase href={`/author/${novel.id_author}`}>
-                          {novel.penname}
-                        </ButtonBase>
-                      </Typography>
-                      <Typography
-                        gutterBottom
-                        variant="h7"
-                        component="div"
-                        style={{ width: "30%" }}
-                      >
-                        <CustomLink href={`/selecttype/${novel.id_type}`}>
-                          {novel.name_type}
-                        </CustomLink>
-                      </Typography>
-                      <Typography
-                        sx={{ margin: "0 8px" }}
-                        style={{ width: "20%" }}
-                      >
-                        Status: {novel.statusN}
-                      </Typography>
-                    </Box>
-                    <Divider />
-                    <Typography variant="h7">Introduction</Typography>
-                    <CustomButtonB>{novel.description}</CustomButtonB>
-                  </CardContent>
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      borderTop: "1px solid #ccc", // Add border top for separation
-                      paddingTop: "8px",
-                      maxWidth: "100%", // Ensure full width
-                    }}
-                  >
-                    <Typography sx={chapter1}>
-                      Chapter {novel.id_episode_novel}: {novel.name_episode}
-                    </Typography>
-                    <Typography sx={chapter2}>
-                      {formatDateTime(novel.updateep)}
-                    </Typography>
-                    <Typography sx={chapter3}>
-                      <MenuBookIcon />
-                      <Typography color={"red"}>{novel.epall} </Typography>
-                      Chapters
-                    </Typography>
-                  </CardContent>
-                </StyledCard>
-              </Grid>
-            ))}
+                      <CardContent sx={{ display: "flex" }}>
+                        <Grid item xs={3} md={3}>
+                          <Skeleton variant="rectangular" height={140} />
+                        </Grid>
+                        <Grid marginLeft={2} item xs={9} md={9}>
+                          <Stack spacing={1}>
+                            <Skeleton variant="rectangular" height={10} />
+                            <Skeleton variant="rectangular" height={100} />
+                            <Skeleton variant="rectangular" />
+                          </Stack>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))
+              : displayData.map((item, index) => (
+                  <Grid item xs={12} sm={6} key={item.id}>
+                    <Card
+                      sx={{
+                        backgroundColor: "#f5f5f5",
+                        height: { xs: 170, md: 200 },
+                      }}
+                    >
+                      <CardContent sx={{ display: "flex" }}>
+                        <Grid item xs={4} md={3}>
+                          <Card sx={{ backgroundColor: "black" }}>
+                            <Linknovel target="_blank" href={`/novel/${item.id_novel}`}>
+                              <CardMedia
+                                component="img"
+                                sx={{
+                                  width: { xs: "100%", md: "100%" },
+                                  height: { xs: 130, md: 170 },
+                                  overflow: "hidden",
+                                }}
+                                image={
+                                  item.image_novel
+                                    ? item.image_novel
+                                    : `https://drive.google.com/thumbnail?id=1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd`
+                                }
+                                alt="Novel cover"
+                              />
+                            </Linknovel>
+                          </Card>
+                          <Box sx={{display:{md:"none"}}}>
+                            <Typography variant="caption" component="p" noWrap>
+                              {" "}
+                              Update {formatDateTime(item.updateep)} 
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid marginLeft={2} item xs={8} md={9}>
+                          <Typography variant="h6" component="div">
+                            <Linknovel target="_blank" href={`/novel/${item.id_novel}`}>
+                              {index + 1}. {item.name_novel}
+                            </Linknovel>
+                          </Typography>
+                          <Typography
+                            mt={1}
+                            mb={1}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-around",
+                            }}
+                            variant="body2"
+                            color="textSecondary"
+                          >
+                            <Typography
+                              variant="body2"
+                              paddingRight={1}
+                              sx={{ borderRight: "1px solid grey" }}
+                            >
+                              {item.penname}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              paddingRight={1}
+                              paddingLeft={1}
+                              sx={{ borderRight: "1px solid grey" }}
+                            >
+                              {item.name_type}
+                            </Typography>
+                            <Typography variant="body2" paddingLeft={1}>
+                              {item.statusN}
+                            </Typography>
+                          </Typography>
+                          <CustomButtonB>{item.description}</CustomButtonB>
+                          <Box display="flex" alignItems="center">
+                            <Typography
+                              variant="caption"
+                              mt={1}
+                              sx={{
+                                backgroundColor: "white",
+                                paddingRight: 1,
+                                whiteSpace: "nowrap", // Prevent wrapping
+                                flexShrink: 0, // Prevent shrinking
+                              }}
+                            >
+                              Latest Chapter :
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              component="p"
+                              noWrap
+                              mt={1}
+                              sx={{
+                                whiteSpace: "nowrap", // Prevent wrapping
+                                overflow: "hidden", // Hide overflow text if necessary
+                                textOverflow: "ellipsis", // Add ellipsis if text is too long
+                              }}
+                            >
+                              {item.name_episode}
+                            </Typography>
+                          </Box>
+                          <Box sx={{display:{xs:"none",md:"block"}}} mt={2}>
+                            <Typography variant="caption" component="p" noWrap>
+                              {" "}
+                              Latest Update {formatDateTime(item.updateep)}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
           </Grid>
-        )}
-      </Box>
-      <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "16px",
-          }}
-        >
-          <Pagination
-            count={Math.ceil(dataTag.length / itemsPerPage)}
-            page={page}
-            onChange={handlePageChange}
-            variant="outlined"
-            shape="rounded"
-          />
-        </Box>
+              </Card>
+            )}
+          </Grid>
+          <Card>
+          {dataTag.length >= 20 && (<Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "16px",
+              mb: 2,
+            }}
+          >
+            <Pagination
+              count={Math.ceil(dataTag.length / itemsPerPage)}
+              page={page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+            />
+          </Box>)}
+          </Card>
+        </Card>
+      </Container>
     </Box>
   );
 }

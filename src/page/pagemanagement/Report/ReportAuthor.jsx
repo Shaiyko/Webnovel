@@ -19,8 +19,11 @@ import {
   MenuItem,
   TablePagination,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Card,
 } from "@mui/material";
+import { apinovel } from "../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
 
 const ReportAuthor = () => {
   const [authors, setAuthors] = useState([]);
@@ -40,7 +43,7 @@ const ReportAuthor = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/reportauthor", {
+      const response = await axios.get(`${apinovel}/reportauthor`, {
         params: {
           pennameSearch,
           genderSearch,
@@ -59,8 +62,20 @@ const ReportAuthor = () => {
   };
 
   const handleExport = () => {
+    const result = Swal.fire({
+      title: "Are you sure?",
+      text: "You export data?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Export it!",
+    });
+
+    if (result.isConfirmed) {
     const allDataFlag = includeAllData ? 1 : 0;
-    window.location.href = `http://localhost:5000/exportauthor?pennameSearch=${pennameSearch}&genderSearch=${genderSearch}&includeAllData=${allDataFlag}`;
+    window.location.href = `${apinovel}/exportauthor?pennameSearch=${pennameSearch}&genderSearch=${genderSearch}&includeAllData=${allDataFlag}`;
+    }
   };
 
   const handleClear = () => {
@@ -78,132 +93,154 @@ const ReportAuthor = () => {
   };
 
   return (
-    <Container>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          marginBottom: "20px",
-          p: 1,
-          border: 1,
-        }}
-      >
-        <Box sx={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-          <TextField
-            label="Pen Name"
-            variant="outlined"
-            value={pennameSearch}
-            onChange={(e) => setPennameSearch(e.target.value)}
-          />
-          <FormControl sx={{ width: "150px" }} variant="outlined">
-            <InputLabel>Gender</InputLabel>
-            <Select
-              value={genderSearch}
-              onChange={(e) => setGenderStatus(e.target.value)}
-              label="Gender"
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="Male">Male</MenuItem>
-              <MenuItem value="Female">Female</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={includeAllData}
-                onChange={() => setIncludeAllData(!includeAllData)}
-              />
-            }
-            label="Include All Data"
-          />
-        </Box>
+    <Box m={5}>
+        <Card >
+        <Typography alignContent={"center"} display={"flex"} justifyContent={"center"} variant="h5">Report Author Data</Typography>
+      <Box boxShadow={2} p={1}>
         <Box
           sx={{
             display: "flex",
-            gap: "10px",
-            justifyContent: "space-around",
-            alignContent: "center",
+            flexDirection: "column",
+            marginBottom: "20px",
+            p: 1,
+            border: 1,
           }}
         >
-          <Box sx={{ display: "flex", gap: "20px", height: 40 }}>
-            <Button variant="contained" color="primary" onClick={fetchData}>
-              Apply Filters
-            </Button>
-            <Button variant="contained" color="secondary" onClick={handleClear}>
-              Clear
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleExport}>
-              Export to Excel
-            </Button>
+          <Box sx={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            <TextField
+              label="Pen Name"
+              variant="outlined"
+              value={pennameSearch}
+              onChange={(e) => setPennameSearch(e.target.value)}
+            />
+            <FormControl sx={{ width: "150px" }} variant="outlined">
+              <InputLabel>Gender</InputLabel>
+              <Select
+                value={genderSearch}
+                onChange={(e) => setGenderStatus(e.target.value)}
+                label="Gender"
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
-          <Box sx={{ display: "flex", marginTop: "20px" }}>
-            <Box>
-              <Typography>Number of Author: {qauthor}</Typography>
-              <Typography>Gender</Typography>
-              <Typography>Male: {genderm}</Typography>
-              <Typography>Female: {genderf}</Typography>
+          <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={includeAllData}
+                  onChange={() => setIncludeAllData(!includeAllData)}
+                />
+              }
+              label="Include All Data"
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "space-around",
+              alignContent: "center",
+            }}
+          >
+            <Box sx={{ display: "flex", gap: "20px", height: 40 }}>
+              <Button variant="contained" color="primary" onClick={fetchData}>
+                Apply Filters
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleClear}
+              >
+                Clear
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleExport}
+              >
+                Export to Excel
+              </Button>
+            </Box>
+            <Box sx={{ display: "flex", marginTop: "20px" }}>
+              <Box>
+                <Typography>Number of Author: {qauthor}</Typography>
+                <Typography>Gender</Typography>
+                <Typography>Male: {genderm}</Typography>
+                <Typography>Female: {genderf}</Typography>
+              </Box>
             </Box>
           </Box>
         </Box>
-      </Box>
-      <TableContainer sx={{ display: "flex" }} component={Paper}>
-        <Table sx={{ border: 1 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID Author</TableCell>
-              <TableCell>Real Name</TableCell>
-              <TableCell>Pen Name</TableCell>
-              <TableCell>Gender</TableCell>
-              <TableCell>Date of Birth</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Gmail</TableCell>
-              <TableCell>User Name</TableCell>
-              <TableCell>Contact Channels</TableCell>
-              <TableCell>Start</TableCell>
-              <TableCell>Continuously</TableCell>
-              <TableCell>Completed</TableCell>
-              <TableCell>Number of Novels Created</TableCell>
-              <TableCell>Latest Novel Create date</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {authors.map((author) => (
-              <TableRow key={author.id_author}>
-                <TableCell>{author.id_author}</TableCell>
-                <TableCell>{author.realname}</TableCell>
-                <TableCell>{author.penname}</TableCell>
-                <TableCell>{author.gender}</TableCell>
-                <TableCell>{author.date_of_birth}</TableCell>
-                <TableCell>{author.address}</TableCell>
-                <TableCell>{author.gmail}</TableCell>
-                <TableCell>{author.user_name}</TableCell>
-                <TableCell>{author.contact_channels}</TableCell>
-                <TableCell>{author.start}</TableCell>
-                <TableCell>{author.continuously}</TableCell>
-                <TableCell>{author.completed}</TableCell>
-                <TableCell>{author.id_author_count}</TableCell>
-                <TableCell>
-                  {new Date(author.latest_createdate).toLocaleDateString()}
-                </TableCell>
+        <TableContainer
+          sx={{ display: "flex", minHeight: "500px" }}
+          component={Paper}
+        >
+          <Table sx={{ border: 1 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID Author</TableCell>
+                <TableCell>Real Name</TableCell>
+                <TableCell>Pen Name</TableCell>
+                <TableCell>Gender</TableCell>
+                <TableCell>Date of Birth</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Gmail</TableCell>
+                <TableCell>User Name</TableCell>
+                <TableCell>Contact Channels</TableCell>
+                <TableCell>Start</TableCell>
+                <TableCell>Continuously</TableCell>
+                <TableCell>Completed</TableCell>
+                <TableCell>Number of Novels Created</TableCell>
+                <TableCell>Latest Novel Create date</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={authors.length} // You might want to get the total count from the server
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+            </TableHead>
+            <TableBody>
+              {authors.map((author) => (
+                <TableRow key={author.id_author}>
+                  <TableCell>{author.id_author}</TableCell>
+                  <TableCell>{author.realname}</TableCell>
+                  <TableCell>{author.penname}</TableCell>
+                  <TableCell>{author.gender}</TableCell>
+                  <TableCell>{author.date_of_birth}</TableCell>
+                  <TableCell>{author.address}</TableCell>
+                  <TableCell>{author.gmail}</TableCell>
+                  <TableCell>{author.user_name}</TableCell>
+                  <TableCell>{author.contact_channels}</TableCell>
+                  <TableCell>{author.start}</TableCell>
+                  <TableCell>{author.continuously}</TableCell>
+                  <TableCell>{author.completed}</TableCell>
+                  <TableCell>{author.id_author_count}</TableCell>
+                  <TableCell>
+                    {new Date(author.latest_createdate).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "10px",
+          }}
+        >
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component="div"
+            count={authors.length} // You might want to get the total count from the server
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Box>
       </Box>
-    </Container>
+      </Card>
+    </Box>
   );
 };
 

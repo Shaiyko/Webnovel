@@ -25,6 +25,8 @@ import TextField from "@mui/material/TextField";
 import axios from "axios";
 import UpdateTag from "./UpdateTag";
 import AddTag from "./AddTag";
+import { apinovel } from "../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -141,8 +143,19 @@ function EnhancedTableToolbar(props) {
   } = props;
   console.log("D", selected);
   const DeleteTag = async () => {
+    const result = Swal.fire({
+      title: "Are you sure?",
+      text: "You delete data?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Delete it!",
+    });
+
+    if (result.isConfirmed) {
     try {
-      const response = await axios.delete("https://dex-api-novel.onrender.com/delete/tag", {
+      const response = await axios.delete(`${apinovel}/delete/tag`, {
         data: {
           tag_ids: selected,
         },
@@ -157,6 +170,7 @@ function EnhancedTableToolbar(props) {
     } catch (error) {
       console.error("Error:", error);
     }
+  }
   };
   return (
     <Toolbar
@@ -191,7 +205,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Tag Novel Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -254,7 +275,7 @@ export default function EnhancedTable() {
 
   const UserGet = () => {
     axios
-      .get("https://dex-api-novel.onrender.com/taeknovel")
+      .get(`${apinovel}/taeknovel`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {

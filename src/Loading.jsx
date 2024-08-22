@@ -2,8 +2,9 @@ import React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { Backdrop } from '@mui/material';
 
-const LoadingComponent = () => {
+const LoadingComponent = ({loading}) => {
   return (
     <Box
       display="flex"
@@ -11,10 +12,16 @@ const LoadingComponent = () => {
       alignItems="center"
       justifyContent="center"
     >
-      <CircularProgress />
-      <Typography variant="h6" style={{ marginTop: '16px',color:"black" }}>
-        Loading...
-      </Typography>
+       {/* ตัวโหลด */}
+       <Backdrop
+        sx={{
+          color: "#fff",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 };

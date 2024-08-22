@@ -1,0 +1,9 @@
+export const recommendations = [
+    { id: 1, title: 'No, a gentleman should also be on guard.', author: 'Yang Xiaorong', words: '2.456', description: 'In the first year, Princess Li Qian met a "gentleman" for the first time. That man was upright and fair, and she sneered: "hypocrite." In the...' },
+    { id: 2, title: 'The Immortal with Infinite Power', author: 'Snow Walker', words: '3.320', description: 'I am vain, selfish, greedy, and lustful, and occasionally I kill and set fires, but I know that I am a good immortal - Gao Xian, a fellow...' },
+    { id: 3, title: 'The Great Xuanwu Saint', author: 'Listen to the wind in the south', words: '1.902', description: 'Chen Mu, a low-level policeman, thought he could only live a cautious life, but he unexpectedly got a system panel that could...' },
+    { id: 4, title: 'Lord of Pro', author: 'Sarragus', words: '1.646', description: 'Two railroad tracks rushed into the yard, and the steam locomotive broke through the door. The singing girl in cheongsam ate ten...' },
+    { id: 5, title: 'Arc of Fire', author: 'Count Constantine', words: '1.586', description: 'Wang Zhong came to another world and got involved in the world war in this world. The plug-in he got was a bird\'s-eye view like a real...' },
+    { id: 6, title: 'While others are leveling up, I am cultivating immortality, and I will come out of the mountains after reaching the Mahayana stage.', author: 'Three Five Mysterious Seven', words: '2.484', description: 'Once he traveled through time, the game came into reality. In this world, everyone can change their job to a professional. They can lev...' },
+  ];
+  

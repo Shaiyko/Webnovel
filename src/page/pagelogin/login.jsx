@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import {
   Box,
   Button,
+  Card,
+  Container,
   FormControl,
   Grid,
   IconButton,
@@ -17,6 +19,7 @@ import {
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import KeyIcon from "@mui/icons-material/Key";
 import LoadingComponent from "../../Loading";
+import { apinovel } from "../../URL_API/Apinovels";
 
 export default function LoginRegister() {
   const [loading, setLoading] = useState(false);
@@ -41,7 +44,7 @@ export default function LoginRegister() {
     try {
       localStorage.setItem("admin", JSON.stringify(admin));
       console.log("Admin stored in localStorage:", admin);
-      window.location.href = "/admin";
+      window.location.href = "/";
     } catch (error) {
       console.error("Failed to store user in localStorage:", error);
     }
@@ -51,7 +54,7 @@ export default function LoginRegister() {
     try {
       localStorage.setItem("userP", JSON.stringify(userP));
       console.log("userP stored in localStorage:", userP);
-      window.location.href = "/user";
+      window.location.href = "/";
     } catch (error) {
       console.error("Failed to store user in localStorage:", error);
     }
@@ -71,7 +74,7 @@ export default function LoginRegister() {
     e.preventDefault();
     setLoading(true);
     axios
-      .get("https://dex-api-novel.onrender.com/login")
+      .get(`${apinovel}/login`)
       .then((response) => {
         const loggedInUser = response.data.find(
           (user) => user.user_name === username && user.password === password
@@ -84,10 +87,7 @@ export default function LoginRegister() {
 
           if (loggedInUser.status === "admin") {
             axios
-              .get(
-                "https://dex-api-novel.onrender.com/view/admin/" +
-                  loggedInUser.id
-              )
+              .get(`${apinovel}/view/admin/` + loggedInUser.id)
               .then((response) => {
                 const data = response.data[0];
 
@@ -96,10 +96,7 @@ export default function LoginRegister() {
               .catch((error) => console.log("error", error));
           } else if (loggedInUser.status === "author") {
             axios
-              .get(
-                "https://dex-api-novel.onrender.com/view/author/" +
-                  loggedInUser.id
-              )
+              .get(`${apinovel}/view/author/` + loggedInUser.id)
               .then((response) => {
                 const data = response.data[0];
 
@@ -108,10 +105,7 @@ export default function LoginRegister() {
               .catch((error) => console.log("error", error));
           } else if (loggedInUser.status === "user") {
             axios
-              .get(
-                "https://dex-api-novel.onrender.com/view/user/" +
-                  loggedInUser.id
-              )
+              .get(`${apinovel}/view/user/` + loggedInUser.id)
               .then((response) => {
                 const data = response.data[0];
 
@@ -145,50 +139,30 @@ export default function LoginRegister() {
   const isFormValid = () => {
     return username && password;
   };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && isFormValid()) {
+      handleLoginSubmit(e);
+    }
+  };
 
   return (
-    <>
-      <Box>
-        <Grid xs={12}>
-          {loading && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "50%",
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-              }}
-            >
-              <LoadingComponent />
+    <Container>
+      <Card>
+        <Box p={3}>
+          <Grid xs={12}>
+            <Box>
+              <LoadingComponent loading={loading} />
             </Box>
-          )}
-          {!loading && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "50%",
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                boxShadow: 5,
-                p: 4,
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-              }}
-            >
-              <AccountCircle sx={{ fontSize: 60 }} />
-              <Typography variant="h5" component="h1" gutterBottom>
-                Login
-              </Typography>
+
+            <Box>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <AccountCircle sx={{ fontSize: 60 }} />
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Typography variant="h5" component="h1" gutterBottom>
+                  Login
+                </Typography>
+              </Box>
               <Box>
                 <FormControl fullWidth sx={{ mb: 5 }}>
                   <InputLabel htmlFor="input-with-icon-adornment">
@@ -198,6 +172,7 @@ export default function LoginRegister() {
                     id="input-with-icon-adornment"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    onKeyDown={handleKeyDown} // Add this line
                     startAdornment={
                       <InputAdornment position="start">
                         <AccountCircle />
@@ -214,6 +189,7 @@ export default function LoginRegister() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // Add this line
                     startAdornment={
                       <InputAdornment position="start">
                         <KeyIcon />
@@ -233,27 +209,32 @@ export default function LoginRegister() {
                   />
                 </FormControl>
               </Box>
-              <Button
-                sx={{ width: "70%", mb: 3 }}
-                variant="contained"
-                color="primary"
-                onClick={handleLoginSubmit}
-                fullWidth
-                disabled={!isFormValid()}
-              >
-                Login
-              </Button>
-              <Box display={"flex"} mb={2}>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  sx={{ width: "70%", mb: 3 }}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleLoginSubmit}
+                  fullWidth
+                  disabled={!isFormValid()}
+                  onKeyDown={handleKeyDown}
+                >
+                  Login
+                </Button>
+              </Box>
+              <Box display={"flex"} justifyContent={"center"} mb={2}>
                 <Typography>
                   No Account?
                   <Link href="/register"> Register</Link>
                 </Typography>
               </Box>
-              <Link href="/">Forgot Password</Link>,
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Link href="/forgotpassword">Forgot Password</Link>,
+              </Box>
             </Box>
-          )}
-        </Grid>
-      </Box>
-    </>
+          </Grid>
+        </Box>
+      </Card>
+    </Container>
   );
 }

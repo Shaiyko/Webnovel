@@ -1,242 +1,173 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
 import {
   Box,
   Card,
-  CardContent,
-  Typography,
-  CssBaseline,
-  IconButton,
-  CardActionArea,
   CardMedia,
-  Divider,
+  Typography,
+  IconButton,
+  Link,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import axios from "axios";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { styled } from "@mui/system";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import { blueGrey } from '@mui/material/colors';
-
-const StyledCard = styled(Card)({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
+const Linknovel = styled(Link)({
+  textDecoration: "none",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "none",
+    color: "blue",
+  },
+  fontWeight: "bold",
 });
+const CustomArrow = ({ className, style, onClick, icon, position }) => (
+  <IconButton
+    className={className}
+    onClick={onClick}
+    style={{
+      ...style,
+      display: "block",
+      position: "absolute",
+      top: "50%",
+      transform: "translateY(-50%)",
+      zIndex: 2,
+      [position]: 0,
+    }}
+  >
+    {icon}
+  </IconButton>
+);
 
-const theme = createTheme();
+const EnlargedCard = styled(Card)(({ theme }) => ({
+  position: "relative",
+  transition: "transform 0.3s ease-in-out",
+}));
 
-function Slidernovel() {
-  const [novels, setNovels] = useState([]);
-  const [index, setIndex] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(2.5); // Initial value for medium screens
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchEndX, setTouchEndX] = useState(0);
-  const itemWidth = 300; // Set the width of each item in pixels
-  const containerRef = useRef(null);
+const OverlayText = styled(Box)(({ theme }) => ({
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  width: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  color: "#fff",
+  padding: theme.spacing(1),
+  textAlign: "center",
+  opacity: 0,
+  transition: "opacity 0.3s ease-in-out",
+}));
+const CustomButtonB = styled(Typography)({
+  color: "textSecondary",
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 2,
+  maxWidth: "100%",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  fontSize: "14px",
+});
+const Slidernovel = ({ dataTag }) => {
+  const itemsPerPage = 5;
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/novelallviewepslider")
-      .then((response) => {
-        const data = response.data;
-        if (Array.isArray(data) && data.length > 0) {
-          const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
-          setNovels(filteredData);
-        } else {
-          console.log("No user data found");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching novels:", error);
-      });
-  }, []);
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: itemsPerPage,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    nextArrow: <CustomArrow position="right" />,
+    prevArrow: <CustomArrow position="left" />,
 
-  useEffect(() => {
-    const updateItemsPerPage = () => {
-      const width = window.innerWidth;
-      if (width < 600) {
-        setItemsPerPage(0.8);
-      } else if (width < 1200) {
-        setItemsPerPage(2.5);
-      } else {
-        setItemsPerPage(3.5);
-      }
-    };
-
-    updateItemsPerPage();
-    window.addEventListener("resize", updateItemsPerPage);
-
-    return () => {
-      window.removeEventListener("resize", updateItemsPerPage);
-    };
-  }, []);
-
-  const maxIndex = Math.max(0, novels.length - itemsPerPage);
-
-  const handleNext = () => {
-    setIndex((prevIndex) => {
-      const newIndex = Math.min(prevIndex + 1, maxIndex);
-      return newIndex;
-    });
-  };
-
-  const handlePrevious = () => {
-    setIndex((prevIndex) => {
-      const newIndex = Math.max(prevIndex - 1, 0);
-      return newIndex;
-    });
-  };
-
-  const handleTouchStart = (e) => {
-    setTouchStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    setTouchEndX(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    const deltaX = touchStartX - touchEndX;
-    if (Math.abs(deltaX) > 50) {
-      // Adjust sensitivity as needed
-      if (deltaX > 0 && index < maxIndex) {
-        handleNext();
-      } else if (deltaX < 0 && index > 0) {
-        handlePrevious();
-      }
-    }
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          initialSlide: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box bgcolor={blueGrey[50]} sx={{ padding: "10px", position: "relative",mb:1 }}>
-        <Typography backgroundColor={blueGrey[200] } variant="h4" gutterBottom>
-          Novel New
-        </Typography>
-        <Box
-          ref={containerRef}
-          sx={{
-            display: "flex",
-            overflow: "hidden",
-            width: "100%",
-            position: "relative",
-            touchAction: "none", // Disable default touch actions for better control
-          }}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              transition: "transform 0.5s ease-out",
-              transform: `translateX(-${index * itemWidth}px)`,
-              width: `${novels.length * itemWidth}px`,
-            }}
-          >
-            {novels.map((novel) => (
-              <Card
-                key={novel.id_novel}
+    <Box
+      sx={{
+        m: 1,
+        width: "100%",
+        maxWidth: 1200,
+        mx: "auto",
+        my: 4,
+        position: "relative",
+        backgroundColor: "#e0e0e0",
+      }}
+    >
+      <Slider {...settings}>
+        {dataTag.map((item) => (
+          <Box key={item.id} px={1} sx={{ mx: "2px" }}>
+            <EnlargedCard
+              sx={{
+                m: 1,
+                transform: "scale(1)",
+                "&:hover": {
+                  transform: "scale(1.1)",
+                },
+                "&:hover .MuiBox-root": {
+                  opacity: 1,
+                },
+              }}
+            >
+              <CardMedia
+                component="img"
                 sx={{
-                  width: `${itemWidth}px`,
-                  margin: "0 10px",
-                  flexShrink: 0,
+                  width: { xs: 160, md: "100%" },
+                  height: { xs: 200, md: 270 },
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
-              >
-                <CardContent>
-                  <StyledCard>
-                    <CardActionArea href={`/novel/${novel.id_novel}`}>
-                      <CardMedia
-                        component="img"
-                        alt={novel.name_novel}
-                        height="150"
-                        image={novel.image_novel}
-                        title={novel.name_novel}
-                      />
-                      <Typography variant="h5" component="div">
-                        {novel.name_novel}
-                      </Typography>
-                    </CardActionArea>
-                    <Divider />
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-around" }}
-                    >
-                      <Typography variant="body2" color="text.secondary">
-                        {novel.penname}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        |
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {novel.name_type}
-                      </Typography>
-                    </Box>
-                    <Divider />
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-around" }}
-                    >
-                      <Typography p={1} variant="body2" color="text.secondary">
-                        {`${new Date(
-                          novel.updateep
-                        ).toLocaleDateString()}`}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        |
-                      </Typography>
-                      <Typography
-                        sx={{ display: "flex" }}
-                        variant="body2"
-                        color="text.secondary"
-                      >
-                        <MenuBookIcon />
-                        <Typography variant="body2" color={"red"}>
-                          {novel.epall}{" "}
-                        </Typography>
-                        Chapters
-                      </Typography>
-                    </Box>
-                  </StyledCard>
-                </CardContent>
-              </Card>
-            ))}
+                image={
+                  item.image_novel
+                    ? item.image_novel
+                    : `https://drive.google.com/thumbnail?id=1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd`
+                }
+                alt="Novel cover"
+              />
+              <OverlayText>
+                <Typography variant="h6">
+                  {" "}
+                  <Linknovel href={`/novel/${item.id_novel}`}>
+                    {item.name_novel}
+                  </Linknovel>
+                </Typography>
+                <CustomButtonB>{item.description}</CustomButtonB>
+              </OverlayText>
+            </EnlargedCard>
           </Box>
-        </Box>
-        <IconButton
-          onClick={handlePrevious}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "-20px",
-            zIndex: 1000,
-            transform: "translateY(-50%)",
-            visibility: index === 0 ? "hidden" : "visible", // Hide if at the start
-          }}
-        >
-          <ArrowBackIosNewIcon
-            sx={{ color: "white", backgroundColor: "gray" }}
-          />
-        </IconButton>
-        <IconButton
-          onClick={handleNext}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: "-20px",
-            zIndex: 1000,
-            transform: "translateY(-50%)",
-            visibility: index === maxIndex ? "hidden" : "visible", // Hide if at the end
-          }}
-        >
-          <ArrowForwardIosIcon
-            sx={{ color: "white", backgroundColor: "gray" }}
-          />
-        </IconButton>
-      </Box>
-    </ThemeProvider>
+        ))}
+      </Slider>
+    </Box>
   );
-}
+};
 
 export default Slidernovel;

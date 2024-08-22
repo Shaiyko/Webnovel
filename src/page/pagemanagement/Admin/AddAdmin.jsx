@@ -9,6 +9,13 @@ import {
   IconButton,
   Card,
   CardMedia,
+  DialogContent,
+  DialogTitle,
+  Dialog,
+  Alert,
+  DialogActions,
+  Divider,
+  Container,
 } from "@mui/material";
 import axios from "axios";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
@@ -29,6 +36,8 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
+import LoadingComponent from "../../../Loading";
+import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
 const currencies = [
   {
     value: "Male",
@@ -86,7 +95,7 @@ TextMaskCustomTel.propTypes = {
 export default function AddAdmin({ UserGet }) {
   //loading
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [notuser, setNotuser] = useState(false);
   //upload image
   const [image, setImage] = useState(null);
   const [fileimage, setFile] = useState(null);
@@ -146,15 +155,11 @@ export default function AddAdmin({ UserGet }) {
     formData.append("parentFile", parentFileId);
 
     try {
-      const response = await axios.post(
-        "https://uploadfile-api-huw0.onrender.com/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${apiupfile}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setAvatar(
         `https://drive.google.com/thumbnail?id=${response.data.fileId}`
@@ -168,7 +173,7 @@ export default function AddAdmin({ UserGet }) {
 
   const handleAddTag = async (fileId) => {
     axios
-      .post("http://localhost:5000/create/admin", {
+      .post(`${apinovel}/create/admin`, {
         f_name: namef,
         l_name: namel,
         gender: datagender,
@@ -183,7 +188,6 @@ export default function AddAdmin({ UserGet }) {
       })
 
       .then((response) => {
-       
         console.log("Add succeeded", response.data);
         Swal.fire({
           position: "top-end",
@@ -204,10 +208,43 @@ export default function AddAdmin({ UserGet }) {
         });
       });
   };
-
+  //ແກ້ແລ້ວ
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
+    axios
+      .get(`${apinovel}/login`)
+      .then((response) => {
+        const loggedInUser = response.data.find(
+          (user) => user.user_name === datauser
+        );
+
+        if (loggedInUser) {
+          console.log("ss");
+          setLoading(false);
+          setNotuser(true);
+          setOpenDialog(true);
+        } else {
+          handleSubmitfun();
+        }
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
+        console.error("Error Add in:", error);
+        setLoading(false);
+      });
+  };
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleDialogClose = () => {
+    setUserName("");
+    setOpenDialog(false);
+    setNotuser(false);
+  };
+  const handleSubmitfun = async () => {
     if (fileimage == null) {
       const fileId = "1TjKQYdbxvD-JKG3kpO5yVUZs-wJdJMNE";
       try {
@@ -215,7 +252,6 @@ export default function AddAdmin({ UserGet }) {
         Swal.close();
         handleClose();
       } catch (error) {
-        setError(error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -231,7 +267,6 @@ export default function AddAdmin({ UserGet }) {
         Swal.close();
         handleClose();
       } catch (error) {
-        setError(error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -242,7 +277,40 @@ export default function AddAdmin({ UserGet }) {
       }
     }
   };
-
+  if (notuser) {
+    return (
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Error</DialogTitle>
+        <DialogContent>
+          <Alert severity="error">{`This "User Name: ${datauser}" has been Already used`}</Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  } else if (loading) {
+    return (
+      <Container>
+        <Dialog
+          open={loading}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <LoadingComponent />
+          </DialogContent>
+        </Dialog>
+      </Container>
+    );
+  }
   // ตรวจสอบว่าข้อมูลครบถ้วนหรือไม่
   const isFormValid = () => {
     return (
@@ -262,226 +330,217 @@ export default function AddAdmin({ UserGet }) {
       <Button onClick={handleOpen}>
         <PersonAddAltIcon color="info" />
       </Button>
-      <Modal
-        open={open}
-        aria-labelledby="update-modal-title"
-        aria-describedby="update-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          {loading && <div className="loading">Loading...</div>}
-          {error && <p>Error: {error.message}</p>}
-          {!loading && !error && (
-            <>
-              <Typography
-                variant="h6"
-                id="update-modal-title"
-                gutterBottom
-                color={"black"}
-              >
-                Add Admin
-              </Typography>
+      <Dialog open={open} maxWidth="sm" fullWidth>
+        <DialogTitle id="update-modal-title" color={"black"}>
+          Add Admin
+        </DialogTitle>
+        <DialogContent>
+          <Box>
+            <Container>
+              <Card>
+                {!loading && (
+                  <>
+                    <Grid container spacing={0} sx={{ width: "100%", mb: -1 }}>
+                      <Grid xs={4}>
+                        <Card>
+                          <Button
+                            variant="contained"
+                            component="label"
+                            sx={{ mb: 2 }}
+                          >
+                            {image ? (
+                              <CardMedia
+                                component="img"
+                                image={image}
+                                alt="Uploaded Image"
+                              />
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  height: 200,
+                                  bgcolor: "#f0f0f0",
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                  variant="subtitle1"
+                                  color="textSecondary"
+                                >
+                                  <PortraitIcon sx={{ fontSize: 100 }} /> No
+                                  image
+                                </Typography>
+                              </Box>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              hidden
+                              onChange={handleImageChange}
+                            />
+                          </Button>
+                        </Card>
+                      </Grid>
+                      <Grid xs={8}>
+                        <TextField
+                          sx={{ marginLeft: 2 }}
+                          fullWidth
+                          label="First Name"
+                          value={namef}
+                          onChange={(e) => setNameF(e.target.value)}
+                          variant="outlined"
+                          margin="normal"
+                        />
+                        <TextField
+                          sx={{ marginLeft: 2 }}
+                          fullWidth
+                          label="Last Name"
+                          value={namel}
+                          onChange={(e) => setNameL(e.target.value)}
+                          variant="outlined"
+                          margin="normal"
+                        />
+                      </Grid>
+                    </Grid>
+                    <TextField
+                      fullWidth
+                      id="outlined-select-currency"
+                      select
+                      label={datagender}
+                      helperText="Please select your Gender"
+                      onChange={(e) => setGender(e.target.value)}
+                    >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label} {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <FormControl variant="standard">
+                      <InputLabel htmlFor="formatted-text-mask-input">
+                        Date of Birth
+                      </InputLabel>
+                      <Input
+                        value={data_date_of_birth}
+                        onChange={handleChangeDate}
+                        name="textmask"
+                        id="formatted-text-mask-input"
+                        inputComponent={TextMaskCustom}
+                      />
+                    </FormControl>
+                    <FormControl variant="standard">
+                      <InputLabel htmlFor="formatted-text-mask-input-tel">
+                        Phone (laos)
+                      </InputLabel>
+                      <Input
+                        value={datatel}
+                        onChange={handleChangeTel}
+                        name="textmask"
+                        id="formatted-text-mask-input-tel"
+                        inputComponent={TextMaskCustomTel}
+                      />
+                    </FormControl>
+                    <TextField
+                      fullWidth
+                      label="Address"
+                      value={dataaddress}
+                      onChange={(e) => setAddress(e.target.value)}
+                      variant="outlined"
+                      margin="normal"
+                    />
 
-              <Grid container spacing={0} sx={{ width: "100%", mb: -1 }}>
-                <Grid xs={4}>
-                  <Card>
+                    <FormControl fullWidth sx={{ mb: 1 }}>
+                      <InputLabel htmlFor="input-with-icon-adornment">
+                        UserName
+                      </InputLabel>
+                      <Input
+                        id="input-with-icon-adornment"
+                        value={datauser}
+                        onChange={(e) => setUserName(e.target.value)}
+                        startAdornment={
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <FormControl fullWidth sx={{ mb: 1 }}>
+                      <InputLabel htmlFor="input-with-icon-adornment-email">
+                        Gmail
+                      </InputLabel>
+                      <Input
+                        id="input-with-icon-adornment-email"
+                        value={datagmail}
+                        onChange={(e) => setGmail(e.target.value)}
+                        startAdornment={
+                          <InputAdornment position="start">
+                            <MailOutlineIcon />
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <FormControl fullWidth variant="standard">
+                      <InputLabel htmlFor="standard-adornment-password">
+                        Password
+                      </InputLabel>
+                      <Input
+                        id="standard-adornment-password"
+                        type={showPassword ? "text" : "password"}
+                        value={datapass}
+                        onChange={(e) => setPass(e.target.value)}
+                        startAdornment={
+                          <InputAdornment position="start">
+                            <KeyIcon />
+                          </InputAdornment>
+                        }
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
                     <Button
                       variant="contained"
-                      component="label"
-                      sx={{ mb: 2 }}
+                      onClick={handleSubmit}
+                      color="info"
+                      sx={{ mt: 3 }}
+                      fullWidth
+                      disabled={!isFormValid()}
                     >
-                      {image ? (
-                        <CardMedia
-                          component="img"
-                          image={image}
-                          alt="Uploaded Image"
-                        />
-                      ) : (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: 200,
-                            bgcolor: "#f0f0f0",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                            variant="subtitle1"
-                            color="textSecondary"
-                          >
-                            <PortraitIcon sx={{ fontSize: 100 }} /> No image
-                          </Typography>
-                        </Box>
-                      )}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={handleImageChange}
-                      />
+                      Add Admin
                     </Button>
-                  </Card>
-                </Grid>
-                <Grid xs={8}>
-                  <TextField
-                    fullWidth
-                    label="First Name"
-                    value={namef}
-                    onChange={(e) => setNameF(e.target.value)}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    value={namel}
-                    onChange={(e) => setNameL(e.target.value)}
-                    variant="outlined"
-                    margin="normal"
-                  />
-                </Grid>
-              </Grid>
-              <TextField
-                fullWidth
-                id="outlined-select-currency"
-                select
-                label="Select Gender"
-                helperText="Please select your Gender"
-                onChange={(e) => setGender(e.target.value)}
-              >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <FormControl variant="standard">
-                <InputLabel htmlFor="formatted-text-mask-input">
-                  Date of Birth
-                </InputLabel>
-                <Input
-                  value={data_date_of_birth.textmask}
-                  onChange={handleChangeDate}
-                  name="textmask"
-                  id="formatted-text-mask-input"
-                  inputComponent={TextMaskCustom}
-                />
-              </FormControl>
-              <FormControl variant="standard">
-                <InputLabel htmlFor="formatted-text-mask-input-tel">
-                  Phone (laos)
-                </InputLabel>
-                <Input
-                  value={datatel.textmask}
-                  onChange={handleChangeTel}
-                  name="textmask"
-                  id="formatted-text-mask-input-tel"
-                  inputComponent={TextMaskCustomTel}
-                />
-              </FormControl>
-              <TextField
-                fullWidth
-                label="Address"
-                value={dataaddress}
-                onChange={(e) => setAddress(e.target.value)}
-                variant="outlined"
-                margin="normal"
-              />
-
-              <FormControl fullWidth sx={{ mb: 1 }}>
-                <InputLabel htmlFor="input-with-icon-adornment">
-                  UserName
-                </InputLabel>
-                <Input
-                  id="input-with-icon-adornment"
-                  value={datauser}
-                  onChange={(e) => setUserName(e.target.value)}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <AccountCircle />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 1 }}>
-                <InputLabel htmlFor="input-with-icon-adornment-email">
-                  Gmail
-                </InputLabel>
-                <Input
-                  id="input-with-icon-adornment-email"
-                  value={datagmail}
-                  onChange={(e) => setGmail(e.target.value)}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <MailOutlineIcon />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-              <FormControl fullWidth variant="standard">
-                <InputLabel htmlFor="standard-adornment-password">
-                  Password
-                </InputLabel>
-                <Input
-                  id="standard-adornment-password"
-                  type={showPassword ? "text" : "password"}
-                  value={datapass}
-                  onChange={(e) => setPass(e.target.value)}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <KeyIcon />
-                    </InputAdornment>
-                  }
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                color="info"
-                sx={{ mt: 3 }}
-                fullWidth
-                disabled={!isFormValid()}
-              >
-                Add Admin
-              </Button>
-              <Button
-                onClick={handleClose}
-                variant="contained"
-                color="error"
-                fullWidth
-              >
-                Cancel
-              </Button>
-            </>
-          )}
-        </Box>
-      </Modal>
+                    <Button
+                      sx={{ mt: 1, md: 2 }}
+                      onClick={handleClose}
+                      variant="contained"
+                      color="error"
+                      fullWidth
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </Card>
+            </Container>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

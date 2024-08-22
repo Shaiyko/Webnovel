@@ -7,9 +7,11 @@ import {
   IconButton,
   Select,
   Divider,
+  Link,
+  Container,
+  Card,
 } from "@mui/material";
 import axios from "axios";
-import Swal from "sweetalert2";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
@@ -23,8 +25,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
-import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import LoadingComponent from "../../Loading";
+import { apinovel } from "../../URL_API/Apinovels";
 const currencies = [
   {
     value: "Male",
@@ -37,7 +40,6 @@ const currencies = [
 ];
 // eslint-disable-next-line react/prop-types
 export default function Register() {
-  const navigate = useNavigate();
   //
   const [maxIdType, setMaxIdType] = useState(0);
   //loading
@@ -65,38 +67,65 @@ export default function Register() {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => event.preventDefault();
+  useEffect(() => {
+    handleGetUpdate();
+  }, []);
+  const handleAdd = async () => {
+    if (maxIdType) {
+      axios
+        .get(`${apinovel}/login`)
+        .then((response) => {
+          const loggedInUser = response.data.find(
+            (user) => user.user_name === datauser
+          );
 
-  const handleAddTag = async () => {
-    axios
-      .post("http://localhost:5000/create/user", {
-        id_user: maxIdType + 1,
-        user_name: datauser,
-        gender: datagender,
-        gmail: datagmail,
-        password: datapass,
-        year: selectedYear,
-        status: datastatus,
-      })
-      .then((response) => {
-        console.log("Add succeeded", response.data);
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Tag has been added",
-          showConfirmButton: false,
-          timer: 1500,
+          if (loggedInUser) {
+            setLoading(false);
+            Swal.fire(`This "User Name: ${datauser}" has been Already used`);
+          } else {
+            axios
+              .post(`${apinovel}/create/user`, {
+                id_user: maxIdType + 1,
+                user_name: datauser,
+                gender: datagender,
+                gmail: datagmail,
+                password: datapass,
+                year: selectedYear,
+                status: datastatus,
+              })
+              .then((response) => {
+                console.log("Add succeeded", response.data);
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Tag has been added",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                setLoading(false);
+                window.location.href = "/login";
+              })
+              .catch((error) => {
+                console.error("Error registering:", error);
+                setLoading(false);
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Something went wrong!",
+                });
+              });
+          }
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.message,
+          });
+          console.error("Error logging in:", error);
+          setLoading(false);
         });
-
-        navigate("/login");
-      })
-      .catch((error) => {
-        console.error("Error registering:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Something went wrong!",
-        });
-      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -104,8 +133,9 @@ export default function Register() {
     setError(null);
 
     try {
-      await handleAddTag();
+      await handleAdd();
       Swal.close();
+      setLoading(true);
     } catch (error) {
       setError(error);
       Swal.fire({
@@ -124,7 +154,7 @@ export default function Register() {
   };
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/view/user`)
+      .get(`${apinovel}/view/user`)
       .then((response) => {
         const data = response.data;
         if (data.length > 0) {
@@ -139,25 +169,12 @@ export default function Register() {
       });
   };
 
-  useEffect(() => {
-    handleGetUpdate();
-  }, []);
   return (
-    <div>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "70%",
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        {error && <p>Error: {error.message}</p>}
-        {loading && (
+    <Container>
+      <Card>
+        <Box sx={{ p: 5 }}>
+          {error && <p>Error: {error.message}</p>}
+
           <Box
             sx={{
               display: "flex",
@@ -173,10 +190,9 @@ export default function Register() {
               bgcolor: "background.paper",
             }}
           >
-            <LoadingComponent />
+            <LoadingComponent loading={loading} />
           </Box>
-        )}
-        {!loading && (
+
           <>
             <Typography
               variant="h6"
@@ -184,8 +200,8 @@ export default function Register() {
               gutterBottom
               color={"black"}
             >
-             Register
-             <Divider />
+              Register
+              <Divider />
             </Typography>
 
             <Grid container spacing={0} sx={{ width: "100%", mb: -1 }}>
@@ -248,22 +264,23 @@ export default function Register() {
                     }
                   />
                 </FormControl>
+
                 <TextField
-                  sx={{ marginTop: 2 }}
+                  sx={{ mt: 2 }}
                   fullWidth
                   id="outlined-select-currency"
                   select
-                  label="Select Gender"
+                  label={datagender}
                   helperText="Please select your Gender"
                   onChange={(e) => setGender(e.target.value)}
                 >
                   {currencies.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                      {option.label} {option.value}
                     </MenuItem>
                   ))}
                 </TextField>
-                <FormControl fullWidth>
+                <FormControl sx={{ mt: 2 }} fullWidth>
                   <InputLabel id="year-label">Select Year</InputLabel>
                   <Select
                     labelId="year-label"
@@ -291,9 +308,14 @@ export default function Register() {
             >
               Add Admin
             </Button>
+            <Box display={"flex"} justifyContent={"center"} mt={2}>
+              <Typography>
+                <Link href="/login"> Login</Link>
+              </Typography>
+            </Box>
           </>
-        )}
-      </Box>
-    </div>
+        </Box>
+      </Card>
+    </Container>
   );
 }

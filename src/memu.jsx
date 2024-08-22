@@ -27,16 +27,16 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import TagIcon from "@mui/icons-material/Tag";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
-import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
+import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import ImportExportIcon from '@mui/icons-material/ImportExport';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import PreviewIcon from '@mui/icons-material/Preview';
-import SourceIcon from '@mui/icons-material/Source';
-export default function TemporaryDrawer({dataopen}) {
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import ImportExportIcon from "@mui/icons-material/ImportExport";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import PreviewIcon from "@mui/icons-material/Preview";
+import SourceIcon from "@mui/icons-material/Source";
+export default function TemporaryDrawer({ dataopen }) {
   const [openMD, setOpenM] = React.useState(false);
   const handleClickMD = () => {
     setOpenM(!openMD);
@@ -54,8 +54,8 @@ export default function TemporaryDrawer({dataopen}) {
   const loggedInUserP = JSON.parse(localStorage.getItem("userP"));
   const loggedInAuthor = JSON.parse(localStorage.getItem("author"));
   const [open, setOpen] = useState(false);
-  
- console.log("User",loggedInUser);
+
+  console.log("User", loggedInUser);
   const handleSignIn = (event) => {
     event.stopPropagation();
     setOpen(false);
@@ -74,7 +74,10 @@ export default function TemporaryDrawer({dataopen}) {
   let menulist = null;
   if (loggedInUser && loggedInUser.status === "user") {
     menulist = (
-      <Box sx={{ width: 300 }} role="presentation">
+      <Box
+        sx={{ width: 300, backgroundColor: "#fafafa", height: "100ch" }}
+        role="presentation"
+      >
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
           {loggedInUserP && (
             <Avatar sx={{ bgcolor: deepOrange[500], marginLeft: 2 }}>
@@ -87,12 +90,13 @@ export default function TemporaryDrawer({dataopen}) {
             </Typography>
           )}
         </Box>
+        <Divider />
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
           <ListItemButton href="/profile" onClick={handleItemClick}>
             <AccountCircle />
             Profile
           </ListItemButton>
-          <ListItemButton href="/my-bookshelf" onClick={handleItemClick}>
+          <ListItemButton onClick={handleItemClick}>
             <Logout />
           </ListItemButton>
         </Box>
@@ -128,7 +132,10 @@ export default function TemporaryDrawer({dataopen}) {
     );
   } else if (loggedInUser && loggedInUser.status === "admin") {
     menulist = (
-      <Box sx={{ width: 300 }} role="presentation">
+      <Box
+        sx={{ width: 300, backgroundColor: "#fafafa", height: "100ch" }}
+        role="presentation"
+      >
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
           {loggedInAdmin && (
             <Avatar sx={{ bgcolor: blue[500], marginLeft: 2 }}>
@@ -141,14 +148,10 @@ export default function TemporaryDrawer({dataopen}) {
             </Typography>
           )}
         </Box>
+        <Divider />
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-          <ListItemButton href="/profile" onClick={handleItemClick}>
-            <AccountCircle />
-            Profile
-          </ListItemButton>
-          <ListItemButton href="/profile" onClick={handleItemClick}>
+         
             <Logout />
-          </ListItemButton>
         </Box>
 
         <Divider />
@@ -198,7 +201,7 @@ export default function TemporaryDrawer({dataopen}) {
               onClick={handleItemClick}
             >
               <ListItemIcon>
-                <SourceIcon  />
+                <SourceIcon />
               </ListItemIcon>
               <ListItemText primary="Manage Suggestions" />
             </ListItemButton>
@@ -215,7 +218,7 @@ export default function TemporaryDrawer({dataopen}) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/manage/tnovel/1"}
+              href={"/manage/tnovel"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -249,7 +252,7 @@ export default function TemporaryDrawer({dataopen}) {
         {/*Data Report ************************************************************************************************************************* */}
         <ListItemButton onClick={handleClickRN}>
           <ListItemIcon>
-            <ImportExportIcon  />
+            <ImportExportIcon />
           </ListItemIcon>
           <ListItemText primary="Report" />
           {openRN ? <ExpandLess /> : <ExpandMore />}
@@ -262,7 +265,7 @@ export default function TemporaryDrawer({dataopen}) {
               onClick={handleItemClick}
             >
               <ListItemIcon>
-                <ReceiptLongIcon  />
+                <ReceiptLongIcon />
               </ListItemIcon>
               <ListItemText primary="Report Novels" />
             </ListItemButton>
@@ -272,7 +275,7 @@ export default function TemporaryDrawer({dataopen}) {
               onClick={handleItemClick}
             >
               <ListItemIcon>
-                <AssignmentIndIcon  />
+                <AssignmentIndIcon />
               </ListItemIcon>
               <ListItemText primary="Report Authors" />
             </ListItemButton>
@@ -282,7 +285,7 @@ export default function TemporaryDrawer({dataopen}) {
               onClick={handleItemClick}
             >
               <ListItemIcon>
-                <AccountBoxIcon  />
+                <AccountBoxIcon />
               </ListItemIcon>
               <ListItemText primary="Report Users" />
             </ListItemButton>
@@ -292,7 +295,7 @@ export default function TemporaryDrawer({dataopen}) {
               onClick={handleItemClick}
             >
               <ListItemIcon>
-                <AssignmentIcon   />
+                <AssignmentIcon />
               </ListItemIcon>
               <ListItemText primary="Report Suggestions" />
             </ListItemButton>
@@ -302,7 +305,7 @@ export default function TemporaryDrawer({dataopen}) {
               onClick={handleItemClick}
             >
               <ListItemIcon>
-                <PreviewIcon  />
+                <PreviewIcon />
               </ListItemIcon>
               <ListItemText primary="Report Reading" />
             </ListItemButton>
@@ -333,7 +336,10 @@ export default function TemporaryDrawer({dataopen}) {
     );
   } else if (loggedInUser && loggedInUser.status === "author") {
     menulist = (
-      <Box sx={{ width: 300 }} role="presentation">
+      <Box
+        sx={{ width: 300, backgroundColor: "#fafafa", height: "100ch" }}
+        role="presentation"
+      >
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
           {loggedInAuthor && (
             <Avatar sx={{ bgcolor: red[500], marginLeft: 2 }}>
@@ -346,6 +352,7 @@ export default function TemporaryDrawer({dataopen}) {
             </Typography>
           )}
         </Box>
+        <Divider />
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
           <ListItemButton href="/profile" onClick={handleItemClick}>
             <AccountCircle />
@@ -404,7 +411,10 @@ export default function TemporaryDrawer({dataopen}) {
     );
   } else if (!loggedInUser) {
     menulist = (
-      <Box sx={{ width: 280 }} role="presentation">
+      <Box
+        sx={{ width: 300, backgroundColor: "#fafafa", height: "100ch" }}
+        role="presentation"
+      >
         <List>
           <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
             <AccountCircle sx={{ width: 250 }} />
@@ -451,7 +461,7 @@ export default function TemporaryDrawer({dataopen}) {
   console.log("User page ", loggedInUserP);
   console.log("Author page ", loggedInAuthor);
   return (
-    <div>
+    <Box>
       <IconButton
         size="large"
         edge="start"
@@ -465,6 +475,6 @@ export default function TemporaryDrawer({dataopen}) {
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {menulist}
       </Drawer>
-    </div>
+    </Box>
   );
 }

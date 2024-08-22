@@ -20,7 +20,6 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import KeyIcon from "@mui/icons-material/Key";
 import { IMaskInput } from "react-imask";
 import PropTypes from "prop-types";
-import Grid from "@mui/material/Grid";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import FemaleIcon from "@mui/icons-material/Female";
@@ -28,7 +27,8 @@ import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 const currencies = [
   {
@@ -67,8 +67,6 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
-  const [image, setImage] = useState(null);
-  const [fileimage, setFile] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [parentFileId, setParentFileId] = useState(
     "19Wkip54OAhwbxlXedFHIRTOOU-wzOD3w"
@@ -77,7 +75,6 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
   const [datauser, setUserName] = useState("");
   const [datagmail, setGmail] = useState("");
   const [datapass, setPass] = useState("");
-  const [dataavatar, setAvatar] = useState("");
   const datastatus = "user";
   const [showPassword, setShowPassword] = useState(false);
   const [datayear, setYear] = useState("");
@@ -92,47 +89,11 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
     UserGet();
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setFile(file);
-    if (file) {
-      setImage(URL.createObjectURL(file));
-    }
-  };
 
-  const [dataAdmin, setDataTag] = useState();
 
-  const handleUpload = async () => {
-    const formData = new FormData();
-    formData.append("file", fileimage);
-    formData.append("name", datauser);
-    formData.append("parentFile", parentFileId);
-
-    try {
-      const response = await axios.post(
-        "https://uploadfile-api-huw0.onrender.com/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setAvatar(
-        `https://drive.google.com/thumbnail?id=${response.data.fileId}`
-      );
-      return response.data.fileId;
-    } catch (error) {
-      setAvatar(`Error uploading file: ${error.message}`);
-      throw error;
-    }
-  };
-
-  const handleAddTag = async (fileId) => {
+  const handleAddTag = async () => {
     axios
-      .put(`http://localhost:5000/update/user/${selected[0]}`, {
-        avatar: `https://drive.google.com/thumbnail?id=${fileId}`,
+      .put(`${apinovel}/update/user/${selected[0]}`, {
         gender: datagender,
         user_name: datauser,
         gmail: datagmail,
@@ -145,40 +106,7 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: "Admin has been updated",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-
-        UserGet();
-      })
-      .catch((error) => {
-        console.error("Error updating:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Something went wrong!",
-        });
-      });
-  };
-
-  const handleAddAdmin2 = async (avatar) => {
-    axios
-      .put(`http://localhost:5000/update/user/${selected[0]}`, {
-        gender: datagender,
-        user_name: datauser,
-        gmail: datagmail,
-        password: datapass,
-        status: datastatus,
-        year: datayear,
-        avatar: avatar,
-      })
-      .then((response) => {
-        console.log("Update succeeded", response.data);
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Admin has been updated",
+          title: "User has been updated",
           showConfirmButton: false,
           timer: 1500,
         });
@@ -197,15 +125,13 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
 
   const handleGetUpdate = () => {
     axios
-      .get(`http://localhost:5000/view/user/${selected[0]}`)
+      .get(`${apinovel}/view/user/${selected[0]}`)
       .then((response) => {
         const data = response.data[0];
-        setDataTag(data);
         setGender(data.gender);
         setUserName(data.user_name);
         setGmail(data.gmail);
         setPass(data.password);
-        setAvatar(data.avatar);
         setYear(data.year);
       })
       .catch((error) => {
@@ -223,38 +149,20 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
   const handleSubmit = async () => {
     setLoading(true);
     setError(null);
-    if (fileimage == null) {
-      const avatar = dataAdmin.avatar;
-      try {
-        await handleAddAdmin2(avatar);
-        Swal.close();
-        handleClose();
-      } catch (error) {
-        setError(error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: error.message,
-        });
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      try {
-        const fileId = await handleUpload();
-        await handleAddTag(fileId);
-        Swal.close();
-        handleClose();
-      } catch (error) {
-        setError(error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: error.message,
-        });
-      } finally {
-        setLoading(false);
-      }
+
+    try {
+      await handleAddTag();
+      Swal.close();
+      handleClose();
+    } catch (error) {
+      setError(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -283,7 +191,7 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
             right: "30%",
             width: 600,
             overflow: "auto",
-            height: 700,
+            height: 400,
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
@@ -365,7 +273,7 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
           </Box>
           <br />
           <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <CalendarMonthIcon 
+            <CalendarMonthIcon
               sx={{ color: "action.active", mr: 1, my: 0.5 }}
             />
             <TextField
@@ -376,34 +284,6 @@ export default function UpdateUser({ selected, setSelected, UserGet }) {
               variant="standard"
               onChange={(event) => setYear(event.target.value)}
             />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Grid>
-              <Card>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  component="label"
-                >
-                  <CardMedia
-                    component="img"
-                    height="300"
-                    image={image ? image : dataavatar}
-                    alt="Profile Picture"
-                    sx={{ objectFit: "contain" }}
-                  />
-
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </Button>
-              </Card>
-            </Grid>
           </Box>
           <br />
           <Box

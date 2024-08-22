@@ -1,7 +1,13 @@
 // eslint-disable-next-line no-unused-vars
-import { Button } from "@mui/material";
+import { Login, Logout } from "@mui/icons-material";
+import {
+  Button,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 // eslint-disable-next-line no-unused-vars
-import React from "react"; 
+import React from "react";
 
 function Logoutpage() {
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -16,23 +22,22 @@ function Logoutpage() {
   };
   if (!loggedInUser) {
     return (
-      <Button
-        onClick={handleLogout}
-        style={{ backgroundColor: "blue", width: 100, color: "white" }}
-      >
-        Login
-      </Button>
+      <ListItemButton onClick={handleLogout}>
+      <ListItemIcon>
+        <Login  />
+      </ListItemIcon>
+      <ListItemText primary="Login" />
+    </ListItemButton>
     );
   } else if (loggedInUser) {
     return (
       <>
-        
-        <Button
-          onClick={handleLogout}
-          style={{ backgroundColor: "red", width: 100, color: "white" }}
-        >
-          Loguot
-        </Button>
+        <ListItemButton onClick={handleLogout}>
+          <ListItemIcon>
+            <Logout />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItemButton>
       </>
     );
   }

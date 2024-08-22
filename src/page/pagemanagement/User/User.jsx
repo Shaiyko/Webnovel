@@ -28,6 +28,7 @@ import ViewAdmin from "./ViewUser";
 import ExportViewAdmin from "./ExportUser";
 import AddUser from "./Adduser";
 import UpdateUser from "./UpdateUser";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -170,7 +171,7 @@ function EnhancedTableToolbar(props) {
   const DeleteTag = async () => {
     try {
       const response = await axios.delete(
-        "http://localhost:5000/delete/user",
+        `${apinovel}/delete/user`,
         {
           data: {
             id_user: selected,
@@ -221,7 +222,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          User Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -310,7 +318,7 @@ export default function TableUse() {
 
   const UserGet = () => {
     axios
-      .get("http://localhost:5000/view/user")
+      .get(`${apinovel}/view/user`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {

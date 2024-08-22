@@ -20,7 +20,10 @@ import {
   TablePagination,
   FormControlLabel,
   Checkbox,
+  Card,
 } from "@mui/material";
+import { apinovel } from "../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
 
 const NovelReport = () => {
   const [novels, setNovels] = useState([]);
@@ -56,7 +59,7 @@ const NovelReport = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/reportnovel", {
+      const response = await axios.get(`${apinovel}/reportnovel`, {
         params: {
           startDate,
           endDate,
@@ -92,8 +95,20 @@ const NovelReport = () => {
   };
 
   const handleExport = () => {
+    const result = Swal.fire({
+      title: "Are you sure?",
+      text: "You export data?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Export it!",
+    });
+
+    if (result.isConfirmed) {
     const allDataFlag = includeAllData ? 1 : 0;
-    window.location.href = `http://localhost:5000/exportnovel?startDate=${startDate}&endDate=${endDate}&type=${type}&uploadStatus=${uploadStatus}&statusn=${statusn}&pennameSearch=${pennameSearch}&nameNovelSearch=${nameNovelSearch}&includeAllData=${allDataFlag}`;
+    window.location.href = `${apinovel}/exportnovel?startDate=${startDate}&endDate=${endDate}&type=${type}&uploadStatus=${uploadStatus}&statusn=${statusn}&pennameSearch=${pennameSearch}&nameNovelSearch=${nameNovelSearch}&includeAllData=${allDataFlag}`;
+    }
   };
 
   const handleClear = () => {
@@ -114,7 +129,9 @@ const NovelReport = () => {
     setPage(0);
   };
   return (
-    <Container>
+    <Box p={3} boxShadow={10}>
+          <Card sx={{ mb: 1 }}>
+          <Typography alignContent={"center"} display={"flex"} justifyContent={"center"} variant="h5">Report Novel Data</Typography>
       <Box
         sx={{
           display: "flex",
@@ -311,7 +328,8 @@ const NovelReport = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
-    </Container>
+      </Card>
+    </Box>
   );
 };
 

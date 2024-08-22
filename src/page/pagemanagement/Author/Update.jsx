@@ -8,6 +8,9 @@ import {
   IconButton,
   Card,
   CardMedia,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import axios from "axios";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
@@ -29,6 +32,7 @@ import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
+import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
 
 const currencies = [
   {
@@ -102,7 +106,7 @@ export default function UpdateAuthor({ selected, setSelected, UserGet }) {
   const [datagmail, setGmail] = useState("");
   const [datapass, setPass] = useState("");
   const [dataavatar, setAvatar] = useState("");
-  const datastatus = "admin";
+  const datastatus = "author";
   const [showPassword, setShowPassword] = useState(false);
   const [data_date_of_birth, setDate_of_birth] = useState("");
   const [datacontact_channels, setContact_channels] = useState("");
@@ -135,15 +139,11 @@ export default function UpdateAuthor({ selected, setSelected, UserGet }) {
     formData.append("parentFile", parentFileId);
 
     try {
-      const response = await axios.post(
-        "https://uploadfile-api-huw0.onrender.com/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${apiupfile}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setAvatar(
         `https://drive.google.com/thumbnail?id=${response.data.fileId}`
@@ -157,7 +157,7 @@ export default function UpdateAuthor({ selected, setSelected, UserGet }) {
 
   const handleAddTag = async (fileId) => {
     axios
-      .put(`http://localhost:5000/update/author/${selected[0]}`, {
+      .put(`${apinovel}/update/author/${selected[0]}`, {
         realname: datarelname,
         penname: datapenname,
         gender: datagender,
@@ -194,7 +194,7 @@ export default function UpdateAuthor({ selected, setSelected, UserGet }) {
 
   const handleAddAdmin2 = async (avatar) => {
     axios
-      .put(`http://localhost:5000/update/author/${selected[0]}`, {
+      .put(`${apinovel}/update/author/${selected[0]}`, {
         realname: datarelname,
         penname: datapenname,
         gender: datagender,
@@ -231,7 +231,7 @@ export default function UpdateAuthor({ selected, setSelected, UserGet }) {
 
   const handleGetUpdate = () => {
     axios
-      .get(`http://localhost:5000/view/author/${selected[0]}`)
+      .get(`${apinovel}/view/author/${selected[0]}`)
       .then((response) => {
         const data = response.data[0];
         setDataTag(data);
@@ -308,226 +308,215 @@ export default function UpdateAuthor({ selected, setSelected, UserGet }) {
         <PersonAddAltIcon sx={{ mr: 1 }} />
         Update Author
       </Button>
-      <Modal
-        open={open}
-        aria-labelledby="parent-modal-title"
-        aria-describedby="parent-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "5%",
-            left: "30%",
-            right: "30%",
-            width: 600,
-            overflow: "auto",
-            height: 700,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            pt: 2,
-            px: 4,
-            pb: 3,
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={datarelname}
-              label="First Name"
-              variant="standard"
-              onChange={(event) => setRname(event.target.value)}
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={datapenname}
-              label="Last Name"
-              variant="standard"
-              onChange={(event) => setPname(event.target.value)}
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="formatted-text-mask-input">
-                Date of birth
-              </InputLabel>
-              <Input
-                value={data_date_of_birth}
-                onChange={handleChangeDate}
-                name="textmask"
-                id="formatted-text-mask-input"
-                inputComponent={TextMaskCustom}
+      <Dialog open={open} maxWidth="sm" fullWidth>
+        <DialogTitle id="update-modal-title" color={"black"}>
+          Update Author
+        </DialogTitle>
+        <DialogContent>
+          <Box>
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <TextField
+                required
+                fullWidth
+                value={datarelname}
+                label="First Name"
+                variant="standard"
+                onChange={(event) => setRname(event.target.value)}
               />
-            </FormControl>
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <PortraitIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              id="standard-select-currency"
-              select
-              fullWidth
-              label="Gender"
-              value={datagender}
-              onChange={(event) => setGender(event.target.value)}
-              variant="standard"
-            >
-              {currencies.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                  {option.value}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-          <br />
-
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <MailOutlineIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={dataaddress}
-              label="Address"
-              variant="standard"
-              onChange={(event) => setAddress(event.target.value)}
-            />
-          </Box>
-          <br />
-
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <TextField
-              fullWidth
-              label="Contact Channels"
-              helperText="Please enter phone number,email,link. Contact Channels"
-              value={datacontact_channels}
-              onChange={(e) => setContact_channels(e.target.value)}
-              variant="outlined"
-              margin="normal"
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <SecurityUpdateIcon
-              sx={{ color: "action.active", mr: 1, my: 0.5 }}
-            />
-            <TextField
-              required
-              fullWidth
-              value={datauser}
-              label="Username"
-              variant="standard"
-              onChange={(event) => setUserName(event.target.value)}
-            />
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <KeyIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <FormControl fullWidth variant="standard">
-              <InputLabel htmlFor="standard-adornment-password">
-                Password
-              </InputLabel>
-              <Input
-                id="standard-adornment-password"
-                type={showPassword ? "text" : "password"}
-                value={datapass}
-                onChange={(event) => setPass(event.target.value)}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <TextField
+                required
+                fullWidth
+                value={datapenname}
+                label="Last Name"
+                variant="standard"
+                onChange={(event) => setPname(event.target.value)}
               />
-            </FormControl>
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <MailOutlineIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={datagmail}
-              label="Gmail"
-              variant="standard"
-              onChange={(event) => setGmail(event.target.value)}
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Grid>
-              <Card>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  component="label"
-                >
-                  <CardMedia
-                    component="img"
-                    height="300"
-                    image={image ? image : dataavatar}
-                    alt="Profile Picture"
-                    sx={{ objectFit: "contain" }}
-                  />
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="formatted-text-mask-input">
+                  Date of birth
+                </InputLabel>
+                <Input
+                  value={data_date_of_birth}
+                  onChange={handleChangeDate}
+                  name="textmask"
+                  id="formatted-text-mask-input"
+                  inputComponent={TextMaskCustom}
+                />
+              </FormControl>
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <PortraitIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <TextField
+                id="standard-select-currency"
+                select
+                fullWidth
+                label="Gender"
+                value={datagender}
+                onChange={(event) => setGender(event.target.value)}
+                variant="standard"
+              >
+                {currencies.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                    {option.value}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+            <br />
 
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </Button>
-              </Card>
-            </Grid>
-          </Box>
-          <br />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-evenly",
-              mb: 5,
-            }}
-          >
-            <Button
-              sx={{ fontSize: "16px" }}
-              size="small"
-              color="success"
-              variant="contained"
-              onClick={handleSubmit}
-              disabled={loading}
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <MailOutlineIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                required
+                fullWidth
+                value={dataaddress}
+                label="Address"
+                variant="standard"
+                onChange={(event) => setAddress(event.target.value)}
+              />
+            </Box>
+            <br />
+
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <TextField
+                fullWidth
+                label="Contact Channels"
+                helperText="Please enter phone number,email,link. Contact Channels"
+                value={datacontact_channels}
+                onChange={(e) => setContact_channels(e.target.value)}
+                variant="outlined"
+                margin="normal"
+              />
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <SecurityUpdateIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                required
+                fullWidth
+                value={datauser}
+                label="Username"
+                variant="standard"
+                onChange={(event) => setUserName(event.target.value)}
+              />
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <KeyIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <FormControl fullWidth variant="standard">
+                <InputLabel htmlFor="standard-adornment-password">
+                  Password
+                </InputLabel>
+                <Input
+                  id="standard-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  value={datapass}
+                  onChange={(event) => setPass(event.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <MailOutlineIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                required
+                fullWidth
+                value={datagmail}
+                label="Gmail"
+                variant="standard"
+                onChange={(event) => setGmail(event.target.value)}
+              />
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Grid>
+                <Card>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    variant="contained"
+                    component="label"
+                  >
+                    <CardMedia
+                      component="img"
+                      height="300"
+                      image={image ? image : dataavatar}
+                      alt="Profile Picture"
+                      sx={{ objectFit: "contain" }}
+                    />
+
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </Button>
+                </Card>
+              </Grid>
+            </Box>
+            <br />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "space-evenly",
+                mb: 5,
+              }}
             >
-              {loading ? (
-                <div className="loading">Loading...</div>
-              ) : (
-                "Update Admin"
-              )}
-            </Button>
-            <Button
-              sx={{ width: "50%" }}
-              onClick={handleClose}
-              variant="contained"
-              color="error"
-              fullWidth
-            >
-              Cancel
-            </Button>
+              <Button
+                sx={{ fontSize: "16px" }}
+                size="small"
+                color="success"
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="loading">Loading...</div>
+                ) : (
+                  "Update Admin"
+                )}
+              </Button>
+              <Button
+                sx={{ width: "50%" }}
+                onClick={handleClose}
+                variant="contained"
+                color="error"
+                fullWidth
+              >
+                Cancel
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Modal>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

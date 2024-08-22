@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, TextField, Box, Typography } from "@mui/material";
 import axios from "axios";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
+import { apinovel } from "../../../URL_API/Apinovels";
+import Swal from "sweetalert2";
 // eslint-disable-next-line react/prop-types
 export default function UpdateTag({ selected, setSelected, UserGet }) {
   const [nameTaek, setNameTaek] = useState("");
@@ -12,11 +14,15 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
   const handleClose = () => setOpen(false, setSelected([]));
   const handleUpdate = () => {
     axios
-      .put(`https://dex-api-novel.onrender.com/update/tags/${selected[0]}`, {
+      .put(`${apinovel}/update/tags/${selected[0]}`, {
         name_taek: nameTaek,
       })
       // eslint-disable-next-line no-unused-vars
       .then((response) => {
+         Swal.fire({
+          title: "Add success",
+          icon: "success",
+        });
         UserGet();
         handleClose();
       })
@@ -26,8 +32,9 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
   };
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/taeknovel/id_tag/${selected[0]}`)
+      .get(`${apinovel}/taeknovel/id_tag/${selected[0]}`)
       .then((response) => {
+        
         const data = response.data;
         setDataTag(data[0]);
       })

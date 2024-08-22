@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import * as XLSX from "xlsx";
+import { apinovel } from "../../../URL_API/Apinovels";
+import LoadingComponent from "../../../Loading";
 
 // eslint-disable-next-line react/prop-types
 export default function ExportViewAuthor({
@@ -18,7 +20,6 @@ export default function ExportViewAuthor({
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Replace with your selected IDs
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -36,7 +37,7 @@ export default function ExportViewAuthor({
   const handleExportSelectedAdmins = () => {
     setLoading(true);
     axios
-      .get("http://localhost:5000/view/exportauthor", {
+      .get(`${apinovel}/view/exportauthor`, {
         params: { id: selected },
       })
       .then((response) => {
@@ -45,7 +46,6 @@ export default function ExportViewAuthor({
         setLoading(false);
       })
       .catch((error) => {
-        setError(error);
         setLoading(false);
       });
   };
@@ -53,13 +53,12 @@ export default function ExportViewAuthor({
   const handleExportAllAdmins = () => {
     setLoading(true);
     axios
-      .get("http://localhost:5000/view/author")
+      .get(`${apinovel}/view/author`)
       .then((response) => {
         exportToExcel(response.data, "all_admins");
         setLoading(false);
       })
       .catch((error) => {
-        setError(error);
         setLoading(false);
       });
   };
@@ -90,11 +89,7 @@ export default function ExportViewAuthor({
           <Typography variant="h7" component="h2">
             Export Admin Data
           </Typography>
-          {loading ? (
-            <CircularProgress />
-          ) : error ? (
-            <Typography color="error">Error: {error.message}</Typography>
-          ) : (
+          <LoadingComponent loading={loading} />
             <div>
               {numSelected > 0 ? (
                 <Button
@@ -124,7 +119,7 @@ export default function ExportViewAuthor({
                 Close
               </Button>
             </div>
-          )}
+  
         </Box>
       </Modal>
     </div>

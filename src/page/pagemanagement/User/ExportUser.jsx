@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import * as XLSX from "xlsx";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 // eslint-disable-next-line react/prop-types
 export default function ExportViewAdmin({
@@ -39,7 +40,7 @@ export default function ExportViewAdmin({
   const handleExportSelectedAdmins = () => {
     setLoading(true);
     axios
-      .get("http://localhost:5000/view/exportuser", {
+      .get(`${apinovel}/view/exportuser`, {
         params: { id: selected },
       })
       .then((response) => {
@@ -56,7 +57,7 @@ export default function ExportViewAdmin({
   const handleExportAllAdmins = () => {
     setLoading(true);
     axios
-      .get("http://localhost:5000/view/user")
+      .get(`${apinovel}/view/user`)
       .then((response) => {
         exportToExcel(response.data, "all_user");
         setLoading(false);

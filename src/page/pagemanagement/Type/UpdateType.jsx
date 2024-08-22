@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, TextField, Box, Typography } from "@mui/material";
 import axios from "axios";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
+import { apinovel } from "../../../URL_API/Apinovels";
 // eslint-disable-next-line react/prop-types
 export default function UpdateType({ selected, setSelected, TypeGet }) {
   const [nameType, setNameType] = useState("");
@@ -12,7 +13,7 @@ export default function UpdateType({ selected, setSelected, TypeGet }) {
   const handleClose = () => setOpen(false, setSelected([]));
   const handleUpdate = () => {
     axios
-      .put(`https://dex-api-novel.onrender.com/update/type/${selected[0]}`, {
+      .put(`${apinovel}/update/type/${selected[0]}`, {
         name_type: nameType,
       })
       .then((response) => {
@@ -26,7 +27,7 @@ export default function UpdateType({ selected, setSelected, TypeGet }) {
   };
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/typenovel/${selected[0]}`)
+      .get(`${apinovel}/typenovel/${selected[0]}`)
       .then((response) => {
         const data = response.data;
         console.log(response.data);

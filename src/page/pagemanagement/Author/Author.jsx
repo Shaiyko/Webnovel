@@ -29,6 +29,8 @@ import Addauthor from "./AddAuthor";
 import UpdateAuthor from "./Update";
 import ExportViewAuthor from "./Export";
 import Viewauthor from "./View"
+import Swal from "sweetalert2";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -193,9 +195,20 @@ function EnhancedTableToolbar(props) {
   } = props;
   console.log("D", selected);
   const DeleteTag = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
     try {
       const response = await axios.delete(
-        "http://localhost:5000/delete/author",
+        `${apinovel}/delete/author`,
         {
           data: {
             id_author: selected,
@@ -205,13 +218,18 @@ function EnhancedTableToolbar(props) {
           },
         }
       );
-
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Your file has been deleted.",
+        icon: "success",
+      });
       console.log(response.data);
       UserGet();
       setSelected([]);
     } catch (error) {
       console.error("Error:", error);
     }
+  }
   };
   return (
     <Toolbar
@@ -246,7 +264,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Author Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -332,7 +357,7 @@ export default function TableAuthor() {
 
   const UserGet = () => {
     axios
-      .get("http://localhost:5000/view/author")
+      .get(`${apinovel}/view/author`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {

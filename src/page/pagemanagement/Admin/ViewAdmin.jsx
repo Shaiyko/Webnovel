@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { apinovel } from '../../../URL_API/Apinovels';
 
 // eslint-disable-next-line react/prop-types
 export default function ViewAdmin({ selected,setSelected}) {
@@ -29,7 +30,7 @@ export default function ViewAdmin({ selected,setSelected}) {
     // eslint-disable-next-line react/prop-types
     if (selected && selected.length > 0) {
       axios
-        .get(`http://localhost:5000/view/admin/${selected[0]}`)
+        .get(`${apinovel}/view/admin/${selected[0]}`)
         .then(response => {
           setAdminData(response.data[0]);
           setLoading(false);

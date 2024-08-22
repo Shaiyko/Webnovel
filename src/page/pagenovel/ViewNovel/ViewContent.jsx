@@ -11,6 +11,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 const ViewContent = () => {
   const { id_novel, id } = useParams();
@@ -22,6 +23,7 @@ const ViewContent = () => {
   const [episodes, setEpisodes] = useState([]);
   const [show404, setShow404] = useState(false);
 
+  // State for font size and background color
   const [fontSize, setFontSize] = useState(22);
   const [backgroundColor, setBackgroundColor] = useState("white");
   const [fontFamily] = useState(
@@ -29,9 +31,23 @@ const ViewContent = () => {
   );
   const [anchorEl, setAnchorEl] = useState(null);
 
+  // Open and close settings menu
   const handleOpenSettings = (event) => setAnchorEl(event.currentTarget);
   const handleCloseSettings = () => setAnchorEl(null);
 
+  // Handle font size change
+  const handleFontSizeChange = (event, newValue) => {
+    setFontSize(newValue);
+    sessionStorage.setItem("fontSize", newValue);
+  };
+
+  // Handle background color change
+  const handleBackgroundColorChange = (color) => {
+    setBackgroundColor(color);
+    sessionStorage.setItem("backgroundColor", color);
+  };
+
+  // Navigate to the next or previous page
   const handleNextPage = () => {
     const currentIndex = episodes.findIndex((ep) => ep.id === parseInt(id));
     if (currentIndex >= 0 && currentIndex < episodes.length - 1) {
@@ -49,10 +65,12 @@ const ViewContent = () => {
       }`;
     }
   };
+
   const handleDirectory = () => {
     window.location.href = `/novel/${id_novel}/directory`;
   };
 
+  // Fetch episodes and other necessary data
   useEffect(() => {
     fetchEpisodes();
   }, [id_novel]);
@@ -63,7 +81,9 @@ const ViewContent = () => {
     UserGet();
     Bookmark();
   }, []);
+
   const [userId, setUserId] = useState(null);
+
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (loggedInUser && loggedInUser.status === "user") {
@@ -71,18 +91,20 @@ const ViewContent = () => {
       setUserId(loggedInUserP.id_user);
     }
   }, []);
+
   const UserGet = () => {
     axios
-      .get(`http://localhost:5000/novelall2/${id_novel}`)
+      .get(`${apinovel}/novelall2/${id_novel}`)
       .then((response) => {
         const data2 = response.data[0];
         setNameN(data2.name_novel);
       })
       .catch((error) => console.log("error", error));
   };
+
   const handleGetmaxID = () => {
     axios
-      .get(`http://localhost:5000/view/ep_novelep/${id}`)
+      .get(`${apinovel}/view/ep_novelep/${id}`)
       .then((response) => {
         const data = response.data[0];
         if (data.id_novel !== parseInt(id_novel)) {
@@ -100,7 +122,7 @@ const ViewContent = () => {
 
   const fetchEpisodes = () => {
     axios
-      .get(`http://localhost:5000/view/ep_novel/${id_novel}`)
+      .get(`${apinovel}/view/ep_novel/${id_novel}`)
       .then((response) => {
         setEpisodes(response.data);
       })
@@ -108,11 +130,10 @@ const ViewContent = () => {
         console.error("Error fetching episodes:", error);
       });
   };
+
   const Bookmark = () => {
     axios
-      .get(
-        `http://localhost:5000/readings?id_user=${userId}&id_novel=${id_novel}`
-      )
+      .get(`${apinovel}/readings?id_user=${userId}&id_novel=${id_novel}`)
       .then((response) => {
         const data = response.data[0];
         setbookmark(data.bookmark);
@@ -122,24 +143,22 @@ const ViewContent = () => {
         console.error("Error fetching episodes:", error);
       });
   };
+
   const handleBookmark = async () => {
     if (userId) {
       try {
-        const response = await axios.put(
-          "http://localhost:5000/update/reading",
-          {
-            id_user: userId,
-            id_novel: id_novel,
-            bookmark: dataname,
-          }
-        );
+        const response = await axios.put(`${apinovel}/update/reading`, {
+          id_user: userId,
+          id_novel: id_novel,
+          bookmark: dataname,
+        });
         console.log("Reading entry created:", response.data);
       } catch (error) {
         if (error.response && error.response.status === 409) {
           console.error("Entry already exists Bookmark");
           try {
             const response = await axios.put(
-              "http://localhost:5000/update/readingepisode",
+              `${apinovel}/update/readingepisode`,
               {
                 id_user: userId,
                 id_novel: id_novel,
@@ -167,16 +186,20 @@ const ViewContent = () => {
       Swal.fire("Only users");
     }
   };
+
+  useEffect(() => {
+    // Load settings from sessionStorage
+    const savedFontSize = sessionStorage.getItem("fontSize");
+    const savedBackgroundColor = sessionStorage.getItem("backgroundColor");
+
+    if (savedFontSize) setFontSize(parseInt(savedFontSize, 10));
+    if (savedBackgroundColor) setBackgroundColor(savedBackgroundColor);
+  }, []);
+
   if (show404) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
-        <Box
-          sx={{
-            boxShadow: 2,
-            width: 250,
-            textAlign: "center",
-          }}
-        >
+        <Box sx={{ boxShadow: 2, width: 250, textAlign: "center" }}>
           <Typography variant="h4">404 Not Found</Typography>
           <Typography variant="subtitle2">Content not Found</Typography>
         </Box>
@@ -188,12 +211,7 @@ const ViewContent = () => {
     <Box
       sx={{
         width: "100%",
-        fontSize: {
-          xs: fontSize - 4,
-          sm: fontSize,
-          md: fontSize + 2,
-          lg: fontSize + 4,
-        },
+        fontSize: `${fontSize}px`, // Apply font size dynamically
         backgroundColor: backgroundColor,
         color: "black",
         fontFamily: fontFamily,
@@ -226,75 +244,83 @@ const ViewContent = () => {
           backgroundColor: backgroundColor,
           color: "black",
           marginTop: "10px",
-          fontSize: {
-            xs: fontSize - 4,
-            sm: fontSize,
-            md: fontSize + 2,
-            lg: fontSize + 4,
-          },
+          fontSize: `${fontSize}px`, // Apply font size dynamically
           fontFamily: fontFamily,
         }}
         dangerouslySetInnerHTML={{ __html: content }}
       />
-      <Box display={"flex"} justifyContent={"space-between"} mt={2}>
+      <Box display={"flex"} justifyContent={"space-between"} mt={2} mb={2}>
         <Button variant="contained" onClick={handlePreviousPage}>
           Previous Chapter
+        </Button>
+        <Button variant="contained" onClick={handleDirectory}>
+          Directory
         </Button>
         {userId ? (
           <Button variant="contained" onClick={handleBookmark}>
             Bookmark
           </Button>
         ) : (
-          <Typography fullWidth></Typography>
+          <Button
+            variant="contained"
+            onClick={() => Swal.fire("Only users can bookmark")}
+          >
+            Bookmark
+          </Button>
         )}
-
-        <Button variant="contained" onClick={handleDirectory}>
-          Directory
-        </Button>
         <Button variant="contained" onClick={handleNextPage}>
           Next Chapter
         </Button>
       </Box>
-
+      {/* Settings Menu */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleCloseSettings}
       >
         <Box sx={{ p: 2 }}>
-          <Typography mb={1}>Font Size</Typography>
+          <Typography variant="h6">Settings</Typography>
+          <Typography variant="body1">Font Size</Typography>
           <Slider
-            min={14}
-            max={35}
             value={fontSize}
-            onChange={(e, newValue) => setFontSize(newValue)}
-            sx={{ mb: 1 }}
+            min={12}
+            max={36}
+            step={1}
+            onChange={handleFontSizeChange}
+            aria-labelledby="font-size-slider"
+            sx={{ mb: 2 }}
           />
-          <Typography>Current Size: {fontSize}px</Typography>
-
-          <Typography mt={2} mb={1}>
-            Background Color
-          </Typography>
-          <Button
-            variant="contained"
-            sx={{ mr: 1 }}
-            onClick={() => setBackgroundColor("white")}
-          >
-            White
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ mr: 1 }}
-            onClick={() => setBackgroundColor("lightgray")}
-          >
-            Light Gray
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => setBackgroundColor("black")}
-          >
-            Black
-          </Button>
+          <Typography variant="body1">Background Color</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "white" }}
+              onClick={() => handleBackgroundColorChange("white")}
+            >
+              White
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#f0f0f0" }}
+              onClick={() => handleBackgroundColorChange("#f0f0f0")}
+            >
+              Light Gray
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#333" }}
+              onClick={() => handleBackgroundColorChange("#333")}
+            >
+              Dark Gray
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#ffecb3" }}
+              onClick={() => handleBackgroundColorChange("#ffecb3")}
+            >
+              Amber
+            </Button>
+          </Box>
         </Box>
       </Menu>
     </Box>

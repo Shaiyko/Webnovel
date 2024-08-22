@@ -25,6 +25,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
+import { apinovel } from "../../../URL_API/Apinovels";
 const currencies = [
   {
     value: "Male",
@@ -80,7 +81,7 @@ export default function AddUser({ UserGet }) {
 
   const handleAddTag = async () => {
     axios
-      .post("http://localhost:5000/create/user", {
+      .post(`${apinovel}/create/user`, {
         id_user: maxIdType + 1,
         user_name: datauser,
         gender: datagender,
@@ -94,7 +95,7 @@ export default function AddUser({ UserGet }) {
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: "Tag has been added",
+          title: "User has been added",
           showConfirmButton: false,
           timer: 1500,
         });
@@ -137,7 +138,7 @@ export default function AddUser({ UserGet }) {
   };
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/view/user`)
+      .get(`${apinovel}/view/user`)
       .then((response) => {
         const data = response.data;
         if (data.length > 0) {

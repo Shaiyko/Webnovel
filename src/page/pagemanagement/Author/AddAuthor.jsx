@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/stylesloading.css"; // css
 import {
-  Modal,
   Button,
   TextField,
   Box,
@@ -9,6 +8,9 @@ import {
   IconButton,
   Card,
   CardMedia,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import axios from "axios";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
@@ -29,6 +31,8 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
+import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
+import LoadingComponent from "../../../Loading";
 const currencies = [
   {
     value: "Male",
@@ -65,7 +69,6 @@ export default function Addauthor({ UserGet }) {
   const [maxIdType, setMaxIdType] = useState(0);
   //loading
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   //upload image
   const [image, setImage] = useState(null);
   const [fileimage, setFile] = useState(null);
@@ -126,7 +129,7 @@ export default function Addauthor({ UserGet }) {
 
     try {
       const response = await axios.post(
-        "https://uploadfile-api-huw0.onrender.com/upload",
+        `${apiupfile}/upload`,
         formData,
         {
           headers: {
@@ -147,7 +150,7 @@ export default function Addauthor({ UserGet }) {
 
   const handleAddTag = async (fileId) => {
     axios
-      .post("http://localhost:5000/create/author", {
+      .post(`${apinovel}/author`, {
         id_author: maxIdType + 1,
         realname: datarelname,
         penname: datapenname,
@@ -185,7 +188,6 @@ export default function Addauthor({ UserGet }) {
 
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
     if (fileimage == null) {
       const fileId = "1TjKQYdbxvD-JKG3kpO5yVUZs-wJdJMNE";
       try {
@@ -193,7 +195,6 @@ export default function Addauthor({ UserGet }) {
         Swal.close();
         handleClose();
       } catch (error) {
-        setError(error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -209,7 +210,6 @@ export default function Addauthor({ UserGet }) {
         Swal.close();
         handleClose();
       } catch (error) {
-        setError(error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -261,55 +261,21 @@ export default function Addauthor({ UserGet }) {
       <Button onClick={handleOpen}>
         <PersonAddAltIcon color="info" />
       </Button>
-      <Modal
-        open={open}
-        aria-labelledby="update-modal-title"
-        aria-describedby="parent-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            left: "30%",
-            right: "30%",
-            width: 500,
-            overflow: "auto",
-            height: 700,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            pt: 2,
-            px: 5,
-            pb: 3,
-          }}
-        >
-          
-            {loading && <div className="loading">Loading...</div>}
-            {error && <p>Error: {error.message}</p>}
-            {!loading && !error && (
+      <Dialog open={open} maxWidth="sm" fullWidth>
+        <DialogTitle id="update-modal-title" color={"black"}>
+          Add Author
+        </DialogTitle>
+        <DialogContent>
+          <Box>
+            {/* Loading, Error Handling */}
+            <LoadingComponent loading={loading} />
               <>
-                <Typography
-                  variant="h6"
-                  id="update-modal-title"
-                  gutterBottom
-                  color={"black"}
-                >
-                  Add Author
-                </Typography>
-
-                <Grid container spacing={0} sx={{ width: "100%", mb: -1 }}>
-                  <Grid xs={4}>
+                <Grid container spacing={2}>
+                  <Grid item xs={4}>
                     <Card>
-                      <Button
-                        variant="contained"
-                        component="label"
-                        sx={{ mb: 2 }}
-                      >
+                      <Button variant="contained" component="label" sx={{ mb: 2 }}>
                         {image ? (
-                          <CardMedia
-                            component="img"
-                            image={image}
-                            alt="Uploaded Image"
-                          />
+                          <CardMedia component="img" image={image} alt="Uploaded Image" />
                         ) : (
                           <Box
                             sx={{
@@ -320,28 +286,16 @@ export default function Addauthor({ UserGet }) {
                               bgcolor: "#f0f0f0",
                             }}
                           >
-                            <Typography
-                              sx={{
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                              variant="subtitle1"
-                              color="textSecondary"
-                            >
+                            <Typography variant="subtitle1" color="textSecondary">
                               <PortraitIcon sx={{ fontSize: 100 }} /> No image
                             </Typography>
                           </Box>
                         )}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          hidden
-                          onChange={handleImageChange}
-                        />
+                        <input type="file" accept="image/*" hidden onChange={handleImageChange} />
                       </Button>
                     </Card>
                   </Grid>
-                  <Grid xs={8}>
+                  <Grid item xs={8}>
                     <TextField
                       fullWidth
                       label="Rel Name"
@@ -358,16 +312,13 @@ export default function Addauthor({ UserGet }) {
                       variant="outlined"
                       margin="normal"
                     />
-                    <FormControl variant="standard">
-                      <InputLabel htmlFor="formatted-text-mask-input">
-                        Date of Birth
-                      </InputLabel>
+                    <FormControl variant="standard" fullWidth margin="normal">
+                      <InputLabel htmlFor="formatted-text-mask-input">Date of Birth</InputLabel>
                       <Input
-                        value={data_date_of_birth.textmask}
+                        value={data_date_of_birth}
                         onChange={handleChangeDate}
                         name="textmask"
                         id="formatted-text-mask-input"
-                        inputComponent={TextMaskCustom}
                       />
                     </FormControl>
                   </Grid>
@@ -378,20 +329,19 @@ export default function Addauthor({ UserGet }) {
                   select
                   label="Select Gender"
                   helperText="Please select your Gender"
+                  value={datagender}
                   onChange={(e) => setGender(e.target.value)}
                 >
                   {currencies.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                  {option.value}
-                </MenuItem>
-              ))}
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
-
                 <TextField
                   fullWidth
                   label="Contact Channels"
-                  helperText="Please enter phone number,email,link. Contact Channels"
+                  helperText="Please enter phone number, email, or link."
                   value={datacontact_channels}
                   onChange={(e) => setContact_channels(e.target.value)}
                   variant="outlined"
@@ -405,11 +355,8 @@ export default function Addauthor({ UserGet }) {
                   variant="outlined"
                   margin="normal"
                 />
-
-                <FormControl fullWidth sx={{ mb: 1 }}>
-                  <InputLabel htmlFor="input-with-icon-adornment">
-                    UserName
-                  </InputLabel>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel htmlFor="input-with-icon-adornment">UserName</InputLabel>
                   <Input
                     id="input-with-icon-adornment"
                     value={datauser}
@@ -421,10 +368,8 @@ export default function Addauthor({ UserGet }) {
                     }
                   />
                 </FormControl>
-                <FormControl fullWidth sx={{ mb: 1 }}>
-                  <InputLabel htmlFor="input-with-icon-adornment-email">
-                    Gmail
-                  </InputLabel>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel htmlFor="input-with-icon-adornment-email">Gmail</InputLabel>
                   <Input
                     id="input-with-icon-adornment-email"
                     value={datagmail}
@@ -436,10 +381,8 @@ export default function Addauthor({ UserGet }) {
                     }
                   />
                 </FormControl>
-                <FormControl fullWidth variant="standard">
-                  <InputLabel htmlFor="standard-adornment-password">
-                    Password
-                  </InputLabel>
+                <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
+                  <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
                   <Input
                     id="standard-adornment-password"
                     type={showPassword ? "text" : "password"}
@@ -482,10 +425,9 @@ export default function Addauthor({ UserGet }) {
                   Cancel
                 </Button>
               </>
-            )}
-          
-        </Box>
-      </Modal>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

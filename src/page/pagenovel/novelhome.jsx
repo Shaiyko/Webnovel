@@ -1,89 +1,84 @@
 import React, { useEffect, useState } from "react";
 import {
-  Typography,
+  Container,
   Grid,
   Card,
-  CardMedia,
   CardContent,
+  Typography,
   Box,
-  ButtonBase,
-  CardActionArea,
-  Container,
-  Divider,
-  Button,
+  CardMedia,
   Pagination,
+  Link,
+  Divider,
+  Skeleton,
+  Stack,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import axios from "axios";
-import Slidernovel from "./Slidernovel";
-import { blueGrey } from "@mui/material/colors";
 import { useLocation } from "react-router-dom";
-
-const StyledCard = styled(Card)({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-});
-
-const CustomLink = styled(ButtonBase)({
-  color: "black",
-});
+import axios from "axios";
+import Rankingnew from "../../Rankinnew";
+import Slidernovel from "./Slidernovel";
+import { apinovel } from "../../URL_API/Apinovels";
 
 const CustomButtonB = styled(Typography)({
-  color: "black",
+  color: "textSecondary",
   display: "-webkit-box",
   WebkitBoxOrient: "vertical",
   WebkitLineClamp: 2,
   maxWidth: "100%",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  fontSize: "14px",
+  fontSize: "12px",
 });
 
-const chapter1 = {
-  margin: "0 8px",
-  whiteSpace: "pre-line",
+const Linknovel = styled(Link)({
+  textDecoration: "none",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  width: "45%",
-};
-const chapter2 = {
-  margin: "0 8px",
-  whiteSpace: "pre-line",
-  width: "30%",
-};
-const chapter3 = {
-  display: "flex",
-  margin: "0 8px",
-  whiteSpace: "pre-line",
-  width: "25%",
-};
+  whiteSpace: "nowrap",
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "none",
+    color: "blue",
+  },
+  fontWeight: "bold",
+});
 
-function Pagenovel() {
+const Pagenovel = () => {
   const [dataTag, setTagnovel] = useState([]);
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const page = parseInt(query.get("page")) || 1;
   const itemsPerPage = 20;
 
+  const formatDateTime = (datatime) => {
+    const date = new Date(datatime);
+    return date.toLocaleDateString(); // Display date and time
+  };
+
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     NovelAllGet();
   }, []);
 
   const NovelAllGet = () => {
+    setLoading(true);
     axios
-      .get("http://localhost:5000/novelallviewep")
+      .get(`${apinovel}/novelallviewep`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
           const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
           setTagnovel(filteredData);
+          setLoading(false);
         } else {
           console.log("No user data found");
         }
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => {
+        console.log("error", error);
+      });
   };
 
   const handlePageChange = (event, value) => {
@@ -96,112 +91,174 @@ function Pagenovel() {
   );
 
   return (
-    <Box sx={{ bgcolor: "white" }}>
-      <Container>
-        <Slidernovel dataTag={dataTag} />
-      </Container>
-      <Box p={2} bgcolor={blueGrey[50]} sx={{ width: "85%", marginLeft: "5%" }}>
-        <Box backgroundColor={blueGrey[200]}>
-          <Button>Novels</Button>
-        </Box>
-        <Grid container spacing={3} style={{ marginTop: 0 }}>
-          {displayData.map((novel, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-              <StyledCard>
-                <CardActionArea href={`/novel/${novel.id_novel}`}>
-                  <CardMedia
-                    component="img"
-                    alt={novel.name_novel}
-                    height="150"
-                    image={novel.image_novel}
-                    title={novel.name_novel}
-                  />
-                  <Typography sx={{marginLeft:"20px"}} gutterBottom variant="h5" component="div">
-                    {novel.name_novel}
-                  </Typography>
-                  <Divider />
-                </CardActionArea>
-                <CardContent style={{ flexGrow: 1 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "8px", // เพิ่มระยะห่างของข้อมูล
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      style={{ width: "50%" }}
+    <Container>
+      <Box>
+        <Card sx={{ p: 2 }}>
+        <Typography variant="h6" component="div">
+            New novels every month
+          </Typography>
+          <Divider />
+          <Slidernovel dataTag={dataTag} />
+          <Typography variant="h6" component="div">
+            Novels
+          </Typography>
+          <Divider />
+          <Grid container spacing={2}>
+            {loading
+              ? Array.from(new Array(itemsPerPage)).map((_, index) => (
+                  <Grid item xs={12} sm={6} key={index}>
+                    <Card
+                      sx={{
+                        backgroundColor: "#f5f5f5",
+                        height: { xs: 170, md: 200 },
+                      }}
                     >
-                      <ButtonBase href={`/author/${novel.id_author}`}>
-                        {novel.penname}
-                      </ButtonBase>
-                    </Typography>
-                    <Typography
-                      gutterBottom
-                      variant="h7"
-                      component="div"
-                      style={{ width: "30%" }}
+                      <CardContent sx={{ display: "flex" }}>
+                        <Grid item xs={3} md={3}>
+                          <Skeleton variant="rectangular" height={140} />
+                        </Grid>
+                        <Grid marginLeft={2} item xs={9} md={9}>
+                          <Stack spacing={1}>
+                            <Skeleton variant="rectangular" height={10} />
+                            <Skeleton variant="rectangular" height={100} />
+                            <Skeleton variant="rectangular" />
+                          </Stack>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))
+              : displayData.map((item, index) => (
+                  <Grid item xs={12} sm={6} key={item.id}>
+                    <Card
+                      sx={{
+                        backgroundColor: "#f5f5f5",
+                        height: { xs: 170, md: 200 },
+                      }}
                     >
-                      <CustomLink href={`/selecttype/${novel.id_type}`}>
-                        {novel.name_type}
-                      </CustomLink>
-                    </Typography>
-                    <Typography
-                      sx={{ margin: "0 8px" }}
-                      style={{ width: "20%" }}
-                    >
-                      Status: {novel.statusN}
-                    </Typography>
-                  </Box>
-                  <Divider />
-                  <Typography variant="h7">Introduction</Typography>
-                  <CustomButtonB>{novel.description}</CustomButtonB>
-                </CardContent>
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderTop: "1px solid #ccc", // เพิ่มเส้นแบ่งระหว่างข้อมูล
-                    paddingTop: "8px",
-                    maxWidth: "100%", // เพิ่มระยะห่างด้านบน
-                  }}
-                >
-                  <Typography sx={chapter1}>
-                    Chapter {novel.id_episode_novel}: {novel.name_episode}
-                  </Typography>
-                  <Typography sx={chapter2}>
-                    {`${new Date(novel.updateep).toLocaleDateString()}`}
-                  </Typography>
-                  <Typography sx={chapter3}>
-                    <MenuBookIcon />
-                    <Typography color={"red"}>{novel.epall} </Typography>
-                    Chapters
-                  </Typography>
-                </CardContent>
-              </StyledCard>
-            </Grid>
-          ))}
-        </Grid>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "16px",
-          }}
-        >
-          <Pagination
-            count={Math.ceil(dataTag.length / itemsPerPage)}
-            page={page}
-            onChange={handlePageChange}
-            variant="outlined"
-            shape="rounded"
-          />
-        </Box>
+                      <CardContent sx={{ display: "flex" }}>
+                        <Grid item xs={4} md={3}>
+                          <Card sx={{ backgroundColor: "black" }}>
+                            <Linknovel target="_blank" href={`/novel/${item.id_novel}`}>
+                              <CardMedia
+                                component="img"
+                                sx={{
+                                  width: { xs: "100%", md: "100%" },
+                                  height: { xs: 130, md: 170 },
+                                  overflow: "hidden",
+                                }}
+                                image={
+                                  item.image_novel
+                                    ? item.image_novel
+                                    : `https://drive.google.com/thumbnail?id=1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd`
+                                }
+                                alt="Novel cover"
+                              />
+                            </Linknovel>
+                          </Card>
+                          <Box sx={{display:{md:"none"}}}>
+                            <Typography variant="caption" component="p" noWrap>
+                              {" "}
+                              Update {formatDateTime(item.updateep)} 
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid marginLeft={2} item xs={8} md={9}>
+                          <Typography variant="h6" component="div">
+                            <Linknovel target="_blank" href={`/novel/${item.id_novel}`}>
+                              {index + 1}. {item.name_novel}
+                            </Linknovel>
+                          </Typography>
+                          <Typography
+                            mt={1}
+                            mb={1}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-around",
+                            }}
+                            variant="body2"
+                            color="textSecondary"
+                          >
+                            <Typography
+                              variant="body2"
+                              paddingRight={1}
+                              sx={{ borderRight: "1px solid grey" }}
+                            >
+                              {item.penname}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              paddingRight={1}
+                              paddingLeft={1}
+                              sx={{ borderRight: "1px solid grey" }}
+                            >
+                              {item.name_type}
+                            </Typography>
+                            <Typography variant="body2" paddingLeft={1}>
+                              {item.statusN}
+                            </Typography>
+                          </Typography>
+                          <CustomButtonB>{item.description}</CustomButtonB>
+                          <Box display="flex" alignItems="center">
+                            <Typography
+                              variant="caption"
+                              mt={1}
+                              sx={{
+                                backgroundColor: "white",
+                                paddingRight: 1,
+                                whiteSpace: "nowrap", // Prevent wrapping
+                                flexShrink: 0, // Prevent shrinking
+                              }}
+                            >
+                              Latest Chapter :
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              component="p"
+                              noWrap
+                              mt={1}
+                              sx={{
+                                whiteSpace: "nowrap", // Prevent wrapping
+                                overflow: "hidden", // Hide overflow text if necessary
+                                textOverflow: "ellipsis", // Add ellipsis if text is too long
+                              }}
+                            >
+                              {item.name_episode}
+                            </Typography>
+                          </Box>
+                          <Box sx={{display:{xs:"none",md:"block"}}} mt={2}>
+                            <Typography variant="caption" component="p" noWrap>
+                              {" "}
+                              Latest Update {formatDateTime(item.updateep)}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+          </Grid>
+          {dataTag.length >= 20 && (<Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "16px",
+              mb: 2,
+            }}
+          >
+            <Pagination
+              count={Math.ceil(dataTag.length / itemsPerPage)}
+              page={page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+            />
+          </Box>)}
+        </Card>
+        <Rankingnew />
       </Box>
-    </Box>
+    </Container>
   );
-}
+};
 
 export default Pagenovel;

@@ -25,6 +25,7 @@ import TextField from "@mui/material/TextField";
 import axios from "axios";
 import UpdateType from "./UpdateType";
 import AddType from "./AddType";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -143,7 +144,7 @@ function EnhancedTableToolbar(props) {
   const DeleteTag = async () => {
     try {
       // eslint-disable-next-line no-unused-vars
-      const response = await axios.delete("https://dex-api-novel.onrender.com/delete/type", {
+      const response = await axios.delete(`${apinovel}/delete/type`, {
         data: {
           type_ids: selected,
         },
@@ -192,7 +193,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Type Novel Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -255,7 +263,7 @@ export default function TypeEnhancedTable() {
 
   const TypeGet = () => {
     axios
-      .get("https://dex-api-novel.onrender.com/typenovel")
+      .get(`${apinovel}/typenovel`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {

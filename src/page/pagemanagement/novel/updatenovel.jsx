@@ -8,12 +8,16 @@ import {
   FormControl,
   InputLabel,
   NativeSelect,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import { Modal, Box, Typography, Card, CardMedia } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import Swal from "sweetalert2";
-import "../css/stylesloading.css";
+import LoadingComponent from "../../../Loading";
+import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
 
 // eslint-disable-next-line react/prop-types
 const Updatenovel = ({ UserGet, setSelected, selected }) => {
@@ -34,9 +38,13 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
   // eslint-disable-next-line no-unused-vars
   const [dataimage, setAvatar] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
-
+  //
+  const [datatag, setTag] = useState([]);
+  const [datanovel, setTagnovel] = useState([]);
+  const [datatype2, setType2] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedTypeNovel, setSelectedTypeNovel] = useState(null);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -60,7 +68,6 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
       setImage(URL.createObjectURL(file));
     }
   };
-
   const handleUpload = async () => {
     const formData = new FormData();
     formData.append("file", fileimage);
@@ -68,15 +75,11 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
     formData.append("parentFile", parentFileId);
 
     try {
-      const response = await axios.post(
-        "https://uploadfile-api-huw0.onrender.com/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${apiupfile}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setAvatar(
         `https://drive.google.com/thumbnail?id=${response.data.fileId}`
@@ -87,15 +90,10 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
       throw error;
     }
   };
-  const [datatag, setTag] = useState([]);
-  const [datanovel, setTagnovel] = useState({});
-  const [datatype2, setType2] = useState([]);
-  const [selectedTypes, setSelectedTypes] = useState([]);
-  const [selectedTypeNovel, setSelectedTypeNovel] = useState(null);
 
   const handleGetUpdate = () => {
     axios
-      .get(`http://localhost:5000/taeknovel`)
+      .get(`${apinovel}/taeknovel`)
       .then((response) => {
         const data = response.data.map((item) => ({
           id: item.id_taek,
@@ -109,7 +107,7 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
   };
   const handleGetUpdate2 = () => {
     axios
-      .get(`http://localhost:5000/view/togetherjoin/${selected[0]}`)
+      .get(`${apinovel}/view/togetherjoin/${selected[0]}`)
       .then((response) => {
         const data = response.data.map((item) => ({
           id: item.id_taek,
@@ -124,7 +122,7 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
 
   const handleGetType = () => {
     axios
-      .get(`http://localhost:5000/typenovel`)
+      .get(`${apinovel}/typenovel`)
       .then((response) => {
         const data = response.data.map((item) => ({
           id: item.id_type,
@@ -138,8 +136,9 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
   };
 
   const NovelGet = () => {
+    setLoading(true);
     axios
-      .get(`http://localhost:5000/novelall2/${selected[0]}`)
+      .get(`${apinovel}/novelall2/${selected[0]}`)
       .then((response) => {
         const data = response.data[0];
         const data2 = {
@@ -150,12 +149,13 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
         setTagnovel(data);
         //
         setNameN(data.name_novel);
-        setAuthor(data.id_author);
+        setAuthor(data.penname);
         setDescription(data.description);
         setAvatar(data.image_novel);
         setStatus(data.status);
         setDate(data.createdate);
         setupdatetime(data.updatetime);
+        setLoading(false);
       })
       .catch((error) => console.log("error", error));
   };
@@ -174,7 +174,7 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
     }));
 
     axios
-      .post(`http://localhost:5000/create/together`, {
+      .post(`${apinovel}/create/together`, {
         dataToSave,
         id_novel: selected,
       })
@@ -234,6 +234,36 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
       .then((response) => {
         console.log("Type updated successfully:", response.data);
         UserGet();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Novel has been updated",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      })
+      .catch((error) => {
+        console.error("Error updating type:", error);
+      });
+  };
+  const handleUpdateNovel2 = (avatar) => {
+    axios
+      .put(`${apinovel}/update/novel/${selected[0]}`, {
+        name_novel: nameN,
+        description: description,
+        status: datastatus,
+        image_novel: avatar,
+      })
+      .then((response) => {
+        console.log("Type updated successfully:", response.data);
+        UserGet();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Novel has been updated",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((error) => {
         console.error("Error updating type:", error);
@@ -242,67 +272,55 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
-
-    try {
-      const fileId = fileimage
-        ? await handleUpload()
-        : "1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd";
-     await handleUpdateNovel(fileId);
-      await handleSave();
-    
-      Swal.close();
-      handleClose();
-    } catch (error) {
-      setError(error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: error.message,
-      });
-    } finally {
-      setLoading(false);
+    if (fileimage == null) {
+      const avatar = dataimage;
+      try {
+        await handleUpdateNovel2(avatar);
+        await handleSave();
+        Swal.close();
+        handleClose();
+      } catch (error) {
+        handleClose();
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.message,
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        const fileId = await handleUpload();
+        await handleUpdateNovel(fileId);
+        await handleSave();
+        Swal.close();
+        handleClose();
+      } catch (error) {
+        handleClose();
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.message,
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
   return (
     <div>
       <Button onClick={handleOpen}>Update Novel</Button>
-      <Modal
-        open={open}
-        aria-labelledby="update-modal-title"
-        aria-describedby="update-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "5%",
-            left: "10%",
-            right: "10%",
-            width: 900,
-            overflow: "auto",
-            height: 700,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            px: 4,
-            pb: 3,
-          }}
-        >
-           {!datanovel && <div className="loading">Loading...</div>}
-          {loading && <div className="loading">Loading...</div>}
-          {error && <p>Error: {error.message}</p>}
-          {!loading && !error && (
+      <Dialog open={open} maxWidth="sm" fullWidth>
+        <DialogTitle id="update-modal-title" color={"black"}>
+          Add Author
+        </DialogTitle>
+        <DialogContent>
+          <Box>
+            <LoadingComponent loading={loading} />
             <>
-              <Typography
-                variant="h6"
-                id="update-modal-title"
-                gutterBottom
-                color={"black"}
-              >
-                Update Novel
-              </Typography>
-              <Grid container spacing={0} sx={{ width: "70%", mb: -1 }}>
-                <Grid item xs={4}>
+              <Grid container spacing={0} sx={{ width: "100%", mb: -1 }}>
+                <Grid item xs={4} md={5}>
                   <Card>
                     <Button
                       variant="contained"
@@ -311,7 +329,7 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                     >
                       <CardMedia
                         component="img"
-                        sx={{ height: "250px" }}
+                        sx={{ height: "250px",width:"100%" }}
                         image={image ? image : dataimage}
                         alt="Uploaded Image"
                       />
@@ -324,7 +342,7 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                     </Button>
                   </Card>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={8} md={7}>
                   <TextField
                     fullWidth
                     style={{ width: "100%", marginLeft: 20 }}
@@ -341,7 +359,7 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                   >
                     author: {dataauthor}
                   </Typography>
-                  <Grid sx={{ display: "flex", marginTop: 2 }}>
+                  <Box sx={{ display: "flex", marginTop: 2 }}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-type"
@@ -380,8 +398,8 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                         <option value={"completed"}>completed</option>
                       </NativeSelect>
                     </FormControl>
-                  </Grid>
-                  <Grid sx={{ display: "flex", marginTop: 2 }}>
+                  </Box>
+                  <Box sx={{ display: "flex", marginTop: 2 }}>
                     <Typography
                       variant="h7"
                       color="text.secondary"
@@ -396,10 +414,10 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                     >
                       Update Time: {formatDateTime(datatime)}
                     </Typography>
-                  </Grid>
+                  </Box>
                 </Grid>
               </Grid>
-              <Grid sx={{ marginTop: 5,mb:2 }}>
+              <Grid sx={{ marginTop: 5, mb: 2 }}>
                 <Autocomplete
                   multiple
                   disablePortal
@@ -435,18 +453,14 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                 />
               </Grid>
               <Button
-                sx={{ fontSize: "16px",mb:1 }}
+                sx={{ fontSize: "16px", mb: 1 }}
                 size="small"
                 color="success"
                 variant="contained"
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? (
-                  <div className="loading">Loading...</div>
-                ) : (
-                  "Update Admin"
-                )}
+                Update
               </Button>
               <Button
                 onClick={handleClose}
@@ -457,9 +471,9 @@ const Updatenovel = ({ UserGet, setSelected, selected }) => {
                 Cancel
               </Button>
             </>
-          )}
-        </Box>
-      </Modal>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

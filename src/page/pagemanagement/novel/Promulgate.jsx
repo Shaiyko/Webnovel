@@ -10,6 +10,8 @@ import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import Swal from "sweetalert2";
 import "../css/stylesloading.css";
+import LoadingComponent from "../../../Loading";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 const datatype2 = [
   {
@@ -25,7 +27,6 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
   // eslint-disable-next-line no-unused-vars
   const [idnovel, setDataIdNovel] = useState();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -38,7 +39,7 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
 
   const NovelGet = () => {
     axios
-      .get(`http://localhost:5000/novelall2/${selected[0]}`)
+      .get(`${apinovel}/novelall2/${selected[0]}`)
       .then((response) => {
         const data = response.data[0];
         const data2 = {
@@ -59,11 +60,15 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
  
 
     axios
-      .put(`http://localhost:5000/update/noveluploade/${selected[0]}`, {
+      .put(`${apinovel}/update/noveluploade/${selected[0]}`, {
         
         uplode: selectedTypeNovel.label,
       })
       .then((response) => {
+         Swal.fire({
+          title: "Add success",
+          icon: "success",
+        });
         UserGet();
       })
       .catch((error) => {
@@ -75,7 +80,6 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
 
     try {
       await handleSave();
@@ -83,7 +87,6 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
       Swal.close();
       handleClose();
     } catch (error) {
-      setError(error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -118,9 +121,8 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
             pb: 3,
           }}
         >
-          {loading && <div className="loading">Loading...</div>}
-          {error && <p>Error: {error.message}</p>}
-          {!loading && !error && (
+          <LoadingComponent loading={loading} />
+        
             <>
               <Typography
                 variant="h6"
@@ -178,7 +180,7 @@ const PromulgateNovel = ({ UserGet, setSelected, selected }) => {
                 Cancel
               </Button>
             </>
-          )}
+          
         </Box>
       </Modal>
     </div>

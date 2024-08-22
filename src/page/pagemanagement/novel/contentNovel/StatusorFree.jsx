@@ -1,15 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  TextField,
-  Button,
-} from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { Modal, Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import Swal from "sweetalert2";
 import LoadingComponent from "../../../../Loading";
+import { apinovel } from "../../../../URL_API/Apinovels";
 
 const datatype2 = [
   {
@@ -24,7 +22,6 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
   // eslint-disable-next-line no-unused-vars
   const [idnovel, setDataIdNovel] = useState();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -37,19 +34,19 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
 
   const NovelGet = () => {
     axios
-    .get(`http://localhost:5000/view/ep_novelep/${selected[0]}`)
-    .then((response) => {
-      const data = response.data[0];
-      const data2 = {
-        label: data.status,
-      };
-      setSelectedTypeNovel(data2);
-      //
-    })
-    
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+      .get(`${apinovel}/view/ep_novelep/${selected[0]}`)
+      .then((response) => {
+        const data = response.data[0];
+        const data2 = {
+          label: data.status,
+        };
+        setSelectedTypeNovel(data2);
+        //
+      })
+
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   useEffect(() => {
@@ -57,11 +54,8 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
   }, []);
 
   const handleSave = () => {
- 
-
     axios
-      .put(`http://localhost:5000/update/ep_novelstatus/${selected[0]}`, {
-        
+      .put(`${apinovel}/update/ep_novelstatus/${selected[0]}`, {
         status: selectedTypeNovel.label,
       })
       .then((response) => {
@@ -76,7 +70,6 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
 
     try {
       await handleSave();
@@ -84,7 +77,6 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
       Swal.close();
       handleClose();
     } catch (error) {
-      setError(error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -92,10 +84,9 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
       });
     } finally {
       setLoading(false);
-
     }
   };
-  console.log("UP0",selectedTypeNovel)
+  console.log("UP0", selectedTypeNovel);
   return (
     <div>
       <Button onClick={handleOpen}>Status Chapter</Button>
@@ -119,67 +110,65 @@ const StatusorFree = ({ UserGet, setSelected, selected }) => {
             pb: 3,
           }}
         >
-          {loading && <LoadingComponent />}
-          {error && <p>Error: {error.message}</p>}
-          {!loading && !error && (
-            <>
-              <Typography
-                variant="h6"
-                id="update-modal-title"
-                gutterBottom
-                color={"black"}
-              >
-                Promulgate Novel
-              </Typography>
-              <Grid container spacing={0} sx={{ width: "100%", mb: 1 }}>
-                <Grid sx={{ display: "flex", marginTop: 2 }}>
-                  <Autocomplete
-                    disablePortal
-                    id="combo-box-type"
-                    options={datatype2}
-                    getOptionLabel={(option) => option.label}
-                    sx={{ width: "100%" }}
-                    value={selectedTypeNovel}
-                    onChange={(event, newValue) => {
-                      setSelectedTypeNovel(newValue);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        sx={{ width: "200px",marginLeft:"20%" }}
-                        {...params}
-                        label="Promulgate Novel"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
+          <LoadingComponent loading={loading} />
 
-              <Button
-                sx={{ fontSize: "16px", mb: 1 }}
-                size="small"
-                color="success"
-                variant="contained"
-                onClick={handleSubmit}
-                disabled={loading}
-                fullWidth
-              >
-                {loading ? (
-                  <div className="loading">Loading...</div>
-                ) : (
-                  "Update Admin"
-                )}
-              </Button>
-              <Button
-                onClick={handleClose}
-                variant="contained"
-                color="error"
-                fullWidth
-              >
-                Cancel
-              </Button>
-            </>
-          )}
+          <>
+            <Typography
+              variant="h6"
+              id="update-modal-title"
+              gutterBottom
+              color={"black"}
+            >
+              Promulgate Novel
+            </Typography>
+            <Grid container spacing={0} sx={{ width: "100%", mb: 1 }}>
+              <Grid sx={{ display: "flex", marginTop: 2 }}>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-type"
+                  options={datatype2}
+                  getOptionLabel={(option) => option.label}
+                  sx={{ width: "100%" }}
+                  value={selectedTypeNovel}
+                  onChange={(event, newValue) => {
+                    setSelectedTypeNovel(newValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      sx={{ width: "200px", marginLeft: "20%" }}
+                      {...params}
+                      label="Promulgate Novel"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+
+            <Button
+              sx={{ fontSize: "16px", mb: 1 }}
+              size="small"
+              color="success"
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={loading}
+              fullWidth
+            >
+              {loading ? (
+                <div className="loading">Loading...</div>
+              ) : (
+                "Update Admin"
+              )}
+            </Button>
+            <Button
+              onClick={handleClose}
+              variant="contained"
+              color="error"
+              fullWidth
+            >
+              Cancel
+            </Button>
+          </>
         </Box>
       </Modal>
     </div>

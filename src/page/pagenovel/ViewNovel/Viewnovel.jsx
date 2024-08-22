@@ -1,28 +1,40 @@
+import React, { useEffect, useState } from "react";
 import {
   Box,
+  Typography,
   Button,
+  Chip,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
   Card,
   CardMedia,
-  Divider,
   Grid,
-  IconButton,
+  CardContent,
+  Link,
+  Breadcrumbs,
   Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
   Tabs,
-  Typography,
+  ListItemButton,
+  Container,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { styled } from "@mui/system";
-import Paper from "@mui/material/Paper";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import Directory from "./Directory";
+import axios from "axios";
 import Swal from "sweetalert2";
+import { useParams } from "react-router-dom";
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import { apinovel } from "../../../URL_API/Apinovels";
+const Linknovel = styled(Link)({
+  textDecoration: "none",
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "none",
+    color: "blue",
+  },
+});
 
 const Description = styled(Typography)({
   color: "black",
@@ -44,8 +56,7 @@ const ExpandedDescription = styled(Box)({
   maxHeight: "200px",
   overflowY: "auto",
 });
-
-export default function ViewNovels() {
+const ViewNovels = () => {
   const [expanded, setExpanded] = useState(false);
   const [chapters, setChapters] = useState([]);
   const [visibleChapters, setVisibleChapters] = useState(5); // Number of visible chapters
@@ -53,7 +64,7 @@ export default function ViewNovels() {
   const handleToggle = () => {
     setExpanded(!expanded);
   };
-  const { id_novel } = useParams();
+  const {id_novel} = useParams();
   const [dataname, setNameN] = useState("");
   const [dataauthor, setAuthor] = useState("");
   const [dataType, setType] = useState("");
@@ -64,7 +75,7 @@ export default function ViewNovels() {
   const [idauthoe, setIDauthor] = useState("");
   const [dataselectTag, setSelectedTypes] = useState([]);
   const [datatime, setupdatetime] = useState("");
-
+  const [rankingk, setNovels] = useState([]);
   const formatDateTime = (datatime) => {
     const date = new Date(datatime);
     return date.toLocaleString(); // Display date and time
@@ -76,24 +87,18 @@ export default function ViewNovels() {
   };
 
   const handleClickIdTag = (id_taek) => {
-    window.location.href = `/selecttag/${id_taek}`;
+    const url = `/selecttag/${id_taek}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleIdType = (id_type) => {
-    window.location.href = `/selecttype/${id_type}`;
-  };
-
-  const handleIDAuthor = (id_author) => {
-    window.location.href = `/author/${id_author}`;
-  };
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     UserGet();
     UserGetChapter();
     handleGetUpdate2();
+    handleGetRanking();
   }, []);
-
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -111,11 +116,14 @@ export default function ViewNovels() {
 
   const createReading = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/create/reading", {
-        id_user: userId,
-        id_novel: id_novel,
-        score: 1
-      });
+      const response = await axios.post(
+        `${apinovel}/create/reading`,
+        {
+          id_user: userId,
+          id_novel: id_novel,
+          score: 1,
+        }
+      );
       console.log("Reading entry created:", response.data);
     } catch (error) {
       if (error.response && error.response.status === 409) {
@@ -126,14 +134,16 @@ export default function ViewNovels() {
     }
   };
   const handleLoadBookshelf = async () => {
-    if(userId){
-      
+    if (userId) {
       try {
-        const response = await axios.put("http://localhost:5000/update/reading", {
-          id_user: userId,
-          id_novel: id_novel,
-          bookmark: dataname
-        });
+        const response = await axios.put(
+          `${apinovel}/update/reading`,
+          {
+            id_user: userId,
+            id_novel: id_novel,
+            bookmark: dataname,
+          }
+        );
         console.log("Reading entry created:", response.data);
       } catch (error) {
         if (error.response && error.response.status === 409) {
@@ -143,13 +153,13 @@ export default function ViewNovels() {
           console.error("Error creating reading entry:", error);
         }
       }
-    }else{
+    } else {
       Swal.fire("Only users");
     }
   };
   const UserGet = () => {
     axios
-      .get(`http://localhost:5000/novelall2/${id_novel}`)
+      .get(`${apinovel}/novelall2/${id_novel}`)
       .then((response) => {
         const data2 = response.data[0];
         setNameN(data2.name_novel);
@@ -167,7 +177,7 @@ export default function ViewNovels() {
 
   const UserGetChapter = () => {
     axios
-      .get(`http://localhost:5000/view/ep_novel/${id_novel}`)
+      .get(`${apinovel}/view/ep_novel/${id_novel}`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -181,7 +191,7 @@ export default function ViewNovels() {
 
   const handleGetUpdate2 = () => {
     axios
-      .get(`http://localhost:5000/view/togetherjoin/${id_novel}`)
+      .get(`${apinovel}/view/togetherjoin/${id_novel}`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -194,191 +204,293 @@ export default function ViewNovels() {
         console.error("Error:", error);
       });
   };
+  const handleGetRanking = () => {
+    axios
+      .get(`${apinovel}/novelallviewepslider`)
+      .then((response) => {
+        const data = response.data;
+        if (Array.isArray(data) && data.length > 0) {
+          const filteredData = data.filter((novel) => novel.uploadeN === "Yes");
+          setNovels(filteredData);
+        } else {
+          console.log("No user data found");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching novels:", error);
+      });
+  };
 
   const handleLoadMoreChapters = () => {
-    window.location.href = `/novel/${id_novel}/directory`
+    window.location.href = `/novel/${id_novel}/directory`;
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "white",
-        width: "100%",
-        p: 2,
-        "@media (max-width: 600px)": {
-          p: 0,
-        },
-      }}
-    >
-      <Box sx={{ mb: 2 }}>
-        <Card>
-          <Grid mb={1} container spacing={2}>
-            <Grid display={"flex"} justifyContent={"center"} item xs={4} md={4}>
-              <CardMedia
-                component="img"
-                sx={{
-                  height: {
-                    xs: 200, // height for extra small devices
-                    sm: 300, // height for small devices and up
-                    md: 400, // height for medium devices and up
-                  },
-                  width: {
-                    xs: 150, // height for extra small devices
-                    sm: 200, // height for small devices and up
-                    md: 250, // height for medium devices and up
-                  },
-                  objectFit: "cover",
-                }}
-                image={
-                  dataimage
-                    ? dataimage
-                    : `https://drive.google.com/thumbnail?id=1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd`
-                }
-                alt="Novel Image"
-              />
+    <Container>
+      <Box mt={4}>
+        <Grid container spacing={1}>
+          <Grid xs={12} md={8}>
+            <Grid item xs={12} md={12}>
+              <Card>
+                <CardContent>
+                <Grid   container spacing={2} mb={1} mt={1}>
+                  <Grid xs={11} md={11} mb={1}>
+                    <Breadcrumbs sx={{paddingLeft:1}} aria-label="breadcrumb">
+                      <Link underline="hover" color="primary" href="/">
+                        Home
+                      </Link>
+                      <Link
+                        underline="hover"
+                        color="primary"
+                        href={`/novel-category/${idtype}`}
+                      >
+                        {dataType}
+                      </Link>
+                      <Link
+                        underline="hover"
+                        color="primary"
+                        href={`/novel/${id_novel}`}
+                        aria-current="page"
+                      >
+                        {dataname}
+                      </Link>
+                   
+                    </Breadcrumbs>
+                    <Divider />
+                    </Grid>
+                    <Grid  xs={1} md={1}>
+                    <Tooltip title="Report">
+                    <IconButton href={`/suggestionreport/${id_novel}`} color="error" sx={{paddingLeft:2}} ><ReportProblemIcon /></IconButton></Tooltip>
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2}>
+                    <Grid item xs={4} md={3}>
+                      <CardMedia
+                        component="img"
+                        sx={{
+                          width: "100%",
+                          height: { xs: 170, md: 250 },
+                          overflow: "hidden",
+                          boxShadow: 5,
+                          border: 1,
+                        }}
+                        image={
+                          dataimage
+                            ? dataimage
+                            : `https://drive.google.com/thumbnail?id=1p_xAKSNXylMpPPKdeB30KWe8BtYjdHJd`
+                        }
+                        alt="Novel cover"
+                      />
+                    </Grid>
+                    <Grid item xs={8} md={9}>
+                      <Typography color={"primary"} variant="h5" gutterBottom>
+                        {dataname} 
+                      </Typography>
+                      <Typography
+                        mt={3}
+                      >
+                        Author:
+                        <Linknovel target="_blank" href={`/author/${idauthoe}`}>
+                          {dataauthor}
+                        </Linknovel>
+                      </Typography>
+                      <Typography
+                        sx={{ display: "flex" }}
+                        mb={2}
+                        mt={2}
+                        variant="subtitle1"
+                        gutterBottom
+                      >
+                        <Typography
+                          sx={{
+                            borderRight: "1px solid grey",
+                            paddingRight: 1,
+                          }}
+                        >
+                          Category:
+                          <Linknovel target="_blank" href={`/novel-category/${idtype}`}>
+                            {dataType}
+                          </Linknovel>
+                        </Typography>
+                        <Typography sx={{ paddingLeft: 1 }}>
+                          {datastatus}
+                        </Typography>
+                      </Typography>
+
+                      <Typography mt={1} mb={1}>
+                        Update Time: {formatDateTime(datatime)}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      display={"flex"}
+                      justifyContent={"space-around"}
+                      mb={2}
+                    >
+                      <Box display="flex" alignItems="center">
+                        <Button
+                          onClick={handleLoadMoreChapters}
+                          variant="contained"
+                          color="primary"
+                        >
+                          Start reading
+                        </Button>
+                        <Button
+                          onClick={handleLoadBookshelf}
+                          variant="contained"
+                          color="primary"
+                          style={{ marginLeft: 8 }}
+                        >
+                          Add to bookshelf
+                        </Button>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
-            <Grid item xs={8} md={8}>
-              <Box sx={{ p: 2, marginTop: -2 }}>
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography variant="h6" fontWeight="bold">
-                    {dataname}
-                  </Typography>
-                  <IconButton
-                    href={`/suggestionreport/${id_novel}`}
-                    color="error"
+            <Grid item xs={12} md={12}>
+              <Box sx={{ mb: 1, mt: 1 }}>
+                <Card>
+                  <Box sx={{ p: 2 }}>
+                    <Typography
+                      borderBottom={"1px solid blue"}
+                      color={"primary"}
+                      variant="h6"
+                      fontWeight="bold"
+                    >
+                      Tag
+                    </Typography>
+                    <Divider />
+                    <Tabs
+                      centered
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      sx={{ mt: 1 }}
+                    >
+                      {dataselectTag.map((category, index) => (
+                        <Chip
+                          color="primary"
+                          variant="outlined"
+                          key={index}
+                          label={category.name_taek}
+                          onClick={() => handleClickIdTag(category.id_taek)}
+                        />
+                      ))}
+                    </Tabs>
+                  </Box>
+                </Card>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <Card>
+                <Box sx={{ p: 2 }}>
+                  <Typography
+                    borderBottom={"1px solid blue"}
+                    color={"primary"}
+                    variant="h6"
+                    fontWeight="bold"
                   >
-                    <WarningAmberIcon />
-                  </IconButton>
+                    Description
+                  </Typography>
+                  <Divider />
+                  {expanded ? (
+                    <ExpandedDescription onClick={handleToggle}>
+                      {datadision}
+                    </ExpandedDescription>
+                  ) : (
+                    <Description onClick={handleToggle}>
+                      {datadision}
+                    </Description>
+                  )}
                 </Box>
-                <Typography color="text.secondary" mt={1}>
-                  Author:{" "}
-                  <Button onClick={() => handleIDAuthor(idauthoe)}>
-                    {dataauthor}
-                  </Button>
-                </Typography>
-                <Typography color="text.secondary" mt={1}>
-                  Type Novel:{" "}
-                  <Button onClick={() => handleIdType(idtype)}>
-                    {dataType}
-                  </Button>
-                </Typography>
-                <Typography mt={1}>Status: {datastatus}</Typography>
-                <Typography mt={1} mb={1}>
-                  Update Time: {formatDateTime(datatime)}
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-                  <Box>
-                    <Button
-                    onClick={handleLoadMoreChapters}
-                      sx={{ backgroundColor: "blue" }}
-                      variant="contained"
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <Box mt={1}>
+                <Card>
+                  <CardContent>
+                    <Typography
+                      borderBottom={"1px solid blue"}
+                      color={"primary"}
+                      variant="h6"
+                      gutterBottom
                     >
-                      Read
-                    </Button>
-                  </Box>
-                  <Box>
-                    <Button
-                     onClick={handleLoadBookshelf}
-                      sx={{ backgroundColor: "blue" }}
-                      variant="contained"
+                      Recently Updated
+                    </Typography>
+                    <List>
+                      {chapters.map((update, index) => (
+                        <React.Fragment key={index}>
+                          <ListItemButton
+                            sx={{ borderBottom: "1px solid #616161" }}
+                            href={`/novel/${id_novel}/${update.id}`}
+                          >
+                            <ListItem>
+                              <ListItemText
+                                primary={`Chapter ${update.name_episode}`}
+                                secondary={formatDateTimeEP(update.updatetime)}
+                              />
+                            </ListItem>
+                            {index < chapters.length - 1 && <Divider />}
+                          </ListItemButton>
+                        </React.Fragment>
+                      ))}
+                    </List>
+                    <Box
+                      sx={{ p: 2, display: "flex", justifyContent: "center" }}
                     >
-                      Add to Bookshelf
-                    </Button>
-                  </Box>
-                </Box>
+                      <Button
+                        variant="contained"
+                        onClick={handleLoadMoreChapters}
+                        sx={{ backgroundColor: "blue" }}
+                      >
+                        Complete catalogue
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
               </Box>
             </Grid>
           </Grid>
-        </Card>
-      </Box>
-      <Box sx={{ mb: 2 }}>
-        <Card>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6" fontWeight="bold">
-              Tag
-            </Typography>
-            <Divider />
-            <Tabs
-              centered
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{ mt: 1 }}
-            >
-              {dataselectTag.map((category, index) => (
-                <Tab
-                  key={index}
-                  label={category.name_taek}
-                  onClick={() => handleClickIdTag(category.id_taek)}
-                />
-              ))}
-            </Tabs>
-          </Box>
-        </Card>
-      </Box>
-      <Box sx={{ mb: 2 }}>
-        <Card>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6" fontWeight="bold">
-              Description
-            </Typography>
-            <Divider />
-            {expanded ? (
-              <ExpandedDescription onClick={handleToggle}>
-                {datadision}
-              </ExpandedDescription>
-            ) : (
-              <Description onClick={handleToggle}>
-                {datadision}
-              </Description>
-            )}
-          </Box>
-        </Card>
-      </Box>
-      <Box sx={{ mb: 2 }}>
-        <Card>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6" fontWeight="bold">
-              Chapter
-            </Typography>
-            <Divider />
-            <TableContainer component={Paper}>
-              <Table>
-                <TableBody>
-                  {chapters.map((row, index) => (
-                    <TableRow key={index}>
-                      <Button
-                        href={`/novel/${id_novel}/${row.id}`}
-                        sx={{
-                          width: "100%",
-                          textTransform: "initial",
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardContent>
+                <Typography
+                  borderBottom={"1px solid blue"}
+                  color={"primary"}
+                  variant="h6"
+                  gutterBottom
+                >
+                  Ranking in Popularity
+                </Typography>
+
+                <List>
+                  {rankingk.map((ranking, index) => (
+                    <React.Fragment key={index}>
+                      <ListItemButton
+                        sx={{ borderBottom: "1px solid #616161" }}
+                        href={`/novel/${id_novel}`}
                       >
-                        <TableCell>
-                          Chapter {row.id_episode_novel} : {row.name_episode}
-                        </TableCell>
-                        <TableCell align="right">
-                          {formatDateTimeEP(row.updatetime)}
-                        </TableCell>
-                      </Button>
-                    </TableRow>
+                        <ListItem>
+                          <ListItemText
+                            primary={`${index + 1}. ${ranking.name_novel}`}
+                          />
+                          Popularity {ranking.scorereding}
+                        </ListItem>
+                        {index < rankingk.length - 1 && <Divider />}
+                      </ListItemButton>
+                    </React.Fragment>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
-              <Button
-                variant="contained"
-                onClick={handleLoadMoreChapters}
-                sx={{ backgroundColor: "blue" }}
-              >
-                Load More Chapters
-              </Button>
-            </Box>
-          </Box>
-        </Card>
+                  <Divider />
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Box>
-    </Box>
+    </Container>
   );
-}
+};
+
+export default ViewNovels;
