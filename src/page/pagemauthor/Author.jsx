@@ -30,7 +30,7 @@ import UpdateAuthor from "./Update";
 import ExportViewAuthor from "./Export";
 import Swal from "sweetalert2";
 import { apinovel } from "../../URL_API/Apinovels";
-import Viewauthor from "./view";
+import Viewauthor from "./viewauthor";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
