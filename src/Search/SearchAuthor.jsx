@@ -13,6 +13,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Stack, styled } from "@mui/system";
 import axios from "axios"; // ใช้ axios สำหรับเรียก API
+import { apinovel } from "../URL_API/Apinovels";
 
 const Linknovel = styled(Link)({
   textDecoration: "none",
@@ -65,7 +66,7 @@ export default function SearchAuthor() {
     setLoading(true)
     try {
       const response = await axios.get(
-        `http://localhost:5000/novelallviewepa/${searchA}`
+        `${apinovel}/novelallviewepa/${searchA}`
       );
       const data = response.data;
       if (Array.isArray(data) && data.length > 0) {

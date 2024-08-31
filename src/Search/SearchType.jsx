@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { styled } from "@mui/system";
 import axios from "axios"; // ใช้ axios สำหรับเรียก API
+import { apinovel } from "../URL_API/Apinovels";
 
 const Linknovel = styled(Link)({
   textDecoration: "none",
@@ -43,7 +44,7 @@ export default function SearchType() {
   const fetchNovels = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/novelallvieweptype/${searchType}`
+        `${apinovel}/novelallvieweptype/${searchType}`
       );
       const data = response.data;
       if (Array.isArray(data) && data.length > 0) {

@@ -14,6 +14,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Stack, styled } from "@mui/system";
 import axios from "axios"; // ใช้ axios สำหรับเรียก API
+import { apinovel } from "../URL_API/Apinovels";
 
 const Linknovel = styled(Link)({
   textDecoration: "none",
@@ -62,7 +63,7 @@ export default function SearchTag() {
     setLoading(true)
     try {
       const response = await axios.get(
-        `http://localhost:5000/novelallvieweptag/${searchTag}`
+        `${apinovel}/novelallvieweptag/${searchTag}`
       );
       const data = response.data;
       if (Array.isArray(data) && data.length > 0) {
