@@ -55,13 +55,16 @@ export default function ForgotPassword() {
               setStatus(loggedInUser.status);
               setID(loggedInUser.id);
               if (loggedInUser) {
-                axios.post(`${apigmail}/send-code`, {
-                  email,
-                  user_name: loggedInUser.user_name,
-                  status: loggedInUser.status,
-                });
-                setActiveStep(activeStep + 1);
-                setLoading(false);
+                axios
+                  .post(`${apigmail}/send-code`, {
+                    email,
+                    user_name: loggedInUser.user_name,
+                    status: loggedInUser.status,
+                  })
+                  .then((response) => {
+                    setActiveStep(activeStep + 1);
+                    setLoading(false);
+                  });
               } else {
                 console.log("Invalid username or email");
                 setLoading(false);
@@ -135,6 +138,13 @@ export default function ForgotPassword() {
                 });
 
                 setLoading(false);
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Tag has been added",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
                 window.location.href = "/login";
               })
               .catch((error) => {
@@ -165,6 +175,13 @@ export default function ForgotPassword() {
                 });
 
                 setLoading(false);
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Tag has been added",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
                 window.location.href = "/login";
               })
               .catch((error) => {
@@ -181,6 +198,7 @@ export default function ForgotPassword() {
                 password: newPassword,
               })
               .then((response) => {
+                setLoading(false);
                 console.log("Update succeeded", response.data);
                 Swal.fire({
                   position: "top-end",
@@ -194,7 +212,13 @@ export default function ForgotPassword() {
                   newPassword,
                 });
 
-                setLoading(false);
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Tag has been added",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
                 window.location.href = "/login";
               })
               .catch((error) => {

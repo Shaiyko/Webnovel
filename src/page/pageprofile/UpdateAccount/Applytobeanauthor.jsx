@@ -39,6 +39,21 @@ const currencies = [
   },
 ];
 const Applytobeanauthor = () => {
+  const [userId, setUserId] = useState("");
+  const [pen, setpen] = useState("");
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedInUser) {
+      if (loggedInUser.status === "author") {
+        const loggedInAuthor = JSON.parse(localStorage.getItem("author"));
+        setUserId(loggedInAuthor.id_author);
+        setpen(loggedInAuthor.penname);
+      } else if (loggedInUser.status === "admin") {
+        setUserId(1);
+        setpen("admin");
+      }
+    }
+  }, []);
   useEffect(() => {
     handleGetUpdate();
   }, []);
@@ -207,40 +222,61 @@ const Applytobeanauthor = () => {
         try {
           setLoading(true);
           await axios
-            .post(`${apinovel}/author`, {
-              id_author: maxIdType + 1,
-              realname: realname,
-              penname: penname,
-              gender: datagender,
-              date_of_birth: date_of_birth,
-              address: address,
-              gmail: email,
-              user_name: username,
-              password: newPassword,
-              avatar: `https://drive.google.com/thumbnail?id=1TjKQYdbxvD-JKG3kpO5yVUZs-wJdJMNE`,
-              status: status,
-              contact_channels: contact,
-            })
+            .get(`${apinovel}/view/author`)
             .then((response) => {
-              Swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Author data submitted successfully.",
-              });
-              setLoading(false);
-              setActiveStep(activeStep + 1);
+              const loggedInUser1 = response.data.find(
+                (user) => user.penname === penname
+              );
+
+              if (loggedInUser1) {
+                setLoading(false);
+                setError(`This "User Name: ${username}" has been Already used`);
+              } else {
+                axios
+                  .post(`${apinovel}/create/author`, {
+                    id_author: maxIdType + 1,
+                    realname: realname,
+                    penname: penname,
+                    gender: datagender,
+                    date_of_birth: date_of_birth,
+                    address: address,
+                    gmail: email,
+                    user_name: username,
+                    password: newPassword,
+                    avatar: `https://drive.google.com/thumbnail?id=1TjKQYdbxvD-JKG3kpO5yVUZs-wJdJMNE`,
+                    status: status,
+                    contact_channels: contact,
+                  })
+                  .then((response) => {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Success",
+                      text: "Author data submitted successfully.",
+                    });
+                    setLoading(false);
+                    setActiveStep(activeStep + 1);
+                  })
+                  .catch((error) => {
+                    console.error("Error registering:", error);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Oops...",
+                      text: "Something went wrong!",
+                    });
+                  });
+              }
             })
             .catch((error) => {
-              console.error("Error registering:", error);
               Swal.fire({
                 icon: "error",
-                title: "Oops...",
-                text: "Something went wrong!",
+                title: "Error",
+                text: "Invalid username or email",
               });
+              console.error("Error code in:", error);
+              setLoading(false);
             });
         } catch (err) {
-          setError("Error submitting author data.");
-          setLoading(false);
+          setError("Error sending verification code.");
         }
         break;
       default:

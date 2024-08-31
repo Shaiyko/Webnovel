@@ -69,6 +69,7 @@ export default function Addauthor({ UserGet }) {
   const [maxIdType, setMaxIdType] = useState(0);
   //loading
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   //upload image
   const [image, setImage] = useState(null);
   const [fileimage, setFile] = useState(null);
@@ -101,7 +102,9 @@ export default function Addauthor({ UserGet }) {
     handClae();
     UserGet();
   };
-
+  useEffect(() => {
+    handleGetUpdate();
+  }, []);
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setFile(file);
@@ -128,15 +131,11 @@ export default function Addauthor({ UserGet }) {
     formData.append("parentFile", parentFileId);
 
     try {
-      const response = await axios.post(
-        `${apiupfile}/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${apiupfile}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setAvatar(
         `https://drive.google.com/thumbnail?id=${response.data.fileId}`
@@ -149,41 +148,85 @@ export default function Addauthor({ UserGet }) {
   };
 
   const handleAddTag = async (fileId) => {
-    axios
-      .post(`${apinovel}/author`, {
-        id_author: maxIdType + 1,
-        realname: datarelname,
-        penname: datapenname,
-        gender: datagender,
-        date_of_birth: data_date_of_birth,
-        address: dataaddress,
-        gmail: datagmail,
-        user_name: datauser,
-        password: datapass,
-        avatar: `https://drive.google.com/thumbnail?id=${fileId}`,
-        status: datastatus,
-        contact_channels: datacontact_channels,
-      })
-      .then((response) => {
-        console.log("Add succeeded", response.data);
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Tag has been added",
-          showConfirmButton: false,
-          timer: 1500,
-        });
+    try {
+      setLoading(true);
+      await axios
+        .get(`${apinovel}/view/author`)
+        .then((response) => {
+          const loggedInPen = response.data.find(
+            (user) => user.penname === datapenname
+          );
+          const loggedInUser = response.data.find(
+            (user) => user.user_name === datauser
+          );
 
-        UserGet();
-      })
-      .catch((error) => {
-        console.error("Error registering:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Something went wrong!",
+          if (loggedInPen) {
+            setLoading(false)
+            setError(`This "Pen Name: ${datapenname}" has been Already used`);
+            console.log("5555555555555555555555555")
+           
+            
+          }else  if (loggedInUser) {
+            setLoading(false)
+            setError(`This "User Name: ${datauser}" has been Already used`);
+            console.log("5555555555555555555555555")
+           
+            
+          } else {
+            axios
+              .post(`${apinovel}/create/author`, {
+                id_author: maxIdType + 1,
+                realname: datarelname,
+                penname: datapenname,
+                gender: datagender,
+                date_of_birth: data_date_of_birth,
+                address: dataaddress,
+                gmail: datagmail,
+                user_name: datauser,
+                password: datapass,
+                avatar: `https://drive.google.com/thumbnail?id=${fileId}`,
+                status: datastatus,
+                contact_channels: datacontact_channels,
+              })
+              .then((response) => {
+                console.log("Add succeeded", response.data);
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Tag has been added",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+
+                UserGet();
+                Swal.close();
+                handleClose();
+              })
+              .catch((error) => {
+                console.error("Error registering:", error);
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Something went wrong!",
+                });
+              });
+          }
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Invalid penname",
+          });
+          console.error("Error code in:", error);
+          setLoading(false);
         });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
       });
+    }
   };
 
   const handleSubmit = async () => {
@@ -192,31 +235,23 @@ export default function Addauthor({ UserGet }) {
       const fileId = "1TjKQYdbxvD-JKG3kpO5yVUZs-wJdJMNE";
       try {
         await handleAddTag(fileId);
-        Swal.close();
-        handleClose();
       } catch (error) {
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: error.message,
         });
-      } finally {
-        setLoading(false);
-      }
+      } 
     } else {
       try {
         const fileId = await handleUpload();
         await handleAddTag(fileId);
-        Swal.close();
-        handleClose();
       } catch (error) {
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: error.message,
         });
-      } finally {
-        setLoading(false);
       }
     }
   };
@@ -238,7 +273,7 @@ export default function Addauthor({ UserGet }) {
 
   const handleGetUpdate = () => {
     axios
-      .get(`https://dex-api-novel.onrender.com/view/author`)
+      .get(`${apinovel}/view/author`)
       .then((response) => {
         const data = response.data;
         if (data.length > 0) {
@@ -253,9 +288,6 @@ export default function Addauthor({ UserGet }) {
       });
   };
 
-  useEffect(() => {
-    handleGetUpdate();
-  }, []);
   return (
     <div>
       <Button onClick={handleOpen}>
@@ -269,162 +301,185 @@ export default function Addauthor({ UserGet }) {
           <Box>
             {/* Loading, Error Handling */}
             <LoadingComponent loading={loading} />
-              <>
-                <Grid container spacing={2}>
-                  <Grid item xs={4}>
-                    <Card>
-                      <Button variant="contained" component="label" sx={{ mb: 2 }}>
-                        {image ? (
-                          <CardMedia component="img" image={image} alt="Uploaded Image" />
-                        ) : (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              height: 200,
-                              bgcolor: "#f0f0f0",
-                            }}
-                          >
-                            <Typography variant="subtitle1" color="textSecondary">
-                              <PortraitIcon sx={{ fontSize: 100 }} /> No image
-                            </Typography>
-                          </Box>
-                        )}
-                        <input type="file" accept="image/*" hidden onChange={handleImageChange} />
-                      </Button>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <TextField
-                      fullWidth
-                      label="Rel Name"
-                      value={datarelname}
-                      onChange={(e) => setRname(e.target.value)}
-                      variant="outlined"
-                      margin="normal"
-                    />
-                    <TextField
-                      fullWidth
-                      label="Pen Name"
-                      value={datapenname}
-                      onChange={(e) => setPname(e.target.value)}
-                      variant="outlined"
-                      margin="normal"
-                    />
-                    <FormControl variant="standard" fullWidth margin="normal">
-                      <InputLabel htmlFor="formatted-text-mask-input">Date of Birth</InputLabel>
-                      <Input
-                        value={data_date_of_birth}
-                        onChange={handleChangeDate}
-                        name="textmask"
-                        id="formatted-text-mask-input"
-                      />
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <TextField
-                  fullWidth
-                  id="outlined-select-currency"
-                  select
-                  label="Select Gender"
-                  helperText="Please select your Gender"
-                  value={datagender}
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  {currencies.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  fullWidth
-                  label="Contact Channels"
-                  helperText="Please enter phone number, email, or link."
-                  value={datacontact_channels}
-                  onChange={(e) => setContact_channels(e.target.value)}
-                  variant="outlined"
-                  margin="normal"
-                />
-                <TextField
-                  fullWidth
-                  label="Address"
-                  value={dataaddress}
-                  onChange={(e) => setAddress(e.target.value)}
-                  variant="outlined"
-                  margin="normal"
-                />
-                <FormControl fullWidth sx={{ mb: 2 }}>
-                  <InputLabel htmlFor="input-with-icon-adornment">UserName</InputLabel>
-                  <Input
-                    id="input-with-icon-adornment"
-                    value={datauser}
-                    onChange={(e) => setUserName(e.target.value)}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-                <FormControl fullWidth sx={{ mb: 2 }}>
-                  <InputLabel htmlFor="input-with-icon-adornment-email">Gmail</InputLabel>
-                  <Input
-                    id="input-with-icon-adornment-email"
-                    value={datagmail}
-                    onChange={(e) => setGmail(e.target.value)}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <MailOutlineIcon />
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-                <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
-                  <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
-                  <Input
-                    id="standard-adornment-password"
-                    type={showPassword ? "text" : "password"}
-                    value={datapass}
-                    onChange={(e) => setPass(e.target.value)}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <KeyIcon />
-                      </InputAdornment>
-                    }
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
+           
+            <>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Card>
+                    <Button
+                      variant="contained"
+                      component="label"
+                      sx={{ mb: 2 }}
+                    >
+                      {image ? (
+                        <CardMedia
+                          component="img"
+                          image={image}
+                          alt="Uploaded Image"
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: 200,
+                            bgcolor: "#f0f0f0",
+                          }}
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
+                          <Typography variant="subtitle1" color="textSecondary">
+                            <PortraitIcon sx={{ fontSize: 100 }} /> No image
+                          </Typography>
+                        </Box>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleImageChange}
+                      />
+                    </Button>
+                  </Card>
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    label="Rel Name"
+                    value={datarelname}
+                    onChange={(e) => setRname(e.target.value)}
+                    variant="outlined"
+                    margin="normal"
                   />
-                </FormControl>
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  color="info"
-                  sx={{ mt: 3 }}
-                  fullWidth
-                  disabled={!isFormValid()}
-                >
-                  Add Admin
-                </Button>
-                <Button
-                  onClick={handleClose}
-                  variant="contained"
-                  color="error"
-                  fullWidth
-                >
-                  Cancel
-                </Button>
-              </>
+                  <TextField
+                    fullWidth
+                    label="Pen Name"
+                    value={datapenname}
+                    onChange={(e) => setPname(e.target.value)}
+                    variant="outlined"
+                    margin="normal"
+                  />
+                  <FormControl variant="standard" fullWidth margin="normal">
+                    <InputLabel htmlFor="formatted-text-mask-input">
+                      Date of Birth
+                    </InputLabel>
+                    <Input
+                      value={data_date_of_birth}
+                      onChange={handleChangeDate}
+                      name="textmask"
+                      id="formatted-text-mask-input"
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <TextField
+                fullWidth
+                id="outlined-select-currency"
+                select
+                label="Select Gender"
+                helperText="Please select your Gender"
+                value={datagender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                {currencies.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                fullWidth
+                label="Contact Channels"
+                helperText="Please enter phone number, email, or link."
+                value={datacontact_channels}
+                onChange={(e) => setContact_channels(e.target.value)}
+                variant="outlined"
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Address"
+                value={dataaddress}
+                onChange={(e) => setAddress(e.target.value)}
+                variant="outlined"
+                margin="normal"
+              />
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="input-with-icon-adornment">
+                  UserName
+                </InputLabel>
+                <Input
+                  id="input-with-icon-adornment"
+                  value={datauser}
+                  onChange={(e) => setUserName(e.target.value)}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <AccountCircle />
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="input-with-icon-adornment-email">
+                  Gmail
+                </InputLabel>
+                <Input
+                  id="input-with-icon-adornment-email"
+                  value={datagmail}
+                  onChange={(e) => setGmail(e.target.value)}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <MailOutlineIcon />
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
+                <InputLabel htmlFor="standard-adornment-password">
+                  Password
+                </InputLabel>
+                <Input
+                  id="standard-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  value={datapass}
+                  onChange={(e) => setPass(e.target.value)}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <KeyIcon />
+                    </InputAdornment>
+                  }
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              {error && <Box color="error.main">{error}</Box>}
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                color="info"
+                sx={{ mt: 3 }}
+                fullWidth
+                disabled={!isFormValid()}
+              >
+                Add Author
+              </Button>
+              <Button
+                onClick={handleClose}
+                variant="contained"
+                color="error"
+                fullWidth
+              >
+                Cancel
+              </Button>
+            </>
           </Box>
         </DialogContent>
       </Dialog>

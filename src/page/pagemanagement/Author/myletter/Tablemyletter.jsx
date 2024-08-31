@@ -29,7 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import Swal from "sweetalert2";
 import { apinovel } from "../../../../URL_API/Apinovels";
-import ViewSuggestions from "../../Report/Suggestions/ViewSuggestions";
+import ViewS from "./view";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -61,7 +61,7 @@ const headCells = [
   { id: "id", numeric: false, disablePadding: true, label: "ID" },
   { id: "name user", numeric: true, disablePadding: false, label: "User Name" },
   { id: "creation date", numeric: true, disablePadding: false, label: "Date" },
-  
+
   {
     id: "namenovel",
     numeric: true,
@@ -291,7 +291,7 @@ function EnhancedTableToolbar(props) {
       {numSelected === 1 ? (
         <Tooltip title="View and Create Chapter">
           <IconButton>
-            <ViewSuggestions selected={selected} setSelected={setSelected} />
+            <ViewS selected={selected} setSelected={setSelected} />
           </IconButton>
         </Tooltip>
       ) : (

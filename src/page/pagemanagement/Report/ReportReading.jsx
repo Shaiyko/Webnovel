@@ -35,7 +35,7 @@ const ReportReading = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [includeAllData, setIncludeAllData] = useState(false);
   const [quantitynovel, setQuantitynovel] = useState(0);
-
+  const [uniqueTypes, setUniqueTypes] = useState([]);
   useEffect(() => {
     fetchData();
   }, [page, rowsPerPage, genderSearch, startDate, endDate, statusSearch]);
@@ -52,6 +52,7 @@ const ReportReading = () => {
       });
       setNovels(response.data);
       setQuantitynovel(response.data.length);
+      setUniqueTypes(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -149,21 +150,21 @@ const ReportReading = () => {
               />
             </FormControl>
             <FormControl variant="outlined">
-              <InputLabel>Type</InputLabel>
-              <Select
-                sx={{ width: 250 }}
-                value={genderSearch}
-                onChange={(e) => setGenderSearch(e.target.value)}
-                label="Type"
-              >
-                <MenuItem value="">
-                  <em>None</em>
+            <InputLabel>Type</InputLabel>
+            <Select
+             sx={{ width: 250 }}
+             value={genderSearch}
+             onChange={(e) => setGenderSearch(e.target.value)}
+             label="Type"
+            >
+              <MenuItem value="">All</MenuItem>
+              {uniqueTypes.map((type) => (
+                <MenuItem key={type.id_type} value={type.id_type}>
+                  {type.name_type}
                 </MenuItem>
-                <MenuItem value="System">System</MenuItem>
-                <MenuItem value="RPG">RPG</MenuItem>
-                <MenuItem value="Saifai">Saifai</MenuItem>
-              </Select>
-            </FormControl>
+              ))}
+            </Select>
+          </FormControl>
             <FormControl variant="outlined">
               <InputLabel>Status</InputLabel>
               <Select

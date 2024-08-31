@@ -15,9 +15,6 @@ import { apinovel } from "../../../URL_API/Apinovels";
 
 const ViewContent = () => {
   const { id_novel, id } = useParams();
-  const [dataname, setNameN] = useState("");
-  const [databook, setbookmark] = useState("");
-  const [dataep, setep] = useState("");
   const [content, setContent] = useState("");
   const [dataNameEP, setNameEP] = useState("");
   const [episodes, setEpisodes] = useState([]);
@@ -26,28 +23,21 @@ const ViewContent = () => {
   // State for font size and background color
   const [fontSize, setFontSize] = useState(22);
   const [backgroundColor, setBackgroundColor] = useState("white");
-  const [fontFamily] = useState(
-    "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@100..900&display=swap');"
-  );
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // Open and close settings menu
   const handleOpenSettings = (event) => setAnchorEl(event.currentTarget);
   const handleCloseSettings = () => setAnchorEl(null);
 
-  // Handle font size change
   const handleFontSizeChange = (event, newValue) => {
     setFontSize(newValue);
     sessionStorage.setItem("fontSize", newValue);
   };
 
-  // Handle background color change
   const handleBackgroundColorChange = (color) => {
     setBackgroundColor(color);
     sessionStorage.setItem("backgroundColor", color);
   };
 
-  // Navigate to the next or previous page
   const handleNextPage = () => {
     const currentIndex = episodes.findIndex((ep) => ep.id === parseInt(id));
     if (currentIndex >= 0 && currentIndex < episodes.length - 1) {
@@ -70,37 +60,18 @@ const ViewContent = () => {
     window.location.href = `/novel/${id_novel}/directory`;
   };
 
-  // Fetch episodes and other necessary data
   useEffect(() => {
     fetchEpisodes();
-  }, [id_novel]);
-
-  useEffect(() => {
     handleGetmaxID();
-    fetchEpisodes();
-    UserGet();
-    Bookmark();
-  }, []);
-
-  const [userId, setUserId] = useState(null);
+  }, [id_novel, id]);
 
   useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    if (loggedInUser && loggedInUser.status === "user") {
-      const loggedInUserP = JSON.parse(localStorage.getItem("userP"));
-      setUserId(loggedInUserP.id_user);
-    }
-  }, []);
+    const savedFontSize = sessionStorage.getItem("fontSize");
+    const savedBackgroundColor = sessionStorage.getItem("backgroundColor");
 
-  const UserGet = () => {
-    axios
-      .get(`${apinovel}/novelall2/${id_novel}`)
-      .then((response) => {
-        const data2 = response.data[0];
-        setNameN(data2.name_novel);
-      })
-      .catch((error) => console.log("error", error));
-  };
+    if (savedFontSize) setFontSize(parseInt(savedFontSize, 10));
+    if (savedBackgroundColor) setBackgroundColor(savedBackgroundColor);
+  }, []);
 
   const handleGetmaxID = () => {
     axios
@@ -131,71 +102,6 @@ const ViewContent = () => {
       });
   };
 
-  const Bookmark = () => {
-    axios
-      .get(`${apinovel}/readings?id_user=${userId}&id_novel=${id_novel}`)
-      .then((response) => {
-        const data = response.data[0];
-        setbookmark(data.bookmark);
-        setep(data.episodes);
-      })
-      .catch((error) => {
-        console.error("Error fetching episodes:", error);
-      });
-  };
-
-  const handleBookmark = async () => {
-    if (userId) {
-      try {
-        const response = await axios.put(`${apinovel}/update/reading`, {
-          id_user: userId,
-          id_novel: id_novel,
-          bookmark: dataname,
-        });
-        console.log("Reading entry created:", response.data);
-      } catch (error) {
-        if (error.response && error.response.status === 409) {
-          console.error("Entry already exists Bookmark");
-          try {
-            const response = await axios.put(
-              `${apinovel}/update/readingepisode`,
-              {
-                id_user: userId,
-                id_novel: id_novel,
-                bookmark: databook,
-                episode: id,
-              }
-            );
-            console.log("Reading entry created:", response.data);
-            if (response.data) {
-              Swal.fire("The location is saved");
-            }
-          } catch (error) {
-            if (error.response && error.response.status === 409) {
-              console.error("Entry already exists");
-              Swal.fire("Entry already exists");
-            } else {
-              console.error("Error creating reading entry:", error);
-            }
-          }
-        } else {
-          console.error("Error creating reading entry:", error);
-        }
-      }
-    } else {
-      Swal.fire("Only users");
-    }
-  };
-
-  useEffect(() => {
-    // Load settings from sessionStorage
-    const savedFontSize = sessionStorage.getItem("fontSize");
-    const savedBackgroundColor = sessionStorage.getItem("backgroundColor");
-
-    if (savedFontSize) setFontSize(parseInt(savedFontSize, 10));
-    if (savedBackgroundColor) setBackgroundColor(savedBackgroundColor);
-  }, []);
-
   if (show404) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
@@ -214,7 +120,6 @@ const ViewContent = () => {
         fontSize: `${fontSize}px`, // Apply font size dynamically
         backgroundColor: backgroundColor,
         color: "black",
-        fontFamily: fontFamily,
       }}
     >
       <Box
@@ -233,22 +138,22 @@ const ViewContent = () => {
           <SettingsIcon />
         </IconButton>
       </Box>
-      <Typography
-        sx={{
+
+      <div
+        style={{
           border: "1px solid #ccc",
           minHeight: "auto",
-          p: 2,
+          padding: "10px",
           maxWidth: "100%",
           overflowY: "auto",
+          overflowX: "hidden", // Prevent horizontal scroll
           whiteSpace: "pre-wrap",
           backgroundColor: backgroundColor,
           color: "black",
-          marginTop: "10px",
-          fontSize: `${fontSize}px`, // Apply font size dynamically
-          fontFamily: fontFamily,
         }}
         dangerouslySetInnerHTML={{ __html: content }}
       />
+
       <Box display={"flex"} justifyContent={"space-between"} mt={2} mb={2}>
         <Button variant="contained" onClick={handlePreviousPage}>
           Previous Chapter
@@ -256,22 +161,11 @@ const ViewContent = () => {
         <Button variant="contained" onClick={handleDirectory}>
           Directory
         </Button>
-        {userId ? (
-          <Button variant="contained" onClick={handleBookmark}>
-            Bookmark
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            onClick={() => Swal.fire("Only users can bookmark")}
-          >
-            Bookmark
-          </Button>
-        )}
         <Button variant="contained" onClick={handleNextPage}>
           Next Chapter
         </Button>
       </Box>
+
       {/* Settings Menu */}
       <Menu
         anchorEl={anchorEl}
@@ -284,7 +178,7 @@ const ViewContent = () => {
           <Slider
             value={fontSize}
             min={12}
-            max={36}
+            max={44}
             step={1}
             onChange={handleFontSizeChange}
             aria-labelledby="font-size-slider"

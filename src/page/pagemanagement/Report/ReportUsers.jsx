@@ -57,10 +57,10 @@ const ReportUsers = () => {
     }
   };
 
-  const handleExport = () => {
-    const result = Swal.fire({
+  const handleExport = async () => {
+    const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You export data?",
+      text: "You want to export the data?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",

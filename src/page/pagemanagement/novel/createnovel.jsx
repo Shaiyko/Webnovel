@@ -116,7 +116,7 @@ const CreateNovelForm = ({ UserGet, id_author }) => {
       });
 
       const insertId = response.data.insertId;
-      console.log("sss",insertId)
+      console.log("sss", insertId);
       return insertId;
     } catch (error) {
       console.error("There was an error creating the novel!", error);

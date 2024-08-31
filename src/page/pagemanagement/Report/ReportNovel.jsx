@@ -94,19 +94,19 @@ const NovelReport = () => {
     }
   };
 
-  const handleExport = () => {
-    const result = Swal.fire({
+  const handleExport = async () => {
+    const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You export data?",
+      text: "You want to export the data?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Export it!",
     });
+    const allDataFlag = includeAllData ? 1 : 0;
 
     if (result.isConfirmed) {
-    const allDataFlag = includeAllData ? 1 : 0;
     window.location.href = `${apinovel}/exportnovel?startDate=${startDate}&endDate=${endDate}&type=${type}&uploadStatus=${uploadStatus}&statusn=${statusn}&pennameSearch=${pennameSearch}&nameNovelSearch=${nameNovelSearch}&includeAllData=${allDataFlag}`;
     }
   };

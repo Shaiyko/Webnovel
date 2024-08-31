@@ -14,7 +14,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { apinovel } from "../../../../URL_API/Apinovels";
 
 // eslint-disable-next-line react/prop-types
-export default function ViewSuggestions({ selected, setSelected }) {
+export default function ViewS({ selected, setSelected }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
