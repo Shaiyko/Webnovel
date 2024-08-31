@@ -40,9 +40,9 @@ import ResponsiveSlider from "./Test/test";
 import TableNovelAdmin from "./page/pagemanagement/TablenovelAddmin";
 import Account from "./page/pageprofile/account";
 import ForgotPassword from "./page/pagelogin/ForgotPassword";
-import ChangePassword from "./page/pageprofile/UpdateAccount/ChangePassword";
-import ChangeData from "./page/pageprofile/UpdateAccount/ChangeData";
-import Applytobeanauthor from "./page/pageprofile/UpdateAccount/Applytobeanauthor";
+import ChangePassword from "./page/pageprofile/ChangePassword";
+import ChangeData from "./page/pageprofile/ChangeData";
+import Applytobeanauthor from "./page/pageprofile/Applytobeanauthor";
 function App() {
   return (
     <Box

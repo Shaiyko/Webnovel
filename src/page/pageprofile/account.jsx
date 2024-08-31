@@ -21,7 +21,7 @@ import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import { deepOrange } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import Logoutpage from "../pagelogin/Loguot"; // Import the Logout component
-import ChangePassword from "./UpdateAccount/ChangePassword"; // Import the ChangePassword component
+import ChangePassword from "./ChangePassword"; // Import the ChangePassword component
 import SuggestionForm2 from "../pagenovel/SuggestionForm";
 import Bookshelf from "../pagenovel/Bookshelf";
 import {
@@ -30,10 +30,10 @@ import {
   NoteAlt,
   RecentActors,
 } from "@mui/icons-material";
-import ChangeData from "./UpdateAccount/ChangeData";
+import ChangeData from "./ChangeData";
 import TableNovel from "../pagemanagement/novel/Tablenovel";
 import Tablemyletter from "../pagemauthor/Tablemyletter";
-import Applytobeanauthor from "./UpdateAccount/Applytobeanauthor";
+import Applytobeanauthor from "./Applytobeanauthor";
 
 export default function Account() {
   const [selectedOption, setSelectedOption] = useState("userInfo"); // State to track selected option

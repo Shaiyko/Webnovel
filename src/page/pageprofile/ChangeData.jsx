@@ -26,8 +26,8 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
-import LoadingComponent from "../../../Loading";
+import { apinovel, apiupfile } from "../../URL_API/Apinovels";
+import LoadingComponent from "../../Loading";
 
 const currencies = [
   {
@@ -70,7 +70,7 @@ export default function ChangeData({ onCancel }) {
       // Validate year to ensure it has 4 digits
       if (year.length > 4) {
         return; // Ignore the change if year is more than 4 digits
-      } 
+      }
 
       // Reformat date to DD-MM-YYYY
       const formattedDate = `${day}-${month}-${year}`;
@@ -285,7 +285,7 @@ export default function ChangeData({ onCancel }) {
     }
   };
   const years = Array.from(new Array(125), (val, index) => 1900 + index);
-  
+
   let datachange = null;
   if (stus === "user") {
     datachange = (
@@ -584,7 +584,7 @@ export default function ChangeData({ onCancel }) {
 
   return (
     <Box>
-       <LoadingComponent loading={loading} />
+      <LoadingComponent loading={loading} />
       {datachange}
     </Box>
   );
