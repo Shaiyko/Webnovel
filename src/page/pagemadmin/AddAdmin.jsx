@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../css/stylesloading.css"; // css
 import {
   Modal,
   Button,
@@ -36,8 +35,8 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
-import LoadingComponent from "../../../Loading";
-import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
+import LoadingComponent from "../../Loading";
+import { apinovel, apiupfile } from "../../URL_API/Apinovels";
 const currencies = [
   {
     value: "Male",

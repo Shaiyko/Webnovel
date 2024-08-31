@@ -17,7 +17,6 @@ import {
 import { Stack, styled } from "@mui/system";
 import axios from "axios";
 import { useLocation, useParams } from "react-router-dom";
-import LoadingComponent from "../../Loading";
 import { apinovel } from "../../URL_API/Apinovels";
 
 const CustomButtonB = styled(Typography)({

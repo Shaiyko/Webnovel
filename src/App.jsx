@@ -8,22 +8,22 @@ import PrivateRoute from "./cacklogin/ceaklogin";
 import Appbar from "./Appbar";
 import Profile from "./page/pageprofile/profile";
 import Bookshelf from "./page/pagenovel/Bookshelf";
-import TableAdmin from "./page/pagemanagement/Admin/Admin";
+import TableAdmin from "./page/pagemadmin/Admin";
 import TableUse from "./page/pagemanagement/User/User";
-import TableAuthor from "./page/pagemanagement/Author/Author";
+import TableAuthor from "./page/pagemauthor/Author";
 import EnhancedTable from "./page/pagemanagement/Tag/TAgnovel";
 import TypeEnhancedTable from "./page/pagemanagement/Type/TypeNovel";
 import Register from "./page/pagelogin/Register";
 import { Box } from "@mui/material";
 import SearchNovel from "./Search/SearchNovel";
 import SearchAuthor from "./Search/SearchAuthor";
-import ViewNovel from "./page/pagenovel/ViewNovel/Viewnovel";
+import ViewNovel from "./page/pagenovel/Viewnovel";
 import TableNovel from "./page/pagemanagement/novel/Tablenovel";
 import ViewAndChapter from "./page/pagemanagement/novel/ViewNovelAdd";
 import ContentNovel from "./page/pagemanagement/novel/contentNovel/CreateContent";
 import CreateContentAdd from "./page/pagemanagement/novel/contentNovel/CreateContentAdd";
 import UpdateContent from "./page/pagemanagement/novel/contentNovel/UpdateConent";
-import ViewContent from "./page/pagenovel/ViewNovel/ViewContent";
+import ViewContent from "./page/pagenovel/ViewContent";
 import SearchTag from "./Search/SearchTag";
 import SearchType from "./Search/SearchType";
 import SuggestionReport from "./page/pagenovel/Suggestionreposrt";
@@ -34,7 +34,7 @@ import ReportUsers from "./page/pagemanagement/Report/ReportUsers";
 import ReportSuggestions from "./page/pagemanagement/Report/ReportSuggestions";
 import ReportReading from "./page/pagemanagement/Report/ReportReading";
 import TableSuggestions from "./page/pagemanagement/Report/Suggestions/TableSuggestions";
-import Directory from "./page/pagenovel/ViewNovel/Directory";
+import Directory from "./page/pagenovel/Directory";
 import Footer from "./Footerweb";
 import ResponsiveSlider from "./Test/test";
 import TableNovelAdmin from "./page/pagemanagement/TablenovelAddmin";
@@ -76,9 +76,7 @@ function App() {
             {
               <Route
                 path="/profile"
-                element={
-                   <PrivateRoute element={<Account />} path="/profile" />
-                }
+                element={<PrivateRoute element={<Account />} path="/profile" />}
               />
             }
             {/** */}
@@ -86,15 +84,21 @@ function App() {
               <Route
                 path="/manage/tnovel/:id_author"
                 element={
-                   <PrivateRoute element={<TableNovel />} path="/manage/tnovel/:id_author" />
+                  <PrivateRoute
+                    element={<TableNovel />}
+                    path="/manage/tnovel/:id_author"
+                  />
                 }
               />
             }
-             {
+            {
               <Route
                 path="/manage/tnovel"
                 element={
-                   <PrivateRoute element={<TableNovelAdmin />} path="/manage/tnovel" />
+                  <PrivateRoute
+                    element={<TableNovelAdmin />}
+                    path="/manage/tnovel"
+                  />
                 }
               />
             }

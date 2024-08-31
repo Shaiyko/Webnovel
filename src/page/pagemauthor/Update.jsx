@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "../css/stylesloading.css"; // css
 import {
   Modal,
   Button,
@@ -32,7 +31,7 @@ import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
-import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
+import { apinovel, apiupfile } from "../../URL_API/Apinovels";
 
 const currencies = [
   {

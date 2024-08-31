@@ -23,13 +23,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
-import UpdateTag from "./UpdateAdmin";
-import AddTag from "./AddAdmin";
 import { CardMedia } from "@mui/material";
-import ViewAdmin from "./ViewAdmin";
-import ExportViewAdmin from "./ExportAdminExcel";
+import ExportViewAdmin from "./Export";
+import Addauthor from "./AddAuthor";
+import UpdateAuthor from "./Update";
+import ExportViewAuthor from "./Export";
 import Swal from "sweetalert2";
-import { apinovel } from "../../../URL_API/Apinovels";
+import { apinovel } from "../../URL_API/Apinovels";
+import Viewauthor from "./view";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -65,16 +66,16 @@ const headCells = [
     label: "ID Admin",
   },
   {
-    id: "fname",
+    id: "realname",
     numeric: true,
     disablePadding: false,
-    label: "First Name",
+    label: "Realname",
   },
   {
-    id: "lname",
+    id: "penname",
     numeric: true,
     disablePadding: false,
-    label: "Last Name",
+    label: "Penname",
   },
   {
     id: "gender",
@@ -87,12 +88,6 @@ const headCells = [
     numeric: true,
     disablePadding: false,
     label: "Date of birth",
-  },
-  {
-    id: "phone",
-    numeric: true,
-    disablePadding: false,
-    label: "Phone",
   },
   {
     id: "address",
@@ -111,6 +106,12 @@ const headCells = [
     numeric: true,
     disablePadding: false,
     label: "Gmail",
+  },
+  {
+    id: "contact_channels",
+    numeric: true,
+    disablePadding: false,
+    label: "Contact_Channels",
   },
   {
     id: "status",
@@ -206,38 +207,24 @@ function EnhancedTableToolbar(props) {
 
     if (result.isConfirmed) {
       try {
-        // Make the delete request
-        const response = await axios.delete(
-          `${apinovel}/delete/admin`,
-          {
-            data: {
-              id: selected,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response.data);
-
-        // Show success alert
+        const response = await axios.delete(`${apinovel}/delete/author`, {
+          data: {
+            id_author: selected,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         await Swal.fire({
           title: "Deleted!",
           text: "Your file has been deleted.",
           icon: "success",
         });
-
-        // Perform other actions after successful deletion
+        console.log(response.data);
         UserGet();
         setSelected([]);
       } catch (error) {
         console.error("Error:", error);
-        // Optionally, show an error alert
-        await Swal.fire({
-          title: "Error!",
-          text: "There was an issue deleting your file.",
-          icon: "error",
-        });
       }
     }
   };
@@ -274,14 +261,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-    <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Admin Data
-        </Typography>
+      <Typography
+        sx={{ flex: "1 1 100%" }}
+        variant="h6"
+        id="tableTitle"
+        component="div"
+      >
+        Author Data
+      </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -292,18 +279,18 @@ function EnhancedTableToolbar(props) {
       {numSelected == 1 ? (
         <Tooltip title="Export select ID" sx={{ marginRight: 2 }}>
           <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            numSelected={numSelected}
+            selected={selected}
+            setSelected={setSelected}
+          />
         </Tooltip>
       ) : (
         <Tooltip title="Export All ID">
-          <ExportViewAdmin
-          numSelected={numSelected}
-              selected={selected}
-              setSelected={setSelected}
-            />
+          <ExportViewAuthor
+            numSelected={numSelected}
+            selected={selected}
+            setSelected={setSelected}
+          />
         </Tooltip>
       )}
       {numSelected > 0 ? (
@@ -315,14 +302,14 @@ function EnhancedTableToolbar(props) {
       ) : (
         <Tooltip title="Insert Data">
           <IconButton>
-            <AddTag UserGet={UserGet} />
+            <Addauthor UserGet={UserGet} />
           </IconButton>
         </Tooltip>
       )}
       {numSelected == 1 ? (
         <Tooltip title="Update">
           <IconButton>
-            <UpdateTag
+            <UpdateAuthor
               selected={selected}
               setSelected={setSelected}
               UserGet={UserGet}
@@ -335,10 +322,7 @@ function EnhancedTableToolbar(props) {
       {numSelected == 1 ? (
         <Tooltip title="Update">
           <IconButton>
-            <ViewAdmin
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <Viewauthor selected={selected} setSelected={setSelected} />
           </IconButton>
         </Tooltip>
       ) : (
@@ -354,7 +338,7 @@ EnhancedTableToolbar.propTypes = {
   handleSearchChange: PropTypes.func.isRequired,
 };
 
-export default function TableAdmin() {
+export default function TableAuthor() {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("id");
   const [selected, setSelected] = useState([]);
@@ -370,7 +354,7 @@ export default function TableAdmin() {
 
   const UserGet = () => {
     axios
-      .get(`${apinovel}/view/admin`)
+      .get(`${apinovel}/view/author`)
       .then((response) => {
         const data = response.data;
         if (Array.isArray(data) && data.length > 0) {
@@ -390,19 +374,19 @@ export default function TableAdmin() {
   //
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = dataTag.map((n) => n.id_taek);
+      const newSelected = dataTag.map((n) => n.id_author);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
   //
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
+  const handleClick = (event, id_author) => {
+    const selectedIndex = selected.indexOf(id_author);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, id_author);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -428,14 +412,14 @@ export default function TableAdmin() {
     setDense(event.target.checked);
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  const isSelected = (id_author) => selected.indexOf(id_author) !== -1;
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
   const filteredRows = useMemo(() => {
     return dataTag.filter((row) =>
-      row.f_name.toLowerCase().includes(searchQuery.toLowerCase())
+      row.penname.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [dataTag, searchQuery]);
 
@@ -479,17 +463,17 @@ export default function TableAdmin() {
             />
             <TableBody>
               {visibleRows.map((row) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${row.id}`;
+                const isItemSelected = isSelected(row.id_author);
+                const labelId = `enhanced-table-checkbox-${row.id_author}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
+                    onClick={(event) => handleClick(event, row.id_author)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.id_author}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
@@ -507,20 +491,20 @@ export default function TableAdmin() {
                       padding="none"
                     >
                       <CardMedia
-                      sx={{width: 100,height:150}}
-                          component="img"
-                          image={row.avatar}
-                          alt={row.avatar}
-                        />
+                        sx={{ width: 100, height: 150 }}
+                        component="img"
+                        image={row.avatar}
+                        alt={row.avatar}
+                      />
                     </TableCell>
-                    <TableCell align="right">{row.f_name}</TableCell>
-                    <TableCell align="right">{row.l_name}</TableCell>
+                    <TableCell align="right">{row.realname}</TableCell>
+                    <TableCell align="right">{row.penname}</TableCell>
                     <TableCell align="right">{row.gender}</TableCell>
                     <TableCell align="right">{row.date_of_birth}</TableCell>
-                    <TableCell align="right">{row.tel}</TableCell>
                     <TableCell align="right">{row.address}</TableCell>
                     <TableCell align="right">{row.user_name}</TableCell>
                     <TableCell align="right">{row.gmail}</TableCell>
+                    <TableCell align="right">{row.contact_channels}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
                   </TableRow>
                 );

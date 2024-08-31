@@ -9,20 +9,18 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import * as XLSX from "xlsx";
-import { apinovel } from "../../../URL_API/Apinovels";
+import { apinovel } from "../../URL_API/Apinovels";
+import LoadingComponent from "../../Loading";
 
 // eslint-disable-next-line react/prop-types
-export default function ExportViewAdmin({
+export default function ExportViewAuthor({
   selected,
   setSelected,
   numSelected,
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Replace with your selected IDs
 
-
-  const [DD, setJU] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setSelected([]);
@@ -39,16 +37,15 @@ export default function ExportViewAdmin({
   const handleExportSelectedAdmins = () => {
     setLoading(true);
     axios
-      .get(`${apinovel}/view/exportadmin`, {
+      .get(`${apinovel}/view/exportauthor`, {
         params: { id: selected },
       })
       .then((response) => {
         exportToExcel(response.data, "selected_admins");
-        setJU(response.data);
+
         setLoading(false);
       })
       .catch((error) => {
-        setError(error);
         setLoading(false);
       });
   };
@@ -56,13 +53,12 @@ export default function ExportViewAdmin({
   const handleExportAllAdmins = () => {
     setLoading(true);
     axios
-      .get(`${apinovel}/view/admin`)
+      .get(`${apinovel}/view/author`)
       .then((response) => {
         exportToExcel(response.data, "all_admins");
         setLoading(false);
       })
       .catch((error) => {
-        setError(error);
         setLoading(false);
       });
   };
@@ -93,41 +89,36 @@ export default function ExportViewAdmin({
           <Typography variant="h7" component="h2">
             Export Admin Data
           </Typography>
-          {loading ? (
-            <CircularProgress />
-          ) : error ? (
-            <Typography color="error">Error: {error.message}</Typography>
-          ) : (
-            <div>
-              {numSelected > 0 ? (
-                <Button
-                  onClick={handleExportSelectedAdmins}
-                  variant="contained"
-                  color="success"
-                  sx={{ mt: 2 }}
-                >
-                  Export Selected Admins
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleExportAllAdmins}
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 2 }}
-                >
-                  Export All Admins
-                </Button>
-              )}
+          <LoadingComponent loading={loading} />
+          <div>
+            {numSelected > 0 ? (
               <Button
-                onClick={handleClose}
+                onClick={handleExportSelectedAdmins}
                 variant="contained"
-                color="error"
+                color="success"
                 sx={{ mt: 2 }}
               >
-                Close
+                Export Selected Admins
               </Button>
-            </div>
-          )}
+            ) : (
+              <Button
+                onClick={handleExportAllAdmins}
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+              >
+                Export All Admins
+              </Button>
+            )}
+            <Button
+              onClick={handleClose}
+              variant="contained"
+              color="error"
+              sx={{ mt: 2 }}
+            >
+              Close
+            </Button>
+          </div>
         </Box>
       </Modal>
     </div>

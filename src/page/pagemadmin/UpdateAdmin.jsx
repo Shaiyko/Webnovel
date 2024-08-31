@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "../css/stylesloading.css"; // css
 import {
   Modal,
   Button,
@@ -32,7 +31,7 @@ import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import SecurityUpdateIcon from "@mui/icons-material/SecurityUpdate";
-import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
+import { apinovel, apiupfile } from "../../URL_API/Apinovels";
 
 const currencies = [
   {
@@ -140,15 +139,11 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
     formData.append("parentFile", parentFileId);
 
     try {
-      const response = await axios.post(
-        `${apiupfile}/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${apiupfile}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setAvatar(
         `https://drive.google.com/thumbnail?id=${response.data.fileId}`
@@ -318,211 +313,213 @@ export default function UpdateTag({ selected, setSelected, UserGet }) {
           update Admin
         </DialogTitle>
         <DialogContent>
-        <Box
-      
-        >
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={namef}
-              label="First Name"
-              variant="standard"
-              onChange={(event) => setNameF(event.target.value)}
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={namel}
-              label="Last Name"
-              variant="standard"
-              onChange={(event) => setNameL(event.target.value)}
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="formatted-text-mask-input">
-                Date of birth
-              </InputLabel>
-              <Input
-                value={data_date_of_birth}
-                onChange={handleChangeDate}
-                name="textmask"
-                id="formatted-text-mask-input"
-                inputComponent={TextMaskCustom}
+          <Box>
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <TextField
+                required
+                fullWidth
+                value={namef}
+                label="First Name"
+                variant="standard"
+                onChange={(event) => setNameF(event.target.value)}
               />
-            </FormControl>
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <PortraitIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              id="standard-select-currency"
-              select
-              fullWidth
-              label="Gender"
-              value={datagender}
-              onChange={(event) => setGender(event.target.value)}
-              variant="standard"
-            >
-              {currencies.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                  {option.value}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-          <br />
-
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <MailOutlineIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={dataaddress}
-              label="Address"
-              variant="standard"
-              onChange={(event) => setAddress(event.target.value)}
-            />
-          </Box>
-          <br />
-
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="formatted-text-mask-input">
-                Telephone
-              </InputLabel>
-              <Input
-                value={datatel}
-                onChange={handleChangeTel}
-                name="textmask"
-                id="formatted-text-mask-input"
-                inputComponent={TextMaskCustomTel}
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <TextField
+                required
+                fullWidth
+                value={namel}
+                label="Last Name"
+                variant="standard"
+                onChange={(event) => setNameL(event.target.value)}
               />
-            </FormControl>
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <SecurityUpdateIcon
-              sx={{ color: "action.active", mr: 1, my: 0.5 }}
-            />
-            <TextField
-              required
-              fullWidth
-              value={datauser}
-              label="Username"
-              variant="standard"
-              onChange={(event) => setUserName(event.target.value)}
-            />
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <KeyIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <FormControl fullWidth variant="standard">
-              <InputLabel htmlFor="standard-adornment-password">
-                Password
-              </InputLabel>
-              <Input
-                id="standard-adornment-password"
-                type={showPassword ? "text" : "password"}
-                value={datapass}
-                onChange={(event) => setPass(event.target.value)}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-            <MailOutlineIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              required
-              fullWidth
-              value={datagmail}
-              label="Gmail"
-              variant="standard"
-              onChange={(event) => setGmail(event.target.value)}
-            />
-          </Box>
-          <br />
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Grid>
-              <Card>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  component="label"
-                >
-                  <CardMedia
-                    component="img"
-                    height="300"
-                    image={image ? image : dataavatar}
-                    alt="Profile Picture"
-                    sx={{ objectFit: "contain" }}
-                  />
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="formatted-text-mask-input">
+                  Date of birth
+                </InputLabel>
+                <Input
+                  value={data_date_of_birth}
+                  onChange={handleChangeDate}
+                  name="textmask"
+                  id="formatted-text-mask-input"
+                  inputComponent={TextMaskCustom}
+                />
+              </FormControl>
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <PortraitIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <TextField
+                id="standard-select-currency"
+                select
+                fullWidth
+                label="Gender"
+                value={datagender}
+                onChange={(event) => setGender(event.target.value)}
+                variant="standard"
+              >
+                {currencies.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                    {option.value}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+            <br />
 
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </Button>
-              </Card>
-            </Grid>
-          </Box>
-          <br />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-evenly",
-              mb: 5,
-            }}
-          >
-            <Button
-              sx={{ fontSize: "16px" }}
-              size="small"
-              color="success"
-              variant="contained"
-              onClick={handleSubmit}
-              disabled={loading}
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <MailOutlineIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                required
+                fullWidth
+                value={dataaddress}
+                label="Address"
+                variant="standard"
+                onChange={(event) => setAddress(event.target.value)}
+              />
+            </Box>
+            <br />
+
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="formatted-text-mask-input">
+                  Telephone
+                </InputLabel>
+                <Input
+                  value={datatel}
+                  onChange={handleChangeTel}
+                  name="textmask"
+                  id="formatted-text-mask-input"
+                  inputComponent={TextMaskCustomTel}
+                />
+              </FormControl>
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <SecurityUpdateIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                required
+                fullWidth
+                value={datauser}
+                label="Username"
+                variant="standard"
+                onChange={(event) => setUserName(event.target.value)}
+              />
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <KeyIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+              <FormControl fullWidth variant="standard">
+                <InputLabel htmlFor="standard-adornment-password">
+                  Password
+                </InputLabel>
+                <Input
+                  id="standard-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  value={datapass}
+                  onChange={(event) => setPass(event.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+              <MailOutlineIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                required
+                fullWidth
+                value={datagmail}
+                label="Gmail"
+                variant="standard"
+                onChange={(event) => setGmail(event.target.value)}
+              />
+            </Box>
+            <br />
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Grid>
+                <Card>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    variant="contained"
+                    component="label"
+                  >
+                    <CardMedia
+                      component="img"
+                      height="300"
+                      image={image ? image : dataavatar}
+                      alt="Profile Picture"
+                      sx={{ objectFit: "contain" }}
+                    />
+
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </Button>
+                </Card>
+              </Grid>
+            </Box>
+            <br />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "space-evenly",
+                mb: 5,
+              }}
             >
-              {loading ? (
-                <div className="loading">Loading...</div>
-              ) : (
-                "Update Admin"
-              )}
-            </Button>
-            <Button
-              sx={{ width: "50%" }}
-              onClick={handleClose}
-              variant="contained"
-              color="error"
-              fullWidth
-            >
-              Cancel
-            </Button>
+              <Button
+                sx={{ fontSize: "16px" }}
+                size="small"
+                color="success"
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="loading">Loading...</div>
+                ) : (
+                  "Update Admin"
+                )}
+              </Button>
+              <Button
+                sx={{ width: "50%" }}
+                onClick={handleClose}
+                variant="contained"
+                color="error"
+                fullWidth
+              >
+                Cancel
+              </Button>
+            </Box>
           </Box>
-        </Box>
         </DialogContent>
-        </Dialog>
+      </Dialog>
     </div>
   );
 }

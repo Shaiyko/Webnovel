@@ -24,10 +24,15 @@ import Logoutpage from "../pagelogin/Loguot"; // Import the Logout component
 import ChangePassword from "./UpdateAccount/ChangePassword"; // Import the ChangePassword component
 import SuggestionForm2 from "../pagenovel/SuggestionForm";
 import Bookshelf from "../pagenovel/Bookshelf";
-import { HistoryEdu, MenuBook, NoteAlt, RecentActors } from "@mui/icons-material";
+import {
+  HistoryEdu,
+  MenuBook,
+  NoteAlt,
+  RecentActors,
+} from "@mui/icons-material";
 import ChangeData from "./UpdateAccount/ChangeData";
 import TableNovel from "../pagemanagement/novel/Tablenovel";
-import Tablemyletter from "../pagemanagement/Author/myletter/Tablemyletter";
+import Tablemyletter from "../pagemauthor/Tablemyletter";
 import Applytobeanauthor from "./UpdateAccount/Applytobeanauthor";
 
 export default function Account() {
@@ -50,8 +55,8 @@ export default function Account() {
         navigate("/changedata");
       } else if (option === "home") {
         navigate("/");
-      }else if(option === "applytobeanauthor"){
-        navigate("/applytobeanauthor")
+      } else if (option === "applytobeanauthor") {
+        navigate("/applytobeanauthor");
       }
     } else {
       setSelectedOption(option);
@@ -139,7 +144,9 @@ export default function Account() {
                   </ListItemIcon>
                   <ListItemText primary="Suggestions" />
                 </ListItemButton>
-                <ListItemButton onClick={() => handleMenuClick("applytobeanauthor")}>
+                <ListItemButton
+                  onClick={() => handleMenuClick("applytobeanauthor")}
+                >
                   <ListItemIcon>
                     <NoteAlt />
                   </ListItemIcon>
@@ -157,7 +164,7 @@ export default function Account() {
           md={8}
           sx={{ display: { xs: "none", md: "block" } }} // Hide on xs, show on md and larger
         >
-           {selectedOption === "applytobeanauthor" && (
+          {selectedOption === "applytobeanauthor" && (
             <Applytobeanauthor onCancel={handleCancel} />
           )}
           {selectedOption === "suggestions" && (
@@ -235,17 +242,13 @@ export default function Account() {
                   </ListItemIcon>
                   <ListItemText primary="Home" />
                 </ListItemButton>
-                <ListItemButton
-                  onClick={() => handleMenuClick("mybook")}
-                >
+                <ListItemButton onClick={() => handleMenuClick("mybook")}>
                   <ListItemIcon>
                     <MenuBook />
                   </ListItemIcon>
                   <ListItemText primary="My Book" />
                 </ListItemButton>
-                <ListItemButton
-                  onClick={() => handleMenuClick("myletter")}
-                >
+                <ListItemButton onClick={() => handleMenuClick("myletter")}>
                   <ListItemIcon>
                     <HistoryEdu />
                   </ListItemIcon>
@@ -280,9 +283,7 @@ export default function Account() {
           {selectedOption === "myletter" && (
             <Tablemyletter id_author={userId} />
           )}
-          {selectedOption === "mybook" && (
-            <TableNovel id_author={userId} />
-          )}
+          {selectedOption === "mybook" && <TableNovel id_author={userId} />}
           {selectedOption === "suggestions" && (
             <SuggestionForm2 onCancel={handleCancel} />
           )}
