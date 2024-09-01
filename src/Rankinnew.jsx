@@ -7,7 +7,6 @@ import {
   Link,
   List,
   ListItem,
-  ListItemButton,
   ListItemText,
   Typography,
 } from "@mui/material";
@@ -26,6 +25,7 @@ const Linknovel = styled(Link)({
   fontWeight: "bold",
 });
 export default function Rankingnew() {
+  // eslint-disable-next-line no-unused-vars
   const { id_novel } = useParams();
   const [rankingk, setNovels] = useState([]);
   useEffect(() => {
