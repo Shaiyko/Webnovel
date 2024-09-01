@@ -123,8 +123,9 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<LoginRegister />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/ms" element={<Ser />} />
+              <Route path="/ms1" element={<Ser />} />
               <Route
+
                 path="/applytobeanauthor"
                 element={<Applytobeanauthor />}
               />
