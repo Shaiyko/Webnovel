@@ -10,7 +10,7 @@ export default defineConfig({
       output: {
         // แยก chunk สำหรับไลบรารีหลัก ๆ เช่น react, mui เป็นต้น
         manualChunks: {
-          react: ['react', 'react-dom'],
+          react: ['react', 'react-dom','react-router-dom'],
           mui: ['@mui/material', '@mui/icons-material'],
         },
       },
