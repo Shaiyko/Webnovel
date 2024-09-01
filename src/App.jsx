@@ -115,63 +115,63 @@ function App() {
             {/** */}
             {
               <Route
-                path="/manage/tnovel/:id_author"
+                path="/tnovel/:id_author"
                 element={
-                   <PrivateRoute element={<TableNovel />} path="/manage/tnovel/:id_author" />
+                   <PrivateRoute element={<TableNovel />} path="/tnovel/:id_author" />
                 }
               />
             }
              {
               <Route
-                path="/manage/tnovel"
+                path="/tnovel"
                 element={
-                   <PrivateRoute element={<TableNovelAdmin />} path="/manage/tnovel" />
+                   <PrivateRoute element={<TableNovelAdmin />} path="/tnovel" />
                 }
               />
             }
 
             <Route
-              path="/manage/ttag"
+              path="/ttag"
               element={
-                <PrivateRoute element={<EnhancedTable />} path="/manage/ttag" />
+                <PrivateRoute element={<EnhancedTable />} path="/ttag" />
               }
             />
             <Route
-              path="/manage/ttype"
+              path="/ttype"
               element={
                 <PrivateRoute
                   element={<TypeEnhancedTable />}
-                  path="/manage/ttype"
+                  path="/ttype"
                 />
               }
             />
             <Route
-              path="/manage/tadmin"
+              path="/tadmin"
               element={
-                <PrivateRoute element={<TableAdmin />} path="/manage/tadmin" />
+                <PrivateRoute element={<TableAdmin />} path="/tadmin" />
               }
             />
             <Route
-              path="/manage/tuser"
+              path="/tuser"
               element={
-                <PrivateRoute element={<TableUse />} path="/manage/tuser" />
+                <PrivateRoute element={<TableUse />} path="/tuser" />
               }
             />
             <Route
-              path="/manage/suggestions"
+              path="/tsuggestions"
               element={
                 <PrivateRoute
                   element={<TableSuggestions />}
-                  path="/manage/tuser"
+                  path="/tuser"
                 />
               }
             />
             <Route
-              path="/manage/tauthor"
+              path="/tauthor"
               element={
                 <PrivateRoute
                   element={<TableAuthor />}
-                  path="//manage/tauthor"
+                  path="//tauthor"
                 />
               }
             />
@@ -185,7 +185,7 @@ function App() {
             />
 
             {/*  */}
-            <Route path="/novel-category/:id" element={<Category />} />
+            <Route path="/:id" element={<Category />} />
             <Route
               path="/admin"
               element={
@@ -236,41 +236,41 @@ function App() {
             <Route path="/novel/:id_novel/:id" element={<ViewContent />} />
             {/* Report */}
             <Route
-              path="/report/novel"
+              path="/novel"
               element={
-                <PrivateRoute element={<NovelReport />} path="/report/novel" />
+                <PrivateRoute element={<NovelReport />} path="/novel" />
               }
             />
             <Route
-              path="/report/author"
+              path="/author"
               element={
                 <PrivateRoute
                   element={<ReportAuthor />}
-                  path="/report/author"
+                  path="/author"
                 />
               }
             />
             <Route
-              path="/report/user"
+              path="/user"
               element={
-                <PrivateRoute element={<ReportUsers />} path="/report/user" />
+                <PrivateRoute element={<ReportUsers />} path="/user" />
               }
             />
             <Route
-              path="/report/suggestions"
+              path="/suggestions"
               element={
                 <PrivateRoute
                   element={<ReportSuggestions />}
-                  path="/report/suggestions"
+                  path="/suggestions"
                 />
               }
             />
             <Route
-              path="/report/reortview"
+              path="/reortview"
               element={
                 <PrivateRoute
                   element={<ReportReading />}
-                  path="/report/reortview"
+                  path="/reortview"
                 />
               }
             />
