@@ -178,6 +178,7 @@ function App() {
                 path="/contentnew/:id_novel"
                 element={<CreateContentAdd />}
               />
+              
               <Route path="/novel-category/:id" element={<Category />} />
               <Route
                 path="/admin"
