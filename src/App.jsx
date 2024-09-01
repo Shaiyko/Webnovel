@@ -125,7 +125,6 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/ms1" element={<Ser />} />
               <Route
-
                 path="/applytobeanauthor"
                 element={<Applytobeanauthor />}
               />
@@ -161,7 +160,7 @@ function App() {
                 element={<PrivateRoute element={<TableUse />} />}
               />
               <Route
-                path="/suggestions"
+                path="/tsuggestions"
                 element={<PrivateRoute element={<TableSuggestions />} />}
               />
               <Route
@@ -178,8 +177,8 @@ function App() {
                 path="/contentnew/:id_novel"
                 element={<CreateContentAdd />}
               />
-              
-              <Route path="/novel-category/:id" element={<Category />} />
+
+              <Route path="/:id" element={<Category />} />
               <Route
                 path="/admin"
                 element={<PrivateRoute element={<Adminhomepage />} />}
@@ -204,34 +203,34 @@ function App() {
                 path="/suggestions"
                 element={<PrivateRoute element={<SuggestionForm2 />} />}
               />
-              <Route path="/searchn/:searchN" element={<SearchNovel />} />
-              <Route path="/selecttag/:searchTag" element={<SearchTag />} />
-              <Route path="/selecttype/:searchType" element={<SearchType />} />
-              <Route path="/author/:searchA" element={<SearchAuthor />} />
-              <Route path="/novel/:id_novel" element={<ViewNovel />} />
+              <Route path="/:searchN" element={<SearchNovel />} />
+              <Route path="/:searchTag" element={<SearchTag />} />
+              <Route path="/:searchType" element={<SearchType />} />
+              <Route path="/:searchA" element={<SearchAuthor />} />
+              <Route path="/:id_novel" element={<ViewNovel />} />
               <Route
                 path="/novel/:id_novel/directory"
                 element={<Directory />}
               />
               <Route path="/novel/:id_novel/:id" element={<ViewContent />} />
               <Route
-                path="/report/novel"
+                path="/novel"
                 element={<PrivateRoute element={<NovelReport />} />}
               />
               <Route
-                path="/report/author"
+                path="/author"
                 element={<PrivateRoute element={<ReportAuthor />} />}
               />
               <Route
-                path="/report/user"
+                path="/user"
                 element={<PrivateRoute element={<ReportUsers />} />}
               />
               <Route
-                path="/report/suggestions"
+                path="/suggestions"
                 element={<PrivateRoute element={<ReportSuggestions />} />}
               />
               <Route
-                path="/report/reortview"
+                path="/reortview"
                 element={<PrivateRoute element={<ReportReading />} />}
               />
             </Routes>

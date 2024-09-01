@@ -109,7 +109,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
+          <ListItemButton href="/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -260,7 +260,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openRN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/report/novel"}
+              href={"/novel"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -270,7 +270,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Novels" />
             </ListItemButton>
             <ListItemButton
-              href={"/report/author"}
+              href={"/author"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -280,7 +280,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Authors" />
             </ListItemButton>
             <ListItemButton
-              href={"/report/user"}
+              href={"/user"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -290,7 +290,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Users" />
             </ListItemButton>
             <ListItemButton
-              href={"/report/suggestions"}
+              href={"/suggestions"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -300,7 +300,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Suggestions" />
             </ListItemButton>
             <ListItemButton
-              href={"/report/reortview"}
+              href={"/reortview"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -319,7 +319,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
+          <ListItemButton href="/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -394,7 +394,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
+          <ListItemButton href="/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -434,7 +434,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
+          <ListItemButton href="/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
