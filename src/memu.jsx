@@ -196,7 +196,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage User" />
             </ListItemButton>
             <ListItemButton
-              href={"/suggestions"}
+              href={"/tsuggestions"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >

@@ -100,7 +100,7 @@ const Directory = () => {
               <Link
                 underline="hover"
                 color="primary"
-                href={`/novel-category/${idtype}`}
+                href={`/${idtype}`}
               >
                 {dataType}
               </Link>

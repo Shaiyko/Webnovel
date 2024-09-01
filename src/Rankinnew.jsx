@@ -82,7 +82,7 @@ export default function Rankingnew() {
                           }}
                           primary={
                             <Linknovel
-                              href={`/${ranking.id_novel}`}
+                              href={`/novel/${ranking.id_novel}`}
                               aria-label="left aligned"
                             >
                               {ranking.name_novel}
@@ -102,7 +102,7 @@ export default function Rankingnew() {
                           }}
                           primary={
                             <Linknovel
-                              href={`/${ranking.id_novel}/${ranking.idchater}`}
+                              href={`/novel/${ranking.id_novel}/${ranking.idchater}`}
                               aria-label="left aligned"
                             >
                               {ranking.name_episode}
@@ -121,7 +121,7 @@ export default function Rankingnew() {
                           }}
                           primary={
                             <Linknovel
-                              href={`/${ranking.id_novel}`}
+                              href={`/novel/${ranking.id_novel}`}
                               aria-label="left aligned"
                             >
                               {ranking.penname}
@@ -145,7 +145,7 @@ export default function Rankingnew() {
                           }}
                           primary={
                             <Linknovel
-                              href={`/${ranking.name_type}`}
+                              href={`/novel/${ranking.name_type}`}
                               aria-label="left aligned"
                             >
                               {ranking.name_type}
