@@ -208,7 +208,7 @@ function App() {
               <Route path="/:searchTag" element={<SearchTag />} />
               <Route path="/:searchType" element={<SearchType />} />
               <Route path="/:searchA" element={<SearchAuthor />} />
-              <Route path="/:id_novel" element={<ViewNovel />} />
+              <Route path="/novel/:id_novel" element={<ViewNovel />} />
               <Route
                 path="/novel/:id_novel/directory"
                 element={<Directory />}
