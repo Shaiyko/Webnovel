@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { Backdrop, Box, CircularProgress } from "@mui/material";
 
@@ -119,6 +119,7 @@ function App() {
           <Appbar />
           <Box sx={{ width: "100%", marginTop: 2 }}>
             <Routes>
+              
               <Route path="/test" element={<ResponsiveSlider />} />
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<LoginRegister />} />

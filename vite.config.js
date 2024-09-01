@@ -6,7 +6,9 @@ export default defineConfig({
   base: './',
   plugins: [react()],
   build: {
+    outDir:'dist',
     rollupOptions: {
+     
       output: {
         // แยก chunk สำหรับไลบรารีหลัก ๆ เช่น react, mui เป็นต้น
         manualChunks: {
