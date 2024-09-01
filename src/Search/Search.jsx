@@ -17,7 +17,7 @@ function SearchInput({ setSearchFocus }) {
   };
   const handleSearch = () => {
     if (search) {
-      window.location.href = `/searchn/${search}`;
+      window.location.href = `/${search}`;
       setFocus(false);
     }
   };
