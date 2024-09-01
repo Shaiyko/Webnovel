@@ -137,35 +137,35 @@ function App() {
                 element={<PrivateRoute element={<Account />} />}
               />
               <Route
-                path="/manage/tnovel/:id_author"
+                path="/tnovel/:id_author"
                 element={<PrivateRoute element={<TableNovel />} />}
               />
               <Route
-                path="/manage/tnovel"
+                path="/tnovel"
                 element={<PrivateRoute element={<TableNovelAdmin />} />}
               />
               <Route
-                path="/manage/ttag"
+                path="/ttag"
                 element={<PrivateRoute element={<EnhancedTable />} />}
               />
               <Route
-                path="/manage/ttype"
+                path="/ttype"
                 element={<PrivateRoute element={<TypeEnhancedTable />} />}
               />
               <Route
-                path="/manage/tadmin"
+                path="/tadmin"
                 element={<PrivateRoute element={<TableAdmin />} />}
               />
               <Route
-                path="/manage/tuser"
+                path="/tuser"
                 element={<PrivateRoute element={<TableUse />} />}
               />
               <Route
-                path="/manage/suggestions"
+                path="/suggestions"
                 element={<PrivateRoute element={<TableSuggestions />} />}
               />
               <Route
-                path="/manage/tauthor"
+                path="/tauthor"
                 element={<PrivateRoute element={<TableAuthor />} />}
               />
               <Route path="/content/:id_novel" element={<ViewAndChapter />} />

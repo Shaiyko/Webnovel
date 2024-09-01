@@ -166,7 +166,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openMD} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/manage/tadmin"}
+              href={"/tadmin"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -176,7 +176,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Admin" />
             </ListItemButton>
             <ListItemButton
-              href={"/manage/tauthor"}
+              href={"/tauthor"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -186,7 +186,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Author" />
             </ListItemButton>
             <ListItemButton
-              href={"/manage/tuser"}
+              href={"/tuser"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -196,7 +196,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage User" />
             </ListItemButton>
             <ListItemButton
-              href={"/manage/suggestions"}
+              href={"/suggestions"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -218,7 +218,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/manage/tnovel"}
+              href={"/tnovel"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -228,7 +228,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Novel" />
             </ListItemButton>
             <ListItemButton
-              href={"/manage/ttype"}
+              href={"/ttype"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -238,7 +238,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Novel Type" />
             </ListItemButton>
             <ListItemButton
-              href={"/manage/ttag"}
+              href={"/ttag"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -375,7 +375,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={`/manage/tnovel/${loggedInAuthor.id_author}`}
+              href={`/tnovel/${loggedInAuthor.id_author}`}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
