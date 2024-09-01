@@ -4,7 +4,6 @@ import LoginRegister from "./page/pagelogin/login";
 import Adminhomepage from "./page/pagemanagement/adminhomepage";
 import Userhomepage from "./page/pagemanagement/userpagehome";
 import Category from "./page/pagenovel/Category";
-import PrivateRoute from "./cacklogin/ceaklogin";
 import Appbar from "./Appbar";
 import Profile from "./page/pageprofile/profile";
 import Bookshelf from "./page/pagenovel/Bookshelf";
@@ -43,6 +42,7 @@ import ForgotPassword from "./page/pagelogin/ForgotPassword";
 import ChangePassword from "./page/pageprofile/ChangePassword";
 import ChangeData from "./page/pageprofile/ChangeData";
 import Applytobeanauthor from "./page/pageprofile/Applytobeanauthor";
+import PrivateRoute from "./cacklogin/ceaklogin";
 function App() {
   return (
     <Box
