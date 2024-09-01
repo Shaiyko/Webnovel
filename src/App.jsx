@@ -43,6 +43,7 @@ import ChangePassword from "./page/pageprofile/ChangePassword";
 import ChangeData from "./page/pageprofile/ChangeData";
 import Applytobeanauthor from "./page/pageprofile/Applytobeanauthor";
 import PrivateRoute from "./cacklogin/ceaklogin";
+import Ser from "./page/pagemanagement/Author/myletter/ser";
 function App() {
   return (
     <Box
@@ -68,7 +69,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginRegister />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/madmin" element={<LoginRegister />} />
+            <Route path="/ms/t" element={<Ser />} />
+            <Route path="/ms/t/1" element={<Ser />} />
+            <Route path="/ms/t/1/u" element={<Ser />} />
             <Route path="/applytobeanauthor" element={<Applytobeanauthor />} />
             <Route path="/changedata" element={<ChangeData />} />
             <Route path="/change-password" element={<ChangePassword />} />
