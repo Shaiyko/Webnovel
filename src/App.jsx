@@ -43,7 +43,7 @@ import ChangePassword from "./page/pageprofile/ChangePassword";
 import ChangeData from "./page/pageprofile/ChangeData";
 import Applytobeanauthor from "./page/pageprofile/Applytobeanauthor";
 import PrivateRoute from "./cacklogin/ceaklogin";
-import Ser from "./page/pagemanagement/Author/myletter/ser";
+import Ser from "./ser";
 function App() {
   return (
     <Box
