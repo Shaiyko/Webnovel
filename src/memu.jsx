@@ -109,7 +109,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/0" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -166,7 +166,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openMD} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/tadmin"}
+              href={"/manage/tadmin"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -176,7 +176,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Admin" />
             </ListItemButton>
             <ListItemButton
-              href={"/tauthor"}
+              href={"/manage/tauthor"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -186,7 +186,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Author" />
             </ListItemButton>
             <ListItemButton
-              href={"/tuser"}
+              href={"/manage/tuser"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -196,7 +196,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage User" />
             </ListItemButton>
             <ListItemButton
-              href={"/tsuggestions"}
+              href={"/manage/suggestions"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -218,7 +218,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/tnovel"}
+              href={"/manage/tnovel"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -228,7 +228,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Novel" />
             </ListItemButton>
             <ListItemButton
-              href={"/ttype"}
+              href={"/manage/ttype"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -238,7 +238,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Manage Novel Type" />
             </ListItemButton>
             <ListItemButton
-              href={"/ttag"}
+              href={"/manage/ttag"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -260,7 +260,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openRN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={"/novel"}
+              href={"/report/novel"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -270,7 +270,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Novels" />
             </ListItemButton>
             <ListItemButton
-              href={"/author"}
+              href={"/report/author"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -280,7 +280,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Authors" />
             </ListItemButton>
             <ListItemButton
-              href={"/user"}
+              href={"/report/user"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -290,7 +290,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Users" />
             </ListItemButton>
             <ListItemButton
-              href={"/suggestions"}
+              href={"/report/suggestions"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -300,7 +300,7 @@ export default function TemporaryDrawer({ dataopen }) {
               <ListItemText primary="Report Suggestions" />
             </ListItemButton>
             <ListItemButton
-              href={"/reortview"}
+              href={"/report/reortview"}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -319,7 +319,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/0" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -375,7 +375,7 @@ export default function TemporaryDrawer({ dataopen }) {
         <Collapse in={openMN} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              href={`/tnovel/${loggedInAuthor.id_author}`}
+              href={`/manage/tnovel/${loggedInAuthor.id_author}`}
               sx={{ pl: 4 }}
               onClick={handleItemClick}
             >
@@ -394,7 +394,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/0" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>
@@ -434,7 +434,7 @@ export default function TemporaryDrawer({ dataopen }) {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton href="/0" onClick={handleItemClick}>
+          <ListItemButton href="/novel-category/0" onClick={handleItemClick}>
             <ListItemIcon>
               <LibraryBooksIcon />
             </ListItemIcon>

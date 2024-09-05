@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -20,15 +19,14 @@ import {
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Female, Male, Visibility, VisibilityOff } from "@mui/icons-material";
-import { apigmail, apinovel } from "../../URL_API/Apinovels";
-import LoadingComponent from "../../Loading";
+import { apigmail, apinovel } from "../../../URL_API/Apinovels";
+import LoadingComponent from "../../../Loading";
 const codetext = `
 Please enter the verification code via email.
 `;
 const gmailtext = `
 Please enter your email address correctly as we will use this to send a verification code to your email later.
 `;
-
 const steps = ["Add User", "Verification Code", "Add Data Author Details"];
 const currencies = [
   {

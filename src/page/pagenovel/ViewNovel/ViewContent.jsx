@@ -11,7 +11,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { apinovel } from "../../URL_API/Apinovels";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 const ViewContent = () => {
   const { id_novel, id } = useParams();

@@ -28,9 +28,9 @@ import ExportViewAdmin from "./Export";
 import Addauthor from "./AddAuthor";
 import UpdateAuthor from "./Update";
 import ExportViewAuthor from "./Export";
+import Viewauthor from "./View"
 import Swal from "sweetalert2";
-import { apinovel } from "../../URL_API/Apinovels";
-import Viewauthor from "./viewauthor";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -206,27 +206,30 @@ function EnhancedTableToolbar(props) {
     });
 
     if (result.isConfirmed) {
-      try {
-        const response = await axios.delete(`${apinovel}/delete/author`, {
+    try {
+      const response = await axios.delete(
+        `${apinovel}/delete/author`,
+        {
           data: {
             id_author: selected,
           },
           headers: {
             "Content-Type": "application/json",
           },
-        });
-        await Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-        });
-        console.log(response.data);
-        UserGet();
-        setSelected([]);
-      } catch (error) {
-        console.error("Error:", error);
-      }
+        }
+      );
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Your file has been deleted.",
+        icon: "success",
+      });
+      console.log(response.data);
+      UserGet();
+      setSelected([]);
+    } catch (error) {
+      console.error("Error:", error);
     }
+  }
   };
   return (
     <Toolbar
@@ -261,14 +264,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-      <Typography
-        sx={{ flex: "1 1 100%" }}
-        variant="h6"
-        id="tableTitle"
-        component="div"
-      >
-        Author Data
-      </Typography>
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Author Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."

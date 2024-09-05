@@ -147,7 +147,7 @@ export default function PrivateRoute({ element, path }) {
         </Box>
       </Box>
     );
-  } else if (path === "/ttag" && loggedInUser.status !== "admin") {
+  } else if (path === "/manage/ttag" && loggedInUser.status !== "admin") {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
         <Box
@@ -162,7 +162,7 @@ export default function PrivateRoute({ element, path }) {
         </Box>
       </Box>
     );
-  } else if (path === "/ttype" && loggedInUser.status !== "admin") {
+  } else if (path === "/manage/ttype" && loggedInUser.status !== "admin") {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
         <Box
@@ -177,7 +177,7 @@ export default function PrivateRoute({ element, path }) {
         </Box>
       </Box>
     );
-  } else if (path === "/tadmin" && loggedInUser.status !== "admin") {
+  } else if (path === "/manage/tadmin" && loggedInUser.status !== "admin") {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
         <Box
@@ -192,7 +192,7 @@ export default function PrivateRoute({ element, path }) {
         </Box>
       </Box>
     );
-  } else if (path === "/tauthor" && loggedInUser.status !== "admin") {
+  } else if (path === "/manage/tauthor" && loggedInUser.status !== "admin") {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
         <Box
@@ -207,7 +207,7 @@ export default function PrivateRoute({ element, path }) {
         </Box>
       </Box>
     );
-  } else if (path === "/tuser" && loggedInUser.status !== "admin") {
+  } else if (path === "/manage/tuser" && loggedInUser.status !== "admin") {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
         <Box
@@ -223,7 +223,7 @@ export default function PrivateRoute({ element, path }) {
       </Box>
     );
   } else if (
-    path === "/tnovel" &&
+    path === "/manage/tnovel" &&
     loggedInUser.status !== "admin" &&
     loggedInUser.status !== "author"
   ) {

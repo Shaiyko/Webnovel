@@ -28,8 +28,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import Swal from "sweetalert2";
-import { apinovel } from "../../URL_API/Apinovels";
-import ViewS from "./viewT";
+import { apinovel } from "../../../../URL_API/Apinovels";
+import ViewS from "./view";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {

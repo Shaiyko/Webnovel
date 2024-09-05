@@ -14,7 +14,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { apinovel } from "../../URL_API/Apinovels";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 export default function ChangePassword({ onCancel }) {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -78,46 +78,34 @@ export default function ChangePassword({ onCancel }) {
         if (currentPassword === pass) {
           setLoading(true); // เปิดตัวโหลด
           try {
-            const endpoint =
-              stus === "user"
-                ? `${apinovel}/update/userpass/${userId}`
-                : `${apinovel}/update/authorpass/${userId}`;
-            const response = await axios.put(endpoint, {
-              password: newPassword,
-            });
+            const endpoint = stus === "user" 
+              ? `${apinovel}/update/userpass/${userId}`
+              : `${apinovel}/update/authorpass/${userId}`;
+            const response = await axios.put(endpoint, { password: newPassword });
             console.log("Password change succeeded", response.data);
 
-            const viewEndpoint =
-              stus === "user"
-                ? `${apinovel}/view/user/` + userId
-                : `${apinovel}/view/author/` + userId;
+            const viewEndpoint = stus === "user"
+              ? `${apinovel}/view/user/` + userId
+              : `${apinovel}/view/author/` + userId;
+              
+            axios.get(viewEndpoint).then((response) => {
+              const data = response.data[0];
+              localStorage.setItem(stus === "user" ? "userP" : "author", JSON.stringify(data));
 
-            axios
-              .get(viewEndpoint)
-              .then((response) => {
-                const data = response.data[0];
-                localStorage.setItem(
-                  stus === "user" ? "userP" : "author",
-                  JSON.stringify(data)
-                );
-
-                Swal.fire({
-                  position: "top-end",
-                  icon: "success",
-                  title: `${
-                    stus.charAt(0).toUpperCase() + stus.slice(1)
-                  } data has been updated`,
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-                setLoading(false); // ปิดตัวโหลด
-                handleCancel();
-                Swal.fire("Succeed");
-              })
-              .catch((error) => {
-                console.log("error", error);
-                setLoading(false); // ปิดตัวโหลดเมื่อเกิดข้อผิดพลาด
+              Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: `${stus.charAt(0).toUpperCase() + stus.slice(1)} data has been updated`,
+                showConfirmButton: false,
+                timer: 1500,
               });
+              setLoading(false); // ปิดตัวโหลด
+              handleCancel();
+              Swal.fire("Succeed");
+            }).catch((error) => {
+              console.log("error", error);
+              setLoading(false); // ปิดตัวโหลดเมื่อเกิดข้อผิดพลาด
+            });
           } catch (error) {
             console.error("Error changing password:", error);
             Swal.fire({

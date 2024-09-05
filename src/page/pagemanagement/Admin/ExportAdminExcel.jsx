@@ -9,18 +9,20 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import * as XLSX from "xlsx";
-import { apinovel } from "../../URL_API/Apinovels";
-import LoadingComponent from "../../Loading";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 // eslint-disable-next-line react/prop-types
-export default function ExportViewAuthor({
+export default function ExportViewAdmin({
   selected,
   setSelected,
   numSelected,
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // Replace with your selected IDs
 
+
+  const [DD, setJU] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setSelected([]);
@@ -37,15 +39,16 @@ export default function ExportViewAuthor({
   const handleExportSelectedAdmins = () => {
     setLoading(true);
     axios
-      .get(`${apinovel}/view/exportauthor`, {
+      .get(`${apinovel}/view/exportadmin`, {
         params: { id: selected },
       })
       .then((response) => {
         exportToExcel(response.data, "selected_admins");
-
+        setJU(response.data);
         setLoading(false);
       })
       .catch((error) => {
+        setError(error);
         setLoading(false);
       });
   };
@@ -53,12 +56,13 @@ export default function ExportViewAuthor({
   const handleExportAllAdmins = () => {
     setLoading(true);
     axios
-      .get(`${apinovel}/view/author`)
+      .get(`${apinovel}/view/admin`)
       .then((response) => {
         exportToExcel(response.data, "all_admins");
         setLoading(false);
       })
       .catch((error) => {
+        setError(error);
         setLoading(false);
       });
   };
@@ -89,36 +93,41 @@ export default function ExportViewAuthor({
           <Typography variant="h7" component="h2">
             Export Admin Data
           </Typography>
-          <LoadingComponent loading={loading} />
-          <div>
-            {numSelected > 0 ? (
+          {loading ? (
+            <CircularProgress />
+          ) : error ? (
+            <Typography color="error">Error: {error.message}</Typography>
+          ) : (
+            <div>
+              {numSelected > 0 ? (
+                <Button
+                  onClick={handleExportSelectedAdmins}
+                  variant="contained"
+                  color="success"
+                  sx={{ mt: 2 }}
+                >
+                  Export Selected Admins
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleExportAllAdmins}
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Export All Admins
+                </Button>
+              )}
               <Button
-                onClick={handleExportSelectedAdmins}
+                onClick={handleClose}
                 variant="contained"
-                color="success"
+                color="error"
                 sx={{ mt: 2 }}
               >
-                Export Selected Admins
+                Close
               </Button>
-            ) : (
-              <Button
-                onClick={handleExportAllAdmins}
-                variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
-              >
-                Export All Admins
-              </Button>
-            )}
-            <Button
-              onClick={handleClose}
-              variant="contained"
-              color="error"
-              sx={{ mt: 2 }}
-            >
-              Close
-            </Button>
-          </div>
+            </div>
+          )}
         </Box>
       </Modal>
     </div>

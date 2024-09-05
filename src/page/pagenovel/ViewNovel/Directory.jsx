@@ -1,9 +1,9 @@
-// eslint-disable-next-line no-unused-vars
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Container,
   Typography,
   List,
+  ListItem,
   ListItemText,
   Divider,
   Box,
@@ -15,7 +15,8 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { apinovel } from "../../URL_API/Apinovels";
+import { apinovel } from "../../../URL_API/Apinovels";
+
 
 const Directory = () => {
   const { id_novel } = useParams();
@@ -64,7 +65,9 @@ const Directory = () => {
 
   const UserGet = async () => {
     try {
-      const response = await axios.get(`${apinovel}/novelall2/${id_novel}`);
+      const response = await axios.get(
+        `${apinovel}/novelall2/${id_novel}`
+      );
       const data2 = response.data[0];
       setNameN(data2.name_novel);
       setType(data2.name_type);
@@ -76,7 +79,9 @@ const Directory = () => {
 
   const UserGetChapter = async () => {
     try {
-      const response = await axios.get(`${apinovel}/view/ep_novel/${id_novel}`);
+      const response = await axios.get(
+        `${apinovel}/view/ep_novel/${id_novel}`
+      );
       const data = response.data;
       if (Array.isArray(data) && data.length > 0) {
         setSelectedChapter(data);
@@ -100,7 +105,7 @@ const Directory = () => {
               <Link
                 underline="hover"
                 color="primary"
-                href={`/${idtype}`}
+                href={`/novel-category/${idtype}`}
               >
                 {dataType}
               </Link>
@@ -122,7 +127,7 @@ const Directory = () => {
               </Typography>
             </Breadcrumbs>
           </Box>
-          <Divider />
+            <Divider />
           {userId ? (
             <Box>
               <Typography
@@ -139,24 +144,18 @@ const Directory = () => {
                 Bookshelf
               </Typography>
               <Divider />
-              {datanameep ? (
-                <Fragment>
-                  <ListItemButton
-                    fullWidth
-                    href={`/novel/${id_novel}/${dataep}`}
-                  >
-                    <ListItemText primary={datanameep} />
-                  </ListItemButton>
-                  <Divider />
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <ListItemButton fullWidth>
-                    <ListItemText primary={datanameep} />
-                  </ListItemButton>
-                  <Divider />
-                </Fragment>
-              )}
+              {datanameep ? (<Fragment>
+                <ListItemButton fullWidth href={`/novel/${id_novel}/${dataep}`}>
+                  <ListItemText primary={datanameep} />
+                </ListItemButton>
+                <Divider />
+              </Fragment>):(<Fragment>
+                <ListItemButton fullWidth >
+                  <ListItemText primary={datanameep} />
+                </ListItemButton>
+                <Divider />
+              </Fragment>)}
+              
             </Box>
           ) : (
             <Typography fullWidth></Typography>

@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -18,6 +17,7 @@ import {
 import { Stack, styled } from "@mui/system";
 import axios from "axios";
 import { useLocation, useParams } from "react-router-dom";
+import LoadingComponent from "../../Loading";
 import { apinovel } from "../../URL_API/Apinovels";
 
 const CustomButtonB = styled(Typography)({
@@ -66,7 +66,7 @@ function Category() {
     setSelectedTab(newValue);
     const selectedCategory = dataType[newValue];
     // Update URL with the selected category ID
-    window.location.href = `/${selectedCategory.id}`;
+    window.location.href = `/novel-category/${selectedCategory.id}`;
   };
 
   useEffect(() => {

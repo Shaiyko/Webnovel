@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { lazy } from "react";
-import {  Box } from "@mui/material";
+import { Suspense, lazy } from "react";
+import { Backdrop, Box, CircularProgress } from "@mui/material";
 import PrivateRoute from "./cacklogin/ceaklogin";
 import Appbar from "./Appbar";
 
@@ -11,9 +11,9 @@ const Userhomepage = lazy(() => import("./page/pagemanagement/userpagehome"));
 const Category = lazy(() => import("./page/pagenovel/Category"));
 const Profile = lazy(() => import("./page/pageprofile/profile"));
 const Bookshelf = lazy(() => import("./page/pagenovel/Bookshelf"));
-const TableAdmin = lazy(() => import("./page/pagemadmin/Admin"));
+const TableAdmin = lazy(() => import("./page/pagemanagement/Admin/Admin"));
 const TableUse = lazy(() => import("./page/pagemanagement/User/User"));
-const TableAuthor = lazy(() => import("./page/pagemauthor/Author"));
+const TableAuthor = lazy(() => import("./page/pagemanagement/Author/Author"));
 const EnhancedTable = lazy(() => import("./page/pagemanagement/Tag/TAgnovel"));
 const TypeEnhancedTable = lazy(() =>
   import("./page/pagemanagement/Type/TypeNovel")
@@ -21,7 +21,7 @@ const TypeEnhancedTable = lazy(() =>
 const Register = lazy(() => import("./page/pagelogin/Register"));
 const SearchNovel = lazy(() => import("./Search/SearchNovel"));
 const SearchAuthor = lazy(() => import("./Search/SearchAuthor"));
-const ViewNovel = lazy(() => import("./page/pagenovel/Viewnovel"));
+const ViewNovel = lazy(() => import("./page/pagenovel/ViewNovel/Viewnovel"));
 const TableNovel = lazy(() => import("./page/pagemanagement/novel/Tablenovel"));
 const ViewAndChapter = lazy(() =>
   import("./page/pagemanagement/novel/ViewNovelAdd")
@@ -35,7 +35,7 @@ const CreateContentAdd = lazy(() =>
 const UpdateContent = lazy(() =>
   import("./page/pagemanagement/novel/contentNovel/UpdateConent")
 );
-const ViewContent = lazy(() => import("./page/pagenovel/ViewContent"));
+const ViewContent = lazy(() => import("./page/pagenovel/ViewNovel/ViewContent"));
 const SearchTag = lazy(() => import("./Search/SearchTag"));
 const SearchType = lazy(() => import("./Search/SearchType"));
 const SuggestionReport = lazy(() =>
@@ -60,7 +60,7 @@ const ReportReading = lazy(() =>
 const TableSuggestions = lazy(() =>
   import("./page/pagemanagement/Report/Suggestions/TableSuggestions")
 );
-const Directory = lazy(() => import("./page/pagenovel/Directory"));
+const Directory = lazy(() => import("./page/pagenovel/ViewNovel/Directory"));
 const Footer = lazy(() => import("./Footerweb"));
 const ResponsiveSlider = lazy(() => import("./Test/test"));
 const TableNovelAdmin = lazy(() =>
@@ -68,12 +68,12 @@ const TableNovelAdmin = lazy(() =>
 );
 const Account = lazy(() => import("./page/pageprofile/account"));
 const ForgotPassword = lazy(() => import("./page/pagelogin/ForgotPassword"));
-const ChangePassword = lazy(() => import("./page/pageprofile/ChangePassword"));
-const ChangeData = lazy(() => import("./page/pageprofile/ChangeData"));
+const ChangePassword = lazy(() => import("./page/pageprofile/UpdateAccount/ChangePassword"));
+const ChangeData = lazy(() => import("./page/pageprofile/UpdateAccount/ChangeData"));
 const Applytobeanauthor = lazy(() =>
-  import("./page/pageprofile/Applytobeanauthor")
+  import("./page/pageprofile/UpdateAccount/Applytobeanauthor")
 );
-const Ser = lazy(() => import("./ser"));
+
 function App() {
   return (
     <Box
@@ -115,63 +115,63 @@ function App() {
             {/** */}
             {
               <Route
-                path="/tnovel/:id_author"
+                path="/manage/tnovel/:id_author"
                 element={
-                   <PrivateRoute element={<TableNovel />} path="/tnovel/:id_author" />
+                   <PrivateRoute element={<TableNovel />} path="/manage/tnovel/:id_author" />
                 }
               />
             }
              {
               <Route
-                path="/tnovel"
+                path="/manage/tnovel"
                 element={
-                   <PrivateRoute element={<TableNovelAdmin />} path="/tnovel" />
+                   <PrivateRoute element={<TableNovelAdmin />} path="/manage/tnovel" />
                 }
               />
             }
 
             <Route
-              path="/ttag"
+              path="/manage/ttag"
               element={
-                <PrivateRoute element={<EnhancedTable />} path="/ttag" />
+                <PrivateRoute element={<EnhancedTable />} path="/manage/ttag" />
               }
             />
             <Route
-              path="/ttype"
+              path="/manage/ttype"
               element={
                 <PrivateRoute
                   element={<TypeEnhancedTable />}
-                  path="/ttype"
+                  path="/manage/ttype"
                 />
               }
             />
             <Route
-              path="/tadmin"
+              path="/manage/tadmin"
               element={
-                <PrivateRoute element={<TableAdmin />} path="/tadmin" />
+                <PrivateRoute element={<TableAdmin />} path="/manage/tadmin" />
               }
             />
             <Route
-              path="/tuser"
+              path="/manage/tuser"
               element={
-                <PrivateRoute element={<TableUse />} path="/tuser" />
+                <PrivateRoute element={<TableUse />} path="/manage/tuser" />
               }
             />
             <Route
-              path="/tsuggestions"
+              path="/manage/suggestions"
               element={
                 <PrivateRoute
                   element={<TableSuggestions />}
-                  path="/tuser"
+                  path="/manage/tuser"
                 />
               }
             />
             <Route
-              path="/tauthor"
+              path="/manage/tauthor"
               element={
                 <PrivateRoute
                   element={<TableAuthor />}
-                  path="//tauthor"
+                  path="//manage/tauthor"
                 />
               }
             />
@@ -185,7 +185,7 @@ function App() {
             />
 
             {/*  */}
-            <Route path="/:id" element={<Category />} />
+            <Route path="/novel-category/:id" element={<Category />} />
             <Route
               path="/admin"
               element={
@@ -236,41 +236,41 @@ function App() {
             <Route path="/novel/:id_novel/:id" element={<ViewContent />} />
             {/* Report */}
             <Route
-              path="/novel"
+              path="/report/novel"
               element={
-                <PrivateRoute element={<NovelReport />} path="/novel" />
+                <PrivateRoute element={<NovelReport />} path="/report/novel" />
               }
             />
             <Route
-              path="/author"
+              path="/report/author"
               element={
                 <PrivateRoute
                   element={<ReportAuthor />}
-                  path="/author"
+                  path="/report/author"
                 />
               }
             />
             <Route
-              path="/user"
+              path="/report/user"
               element={
-                <PrivateRoute element={<ReportUsers />} path="/user" />
+                <PrivateRoute element={<ReportUsers />} path="/report/user" />
               }
             />
             <Route
-              path="/suggestions"
+              path="/report/suggestions"
               element={
                 <PrivateRoute
                   element={<ReportSuggestions />}
-                  path="/suggestions"
+                  path="/report/suggestions"
                 />
               }
             />
             <Route
-              path="/reortview"
+              path="/report/reortview"
               element={
                 <PrivateRoute
                   element={<ReportReading />}
-                  path="/reortview"
+                  path="/report/reortview"
                 />
               }
             />

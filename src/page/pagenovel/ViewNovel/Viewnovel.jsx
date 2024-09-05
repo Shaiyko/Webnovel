@@ -25,8 +25,8 @@ import { styled } from "@mui/system";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import { apinovel } from "../../URL_API/Apinovels";
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import { apinovel } from "../../../URL_API/Apinovels";
 const Linknovel = styled(Link)({
   textDecoration: "none",
   color: "inherit",
@@ -64,7 +64,7 @@ const ViewNovels = () => {
   const handleToggle = () => {
     setExpanded(!expanded);
   };
-  const { id_novel } = useParams();
+  const {id_novel} = useParams();
   const [dataname, setNameN] = useState("");
   const [dataauthor, setAuthor] = useState("");
   const [dataType, setType] = useState("");
@@ -116,11 +116,14 @@ const ViewNovels = () => {
 
   const createReading = async () => {
     try {
-      const response = await axios.post(`${apinovel}/create/reading`, {
-        id_user: userId,
-        id_novel: id_novel,
-        score: 1,
-      });
+      const response = await axios.post(
+        `${apinovel}/create/reading`,
+        {
+          id_user: userId,
+          id_novel: id_novel,
+          score: 1,
+        }
+      );
       console.log("Reading entry created:", response.data);
     } catch (error) {
       if (error.response && error.response.status === 409) {
@@ -133,11 +136,14 @@ const ViewNovels = () => {
   const handleLoadBookshelf = async () => {
     if (userId) {
       try {
-        const response = await axios.put(`${apinovel}/update/reading`, {
-          id_user: userId,
-          id_novel: id_novel,
-          bookmark: dataname,
-        });
+        const response = await axios.put(
+          `${apinovel}/update/reading`,
+          {
+            id_user: userId,
+            id_novel: id_novel,
+            bookmark: dataname,
+          }
+        );
         console.log("Reading entry created:", response.data);
       } catch (error) {
         if (error.response && error.response.status === 409) {
@@ -227,43 +233,34 @@ const ViewNovels = () => {
             <Grid item xs={12} md={12}>
               <Card>
                 <CardContent>
-                  <Grid container spacing={2} mb={1} mt={1}>
-                    <Grid xs={11} md={11} mb={1}>
-                      <Breadcrumbs
-                        sx={{ paddingLeft: 1 }}
-                        aria-label="breadcrumb"
+                <Grid   container spacing={2} mb={1} mt={1}>
+                  <Grid xs={11} md={11} mb={1}>
+                    <Breadcrumbs sx={{paddingLeft:1}} aria-label="breadcrumb">
+                      <Link underline="hover" color="primary" href="/">
+                        Home
+                      </Link>
+                      <Link
+                        underline="hover"
+                        color="primary"
+                        href={`/novel-category/${idtype}`}
                       >
-                        <Link underline="hover" color="primary" href="/">
-                          Home
-                        </Link>
-                        <Link
-                          underline="hover"
-                          color="primary"
-                          href={`/novel-category/${idtype}`}
-                        >
-                          {dataType}
-                        </Link>
-                        <Link
-                          underline="hover"
-                          color="primary"
-                          href={`/novel/${id_novel}`}
-                          aria-current="page"
-                        >
-                          {dataname}
-                        </Link>
-                      </Breadcrumbs>
-                      <Divider />
+                        {dataType}
+                      </Link>
+                      <Link
+                        underline="hover"
+                        color="primary"
+                        href={`/novel/${id_novel}`}
+                        aria-current="page"
+                      >
+                        {dataname}
+                      </Link>
+                   
+                    </Breadcrumbs>
+                    <Divider />
                     </Grid>
-                    <Grid xs={1} md={1}>
-                      <Tooltip title="Report">
-                        <IconButton
-                          href={`/suggestionreport/${id_novel}`}
-                          color="error"
-                          sx={{ paddingLeft: 2 }}
-                        >
-                          <ReportProblemIcon />
-                        </IconButton>
-                      </Tooltip>
+                    <Grid  xs={1} md={1}>
+                    <Tooltip title="Report">
+                    <IconButton href={`/suggestionreport/${id_novel}`} color="error" sx={{paddingLeft:2}} ><ReportProblemIcon /></IconButton></Tooltip>
                     </Grid>
                   </Grid>
                   <Grid container spacing={2}>
@@ -287,9 +284,11 @@ const ViewNovels = () => {
                     </Grid>
                     <Grid item xs={8} md={9}>
                       <Typography color={"primary"} variant="h5" gutterBottom>
-                        {dataname}
+                        {dataname} 
                       </Typography>
-                      <Typography mt={3}>
+                      <Typography
+                        mt={3}
+                      >
                         Author:
                         <Linknovel target="_blank" href={`/author/${idauthoe}`}>
                           {dataauthor}
@@ -309,10 +308,7 @@ const ViewNovels = () => {
                           }}
                         >
                           Category:
-                          <Linknovel
-                            target="_blank"
-                            href={`/novel-category/${idtype}`}
-                          >
+                          <Linknovel target="_blank" href={`/novel-category/${idtype}`}>
                             {dataType}
                           </Linknovel>
                         </Typography>

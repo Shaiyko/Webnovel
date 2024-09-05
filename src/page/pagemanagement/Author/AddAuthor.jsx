@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../css/stylesloading.css"; // css
 import {
   Button,
   TextField,
@@ -30,8 +31,8 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MenuItem from "@mui/material/MenuItem";
 import PortraitIcon from "@mui/icons-material/Portrait";
-import { apinovel, apiupfile } from "../../URL_API/Apinovels";
-import LoadingComponent from "../../Loading";
+import { apinovel, apiupfile } from "../../../URL_API/Apinovels";
+import LoadingComponent from "../../../Loading";
 const currencies = [
   {
     value: "Male",
@@ -160,13 +161,17 @@ export default function Addauthor({ UserGet }) {
           );
 
           if (loggedInPen) {
-            setLoading(false);
+            setLoading(false)
             setError(`This "Pen Name: ${datapenname}" has been Already used`);
-            console.log("5555555555555555555555555");
-          } else if (loggedInUser) {
-            setLoading(false);
+            console.log("5555555555555555555555555")
+           
+            
+          }else  if (loggedInUser) {
+            setLoading(false)
             setError(`This "User Name: ${datauser}" has been Already used`);
-            console.log("5555555555555555555555555");
+            console.log("5555555555555555555555555")
+           
+            
           } else {
             axios
               .post(`${apinovel}/create/author`, {
@@ -236,7 +241,7 @@ export default function Addauthor({ UserGet }) {
           title: "Oops...",
           text: error.message,
         });
-      }
+      } 
     } else {
       try {
         const fileId = await handleUpload();
@@ -296,7 +301,7 @@ export default function Addauthor({ UserGet }) {
           <Box>
             {/* Loading, Error Handling */}
             <LoadingComponent loading={loading} />
-
+           
             <>
               <Grid container spacing={2}>
                 <Grid item xs={4}>

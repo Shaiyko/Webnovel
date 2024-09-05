@@ -29,7 +29,7 @@ import { CardMedia } from "@mui/material";
 import ViewAdmin from "./ViewAdmin";
 import ExportViewAdmin from "./ExportAdminExcel";
 import Swal from "sweetalert2";
-import { apinovel } from "../../URL_API/Apinovels";
+import { apinovel } from "../../../URL_API/Apinovels";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -207,14 +207,17 @@ function EnhancedTableToolbar(props) {
     if (result.isConfirmed) {
       try {
         // Make the delete request
-        const response = await axios.delete(`${apinovel}/delete/admin`, {
-          data: {
-            id: selected,
-          },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.delete(
+          `${apinovel}/delete/admin`,
+          {
+            data: {
+              id: selected,
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         console.log(response.data);
 
         // Show success alert
@@ -271,14 +274,14 @@ function EnhancedTableToolbar(props) {
           Nutrition
         </Typography>
       )}
-      <Typography
-        sx={{ flex: "1 1 100%" }}
-        variant="h6"
-        id="tableTitle"
-        component="div"
-      >
-        Admin Data
-      </Typography>
+    <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Admin Data
+        </Typography>
       <TextField
         variant="outlined"
         placeholder="Search..."
@@ -289,18 +292,18 @@ function EnhancedTableToolbar(props) {
       {numSelected == 1 ? (
         <Tooltip title="Export select ID" sx={{ marginRight: 2 }}>
           <ExportViewAdmin
-            numSelected={numSelected}
-            selected={selected}
-            setSelected={setSelected}
-          />
+          numSelected={numSelected}
+              selected={selected}
+              setSelected={setSelected}
+            />
         </Tooltip>
       ) : (
         <Tooltip title="Export All ID">
           <ExportViewAdmin
-            numSelected={numSelected}
-            selected={selected}
-            setSelected={setSelected}
-          />
+          numSelected={numSelected}
+              selected={selected}
+              setSelected={setSelected}
+            />
         </Tooltip>
       )}
       {numSelected > 0 ? (
@@ -332,7 +335,10 @@ function EnhancedTableToolbar(props) {
       {numSelected == 1 ? (
         <Tooltip title="Update">
           <IconButton>
-            <ViewAdmin selected={selected} setSelected={setSelected} />
+            <ViewAdmin
+              selected={selected}
+              setSelected={setSelected}
+            />
           </IconButton>
         </Tooltip>
       ) : (
@@ -501,11 +507,11 @@ export default function TableAdmin() {
                       padding="none"
                     >
                       <CardMedia
-                        sx={{ width: 100, height: 150 }}
-                        component="img"
-                        image={row.avatar}
-                        alt={row.avatar}
-                      />
+                      sx={{width: 100,height:150}}
+                          component="img"
+                          image={row.avatar}
+                          alt={row.avatar}
+                        />
                     </TableCell>
                     <TableCell align="right">{row.f_name}</TableCell>
                     <TableCell align="right">{row.l_name}</TableCell>

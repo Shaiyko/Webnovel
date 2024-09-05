@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { apinovel } from "../../URL_API/Apinovels";
+import { apinovel } from "../../../../URL_API/Apinovels";
 
 // eslint-disable-next-line react/prop-types
 export default function ViewS({ selected, setSelected }) {
@@ -21,7 +21,9 @@ export default function ViewS({ selected, setSelected }) {
     setOpen(false);
     setSelected([]);
   };
-  const [fontFamily] = useState("Noto Sans Lao, sans-serif");
+  const [fontFamily] = useState(
+    "Noto Sans Lao, sans-serif"
+  );
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,6 +105,7 @@ export default function ViewS({ selected, setSelected }) {
                     }}
                     dangerouslySetInnerHTML={{ __html: adminData.reason }}
                   />{" "}
+                  
                 </Typography>
               </CardContent>
             </Card>

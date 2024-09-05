@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { apinovel } from '../../URL_API/Apinovels';
+import { apinovel } from '../../../URL_API/Apinovels';
 
 // eslint-disable-next-line react/prop-types
 export default function Viewauthor({ selected,setSelected}) {
