@@ -94,8 +94,8 @@ const Pagenovel = () => {
     <Container>
       <Box>
         <Card sx={{ p: 2 }}>
-        <Typography variant="h6" component="div">
-            New novels every month
+          <Typography variant="h6" component="div">
+            New novels every month 1
           </Typography>
           <Divider />
           <Slidernovel dataTag={dataTag} />
@@ -139,7 +139,10 @@ const Pagenovel = () => {
                       <CardContent sx={{ display: "flex" }}>
                         <Grid item xs={4} md={3}>
                           <Card sx={{ backgroundColor: "black" }}>
-                            <Linknovel target="_blank" href={`/novel/${item.id_novel}`}>
+                            <Linknovel
+                              target="_blank"
+                              href={`/novel/${item.id_novel}`}
+                            >
                               <CardMedia
                                 component="img"
                                 sx={{
@@ -156,16 +159,19 @@ const Pagenovel = () => {
                               />
                             </Linknovel>
                           </Card>
-                          <Box sx={{display:{md:"none"}}}>
+                          <Box sx={{ display: { md: "none" } }}>
                             <Typography variant="caption" component="p" noWrap>
                               {" "}
-                              Update {formatDateTime(item.updateep)} 
+                              Update {formatDateTime(item.updateep)}
                             </Typography>
                           </Box>
                         </Grid>
                         <Grid marginLeft={2} item xs={8} md={9}>
                           <Typography variant="h6" component="div">
-                            <Linknovel target="_blank" href={`/novel/${item.id_novel}`}>
+                            <Linknovel
+                              target="_blank"
+                              href={`/novel/${item.id_novel}`}
+                            >
                               {index + 1}. {item.name_novel}
                             </Linknovel>
                           </Typography>
@@ -226,7 +232,10 @@ const Pagenovel = () => {
                               {item.name_episode}
                             </Typography>
                           </Box>
-                          <Box sx={{display:{xs:"none",md:"block"}}} mt={2}>
+                          <Box
+                            sx={{ display: { xs: "none", md: "block" } }}
+                            mt={2}
+                          >
                             <Typography variant="caption" component="p" noWrap>
                               {" "}
                               Latest Update {formatDateTime(item.updateep)}
@@ -238,22 +247,24 @@ const Pagenovel = () => {
                   </Grid>
                 ))}
           </Grid>
-          {dataTag.length >= 20 && (<Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "16px",
-              mb: 2,
-            }}
-          >
-            <Pagination
-              count={Math.ceil(dataTag.length / itemsPerPage)}
-              page={page}
-              onChange={handlePageChange}
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>)}
+          {dataTag.length >= 20 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "16px",
+                mb: 2,
+              }}
+            >
+              <Pagination
+                count={Math.ceil(dataTag.length / itemsPerPage)}
+                page={page}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+              />
+            </Box>
+          )}
         </Card>
         <Rankingnew />
       </Box>

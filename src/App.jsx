@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
-import { Backdrop, Box, CircularProgress } from "@mui/material";
+import { lazy } from "react";
+import { Box } from "@mui/material";
 import PrivateRoute from "./cacklogin/ceaklogin";
 import Appbar from "./Appbar";
 
@@ -35,7 +35,9 @@ const CreateContentAdd = lazy(() =>
 const UpdateContent = lazy(() =>
   import("./page/pagemanagement/novel/contentNovel/UpdateConent")
 );
-const ViewContent = lazy(() => import("./page/pagenovel/ViewNovel/ViewContent"));
+const ViewContent = lazy(() =>
+  import("./page/pagenovel/ViewNovel/ViewContent")
+);
 const SearchTag = lazy(() => import("./Search/SearchTag"));
 const SearchType = lazy(() => import("./Search/SearchType"));
 const SuggestionReport = lazy(() =>
@@ -68,14 +70,16 @@ const TableNovelAdmin = lazy(() =>
 );
 const Account = lazy(() => import("./page/pageprofile/account"));
 const ForgotPassword = lazy(() => import("./page/pagelogin/ForgotPassword"));
-const ChangePassword = lazy(() => import("./page/pageprofile/UpdateAccount/ChangePassword"));
-const ChangeData = lazy(() => import("./page/pageprofile/UpdateAccount/ChangeData"));
+const ChangePassword = lazy(() =>
+  import("./page/pageprofile/UpdateAccount/ChangePassword")
+);
+const ChangeData = lazy(() =>
+  import("./page/pageprofile/UpdateAccount/ChangeData")
+);
 const Applytobeanauthor = lazy(() =>
   import("./page/pageprofile/UpdateAccount/Applytobeanauthor")
 );
-const Ser = lazy(() =>
-  import("./ser")
-);
+const Ser = lazy(() => import("./ser"));
 function App() {
   return (
     <Box
@@ -109,9 +113,7 @@ function App() {
             {
               <Route
                 path="/profile"
-                element={
-                   <PrivateRoute element={<Account />} path="/profile" />
-                }
+                element={<PrivateRoute element={<Account />} path="/profile" />}
               />
             }
             {/** */}
@@ -119,15 +121,21 @@ function App() {
               <Route
                 path="/manage/tnovel/:id_author"
                 element={
-                   <PrivateRoute element={<TableNovel />} path="/manage/tnovel/:id_author" />
+                  <PrivateRoute
+                    element={<TableNovel />}
+                    path="/manage/tnovel/:id_author"
+                  />
                 }
               />
             }
-             {
+            {
               <Route
                 path="/manage/tnovel"
                 element={
-                   <PrivateRoute element={<TableNovelAdmin />} path="/manage/tnovel" />
+                  <PrivateRoute
+                    element={<TableNovelAdmin />}
+                    path="/manage/tnovel"
+                  />
                 }
               />
             }
