@@ -95,7 +95,7 @@ const Pagenovel = () => {
       <Box>
         <Card sx={{ p: 2 }}>
           <Typography variant="h6" component="div">
-            New novels every month 1
+            New novels every month sx
           </Typography>
           <Divider />
           <Slidernovel dataTag={dataTag} />
